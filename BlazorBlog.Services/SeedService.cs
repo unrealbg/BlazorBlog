@@ -32,8 +32,9 @@
 
         public async Task SeedDataAsync()
         {
-            // Seed admin role from appsettings.json
-            if (await this.roleManager.FindByNameAsync(this.adminUserSettings.Name) is null)
+            await this.MigrateDatabaseAsync();
+
+            if (await this.roleManager.FindByNameAsync(this.adminUserSettings.Role) is null)
             {
                 var adminRole = new IdentityRole(this.adminUserSettings.Role);
 
@@ -52,10 +53,15 @@
             {
                 adminUser = new ApplicationUser();
 
-                adminUser.PasswordHash = this.userManager.PasswordHasher.HashPassword(adminUser, this.adminUserSettings.Password);
+                adminUser.PasswordHash = userManager.PasswordHasher.HashPassword(adminUser, adminUserSettings.Password);
+
                 adminUser.Name = this.adminUserSettings.Name;
+                adminUser.Email = this.adminUserSettings.Email;
 
                 await this.userStore.SetUserNameAsync(adminUser, this.adminUserSettings.Email, CancellationToken.None);
+
+                var emailStore = (IUserEmailStore<ApplicationUser>)this.userStore;
+                await emailStore.SetEmailAsync(adminUser, this.adminUserSettings.Email, CancellationToken.None);
 
                 var result = await this.userManager.CreateAsync(adminUser, adminUser.PasswordHash);
                 if (!result.Succeeded)
@@ -66,11 +72,22 @@
                 }
             }
 
+
             if (!await this.ctx.Categories.AsNoTracking().AnyAsync())
             {
                 await this.ctx.Categories.AddRangeAsync(Category.GetSeedCategories());
                 await this.ctx.SaveChangesAsync();
             }
+        }
+
+        private async Task MigrateDatabaseAsync()
+        {
+#if DEBUG
+            if (await this.ctx.Database.GetPendingMigrationsAsync() is { } migrations && migrations.Any())
+            {
+                await this.ctx.Database.MigrateAsync();
+            }
+#endif
         }
     }
 }
