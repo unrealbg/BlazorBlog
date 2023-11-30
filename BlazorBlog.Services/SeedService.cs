@@ -53,8 +53,6 @@
             {
                 adminUser = new ApplicationUser();
 
-                adminUser.PasswordHash = userManager.PasswordHasher.HashPassword(adminUser, adminUserSettings.Password);
-
                 adminUser.Name = this.adminUserSettings.Name;
                 adminUser.Email = this.adminUserSettings.Email;
 
@@ -63,7 +61,7 @@
                 var emailStore = (IUserEmailStore<ApplicationUser>)this.userStore;
                 await emailStore.SetEmailAsync(adminUser, this.adminUserSettings.Email, CancellationToken.None);
 
-                var result = await this.userManager.CreateAsync(adminUser, adminUser.PasswordHash);
+                var result = await this.userManager.CreateAsync(adminUser, this.adminUserSettings.Password);
                 if (!result.Succeeded)
                 {
                     var errorsStr = result.Errors.Select(e => e.Description);
