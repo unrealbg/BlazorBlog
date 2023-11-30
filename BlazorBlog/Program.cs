@@ -3,6 +3,8 @@ namespace BlazorBlog
     using BlazorBlog.Components;
     using BlazorBlog.Components.Account;
     using BlazorBlog.Data;
+    using BlazorBlog.Services;
+    using BlazorBlog.Services.Contracts;
 
     using Microsoft.AspNetCore.Components.Authorization;
     using Microsoft.AspNetCore.Identity;
@@ -35,12 +37,14 @@ namespace BlazorBlog
                 options.UseSqlServer(connectionString));
             builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-            builder.Services.AddIdentityCore<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
+            builder.Services.AddIdentityCore<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = false)
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddSignInManager()
                 .AddDefaultTokenProviders();
 
             builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
+
+            builder.Services.AddTransient<ISeedService, SeedService>();
 
             var app = builder.Build();
 
