@@ -12,7 +12,7 @@ namespace BlazorBlog
 
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
 
@@ -38,6 +38,7 @@ namespace BlazorBlog
             builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
             builder.Services.AddIdentityCore<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = false)
+                .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddSignInManager()
                 .AddDefaultTokenProviders();
@@ -47,6 +48,9 @@ namespace BlazorBlog
             builder.Services.AddTransient<ISeedService, SeedService>();
 
             var app = builder.Build();
+
+            // Seed the database.
+            await SeedDataAsync(app.Services);
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
@@ -72,6 +76,13 @@ namespace BlazorBlog
             app.MapAdditionalIdentityEndpoints();
 
             app.Run();
+
+            static async Task SeedDataAsync(IServiceProvider services)
+            {
+                var scope = services.CreateScope();
+                var seedService = scope.ServiceProvider.GetRequiredService<ISeedService>();
+                await seedService.SeedDataAsync();
+            }
         }
     }
 }
