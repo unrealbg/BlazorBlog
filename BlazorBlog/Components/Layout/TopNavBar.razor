@@ -1,6 +1,9 @@
-﻿<!--------------------------------------
+﻿@using BlazorBlog.Common
+<!--------------------------------------
 NAVBAR
 --------------------------------------->
+@inject NavigationManager NavigationManager
+
 <nav class="topnav navbar navbar-expand-lg navbar-light bg-white fixed-top">
     <div class="container">
         <a class="navbar-brand" href="/"><strong>Blazor Blog</strong></a>
@@ -27,23 +30,44 @@ NAVBAR
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="category">Collections</a>
-                </li>            
-                <li class="nav-item">
-                    <a class="nav-link" href="about.html">About</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="docs.html">Template <span class="badge badge-secondary">docs</span></a>
                 </li>
             </ul>
             <ul class="navbar-nav ml-auto d-flex align-items-center">
-                <li class="nav-item highlight">
-                    <a class="nav-link" href="https://www.wowthemes.net/mundana-free-html-bootstrap-template/">Get this Theme</a>
-                </li>
+                <AuthorizeView>
+                    <Authorized>
+                        <li class="nav-item mr-2">
+                            <a class="">@context.User.GetUserName()</a>
+                        </li>
+                        <li class="nav-item highlight">
+                            <form action="Account/Logout" method="post">
+                                <AntiforgeryToken />
+                                <input type="hidden" name="ReturnUrl" value="@redirectUrl" />
+                                <button type="submit" class="nav-link">
+                                    <span class="bi bi-arrow-bar-left-nav-menu" aria-hidden="true"></span> Logout
+                                </button>
+                            </form>
+                        </li>
+                    </Authorized>
+                    <NotAuthorized>
+                        <li class="nav-item highlight mr-2">
+                            <a class="nav-link" href="account/register">Register</a>
+                        </li>
+                        <li class="nav-item highlight">
+                            <a class="nav-link" href="account/login">Login</a>
+                        </li>
+                    </NotAuthorized>
+                </AuthorizeView>
             </ul>
         </div>
     </div>
 </nav>
 <!-- End Navbar -->
 @code {
+    private string redirectUrl = string.Empty;
+
+    protected override void OnInitialized()
+    {
+        this.redirectUrl = NavigationManager.ToBaseRelativePath(NavigationManager.BaseUri);
+    }
 
 }
