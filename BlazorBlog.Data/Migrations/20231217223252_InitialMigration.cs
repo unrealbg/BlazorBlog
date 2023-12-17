@@ -6,11 +6,19 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace BlazorBlog.Migrations
 {
     /// <inheritdoc />
-    public partial class AddBlogEntities : Migration
+    public partial class InitialMigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.AddColumn<string>(
+                name: "Name",
+                table: "AspNetUsers",
+                type: "nvarchar(25)",
+                maxLength: 25,
+                nullable: false,
+                defaultValue: "");
+
             migrationBuilder.CreateTable(
                 name: "Categories",
                 columns: table => new
@@ -52,13 +60,12 @@ namespace BlazorBlog.Migrations
                     Image = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     Introduction = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
                     Content = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CategoryId = table.Column<short>(type: "smallint", nullable: false),
+                    CategoryId = table.Column<int>(type: "int", nullable: false),
                     UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     IsPublished = table.Column<bool>(type: "bit", nullable: false),
                     ViewCount = table.Column<int>(type: "int", nullable: false),
                     IsFeatured = table.Column<bool>(type: "bit", nullable: false),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
-                    CategoryId1 = table.Column<int>(type: "int", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     PublishedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
@@ -72,17 +79,17 @@ namespace BlazorBlog.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_BlogPosts_Categories_CategoryId1",
-                        column: x => x.CategoryId1,
+                        name: "FK_BlogPosts_Categories_CategoryId",
+                        column: x => x.CategoryId,
                         principalTable: "Categories",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_BlogPosts_CategoryId1",
+                name: "IX_BlogPosts_CategoryId",
                 table: "BlogPosts",
-                column: "CategoryId1");
+                column: "CategoryId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_BlogPosts_UserId",
@@ -101,6 +108,10 @@ namespace BlazorBlog.Migrations
 
             migrationBuilder.DropTable(
                 name: "Categories");
+
+            migrationBuilder.DropColumn(
+                name: "Name",
+                table: "AspNetUsers");
         }
     }
 }

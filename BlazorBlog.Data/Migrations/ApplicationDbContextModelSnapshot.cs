@@ -100,10 +100,7 @@ namespace BlazorBlog.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<short>("CategoryId")
-                        .HasColumnType("smallint");
-
-                    b.Property<int>("CategoryId1")
+                    b.Property<int>("CategoryId")
                         .HasColumnType("int");
 
                     b.Property<string>("Content")
@@ -154,7 +151,7 @@ namespace BlazorBlog.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CategoryId1");
+                    b.HasIndex("CategoryId");
 
                     b.HasIndex("UserId");
 
@@ -350,7 +347,7 @@ namespace BlazorBlog.Migrations
                 {
                     b.HasOne("BlazorBlog.Data.Entities.Category", "Category")
                         .WithMany()
-                        .HasForeignKey("CategoryId1")
+                        .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
