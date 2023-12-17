@@ -55,8 +55,7 @@
     [SupplyParameterFromForm]
     private InputModel Input { get; set; } = new();
 
-    [SupplyParameterFromQuery]
-    private string? ReturnUrl { get; set; }
+    [SupplyParameterFromQuery] private string? ReturnUrl { get; set; } = "/admin/dashboard";
 
     protected override async Task OnInitializedAsync()
     {
