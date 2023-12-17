@@ -9,7 +9,6 @@
         private readonly UserManager<ApplicationUser> userManager;
         private readonly RoleManager<IdentityRole> roleManager;
 
-
         public SeedService(ApplicationDbContext ctx, IUserStore<ApplicationUser> userStore,
                            UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager,
                            IConfiguration config)
@@ -60,7 +59,6 @@
                     throw new Exception($"Error creating admin user: {errors}");
                 }
             }
-
 
             if (!await this.ctx.Categories.AsNoTracking().AnyAsync())
             {
