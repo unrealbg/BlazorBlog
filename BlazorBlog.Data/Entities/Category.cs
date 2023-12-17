@@ -14,6 +14,8 @@
 
         public bool ShowOnNavBar { get; set; }
 
+        public Category Clone() => (this.MemberwiseClone() as Category)!;
+
         public static Category[] GetSeedCategories()
         {
             return new[]
