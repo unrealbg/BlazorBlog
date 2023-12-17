@@ -21,7 +21,7 @@
         [Required]
         public string Content { get; set; }
 
-        public short CategoryId { get; set; }
+        public int CategoryId { get; set; }
 
         public string UserId { get; set; }
 
