@@ -1,14 +1,5 @@
 ﻿namespace BlazorBlog.Services
 {
-    using BlazorBlog.Data;
-    using BlazorBlog.Data.Entities;
-    using BlazorBlog.Services.Contracts;
-    using BlazorBlog.Services.Settings;
-
-    using Microsoft.AspNetCore.Identity;
-    using Microsoft.EntityFrameworkCore;
-    using Microsoft.Extensions.Configuration;
-
     public class SeedService : ISeedService
     {
         private readonly AdminUserSettings adminUserSettings;
