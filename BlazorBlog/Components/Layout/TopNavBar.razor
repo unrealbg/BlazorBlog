@@ -1,9 +1,6 @@
-﻿@using BlazorBlog.Common
-<!--------------------------------------
+﻿<!--------------------------------------
 NAVBAR
 --------------------------------------->
-@inject NavigationManager NavigationManager
-
 <nav class="topnav navbar navbar-expand-lg navbar-light bg-white fixed-top">
     <div class="container">
         <a class="navbar-brand" href="/"><strong>Blazor Blog</strong></a>
@@ -35,21 +32,15 @@ NAVBAR
             <ul class="navbar-nav ml-auto d-flex align-items-center">
                 <AuthorizeView>
                     <Authorized>
-                        <li class="nav-item mr-2">
-                            <a class="">@context.User.GetUserName()</a>
+                        <li class="nav-item">
+                            <a class="nav-link" href="admin/dashboard">@context.User.GetUserName()</a>
                         </li>
                         <li class="nav-item highlight">
-                            <form action="Account/Logout" method="post">
-                                <AntiforgeryToken />
-                                <input type="hidden" name="ReturnUrl" value="@redirectUrl" />
-                                <button type="submit" class="nav-link">
-                                    <span class="bi bi-arrow-bar-left-nav-menu" aria-hidden="true"></span> Logout
-                                </button>
-                            </form>
+                            <LogoutForm ButtonClasses="nav-link" />
                         </li>
                     </Authorized>
                     <NotAuthorized>
-                        <li class="nav-item highlight mr-2">
+                        <li class="nav-item highlight mr-1">
                             <a class="nav-link" href="account/register">Register</a>
                         </li>
                         <li class="nav-item highlight">
@@ -63,11 +54,5 @@ NAVBAR
 </nav>
 <!-- End Navbar -->
 @code {
-    private string redirectUrl = string.Empty;
-
-    protected override void OnInitialized()
-    {
-        this.redirectUrl = NavigationManager.ToBaseRelativePath(NavigationManager.BaseUri);
-    }
 
 }
