@@ -1,0 +1,15 @@
+﻿<div class="bg-gray p-3 d-flex justify-content-between">
+    <h5>@Title</h5>
+    <div class="actions-btns d-flex align-items-center">
+        @ActionButtons
+    </div>
+    
+</div>
+
+@code {
+    [Parameter, EditorRequired]
+    public string Title { get; set; }
+
+    [Parameter]
+    public RenderFragment? ActionButtons { get; set; }
+}
