@@ -1,4 +1,5 @@
-﻿namespace BlazorBlog.Common
+﻿
+namespace BlazorBlog.Services.Common
 {
     using System.Security.Claims;
     using System.Text.RegularExpressions;

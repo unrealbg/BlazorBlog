@@ -1,4 +1,4 @@
-﻿namespace BlazorBlog.Common
+﻿namespace BlazorBlog.Services.Common
 {
     public static class AppConstants
     {
