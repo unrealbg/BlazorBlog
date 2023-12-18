@@ -1,8 +1,5 @@
 ﻿namespace BlazorBlog.Services
 {
-    using Contracts;
-    using Common;
-
     public class CategoryService : ICategoryService
     {
         private readonly IDbContextFactory<ApplicationDbContext> contextFactory;
