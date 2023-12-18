@@ -1,6 +1,9 @@
-﻿<!--------------------------------------
+﻿@using BlazorBlog.Services
+<!--------------------------------------
 NAVBAR
 --------------------------------------->
+@inject ICategoryService CategoryService
+
 <nav class="topnav navbar navbar-expand-lg navbar-light bg-white fixed-top">
     <div class="container">
         <a class="navbar-brand" href="/"><strong>Blazor Blog</strong></a>
@@ -13,21 +16,12 @@ NAVBAR
                 <li class="nav-item">
                     <a class="nav-link" href="/">Home <span class="sr-only">(current)</span></a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="category">Culture</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="category">Tech</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="category">Politics</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="category">Health</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="category">Collections</a>
-                </li>
+                @foreach (var category in this.categories)
+                {
+                    <li class="nav-item">
+                        <a class="nav-link" href="category">@category.Name</a>
+                    </li>
+                }
             </ul>
             <ul class="navbar-nav ml-auto d-flex align-items-center">
                 <AuthorizeView>
@@ -54,5 +48,27 @@ NAVBAR
 </nav>
 <!-- End Navbar -->
 @code {
+    private Category[] categories = [];
+    private const int MaxCategoryToShow = 5;
 
+    protected override async Task OnInitializedAsync()
+    {
+        var allCategories = await CategoryService.GetCategoriesAsync();
+
+        this.categories = allCategories
+            .Where(c => c.ShowOnNavBar)
+            .Take(MaxCategoryToShow)
+            .ToArray();
+
+        if (this.categories.Length < MaxCategoryToShow)
+        {
+            this.categories =
+            [
+                ..this.categories, 
+                ..allCategories
+                    .Where(c => !c.ShowOnNavBar)
+                    .Take(MaxCategoryToShow - this.categories.Length)
+            ];
+        }
+    }
 }
