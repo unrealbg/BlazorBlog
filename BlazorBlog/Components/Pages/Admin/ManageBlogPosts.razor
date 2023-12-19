@@ -1,0 +1,52 @@
+﻿@page "/admin/manage-blog-posts"
+
+@rendermode @(new InteractiveServerRenderMode(prerender: false))
+
+@inject IBlogPostAdminService BlogPostService
+
+<AdminHeader Title="Manage Blog Posts">
+    <ActionButtons>
+        <a href="admin/manage-blog-posts/new" class="btn btn-primary btn-sm">+ Add new Blog Post</a>
+    </ActionButtons>
+</AdminHeader>
+
+@if (_isLoading)
+{
+    <Loader LoaderText="@_loadingText" />
+}
+
+<QuickGrid ItemsProvider="_blogPostProvider" Pagination="_paginationState">
+    <PropertyColumn Property="@(b => b.Id)" />
+    <PropertyColumn Property="@(b => b.Title)" />
+</QuickGrid>
+
+<Paginator State="_paginationState" />
+
+@code {
+    private bool _isLoading;
+    private string? _loadingText;
+
+    private const int PageSize = 10;
+
+    private PaginationState _paginationState = new PaginationState
+        {
+            ItemsPerPage = PageSize
+        };
+
+    private GridItemsProvider<BlogPost> _blogPostProvider { get; set; }
+
+    protected override void OnInitialized()
+    {
+        _blogPostProvider = async request =>
+        {
+            _isLoading = true;
+            _loadingText = "Fetching blog posts...";
+
+            var pagedBlogs = await BlogPostService.GetBlogPostsAsync(request.StartIndex, request.Count ?? PageSize);
+
+            _isLoading = false;
+
+            return GridItemsProviderResult.From(pagedBlogs.Results, pagedBlogs.TotalCount);
+        };
+    }
+}
