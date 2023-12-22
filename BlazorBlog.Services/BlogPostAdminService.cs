@@ -2,11 +2,11 @@
 {
     public class BlogPostAdminService : IBlogPostAdminService
     {
-        private readonly IDbContextFactory<ApplicationDbContext> contextFactory;
+        private readonly IDbContextFactory<ApplicationDbContext> _contextFactory;
 
         public BlogPostAdminService(IDbContextFactory<ApplicationDbContext> contextFactory)
         {
-            this.contextFactory = contextFactory;
+            this._contextFactory = contextFactory;
         }
 
         public async Task<PageResult<BlogPost>> GetBlogPostsAsync(int startIndex, int pageSize)
@@ -106,7 +106,7 @@
 
         private async Task<TResult> ExecuteOnContext<TResult>(Func<ApplicationDbContext, Task<TResult>> query)
         {
-            await using var context = this.contextFactory.CreateDbContext();
+            await using var context = this._contextFactory.CreateDbContext();
             return await query.Invoke(context);
         }
 

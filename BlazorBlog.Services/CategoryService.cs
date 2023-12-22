@@ -2,11 +2,11 @@
 {
     public class CategoryService : ICategoryService
     {
-        private readonly IDbContextFactory<ApplicationDbContext> contextFactory;
+        private readonly IDbContextFactory<ApplicationDbContext> _contextFactory;
 
         public CategoryService(IDbContextFactory<ApplicationDbContext> contextFactory)
         {
-            this.contextFactory = contextFactory;
+            this._contextFactory = contextFactory;
         }
 
         public async Task<Category[]> GetCategoriesAsync()
@@ -68,7 +68,7 @@
 
         private async Task<TResult> ExecuteOnContext<TResult>(Func<ApplicationDbContext, Task<TResult>> query)
         {
-            await using var context = this.contextFactory.CreateDbContext();
+            await using var context = this._contextFactory.CreateDbContext();
             return await query.Invoke(context);
         }
     }
