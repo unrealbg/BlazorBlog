@@ -8,6 +8,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Blazored.TextEditor" Version="1.1.0" />
+    <PackageReference Include="HtmlSanitizer" Version="8.1.812-beta" />
     <PackageReference Include="Microsoft.AspNetCore.Components.QuickGrid" Version="8.0.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.0">
       <PrivateAssets>all</PrivateAssets>
@@ -18,6 +20,10 @@
   <ItemGroup>
     <ProjectReference Include="..\BlazorBlog.Data\BlazorBlog.Data.csproj" />
     <ProjectReference Include="..\BlazorBlog.Services\BlazorBlog.Services.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="wwwroot\images\posts\" />
   </ItemGroup>
 
 </Project>
