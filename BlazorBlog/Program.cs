@@ -1,10 +1,12 @@
 namespace BlazorBlog
 {
-    using BlazorBlog.Components;
-    using BlazorBlog.Components.Account;
-    using BlazorBlog.Data;
-    using BlazorBlog.Services;
-    using BlazorBlog.Services.Contracts;
+    using Components;
+    using Components.Account;
+    using Data;
+    using Services;
+    using Services.Contracts;
+
+    using Ganss.Xss;
 
     using Microsoft.AspNetCore.Components.Authorization;
     using Microsoft.AspNetCore.Identity;
@@ -18,7 +20,7 @@ namespace BlazorBlog
 
             // Add services to the container.
             builder.Services.AddRazorComponents()
-                .AddInteractiveServerComponents();
+                .AddInteractiveServerComponents(options => options.DetailedErrors = true);
 
             builder.Services.AddCascadingAuthenticationState();
             builder.Services.AddScoped<IdentityUserAccessor>();
@@ -33,10 +35,10 @@ namespace BlazorBlog
                 .AddIdentityCookies();
 
             var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
-            
+
             builder.Services.AddDbContextFactory<ApplicationDbContext>(options =>
                 options.UseSqlServer(connectionString));
-            
+
             builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
             builder.Services.AddIdentityCore<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = false)
@@ -51,6 +53,12 @@ namespace BlazorBlog
                 .AddTransient<ISeedService, SeedService>()
                 .AddTransient<ICategoryService, CategoryService>()
                 .AddTransient<IBlogPostAdminService, BlogPostAdminService>();
+
+            builder.Services.AddSingleton<IHtmlSanitizer, HtmlSanitizer>(provider =>
+            {
+                var sanitizer = new HtmlSanitizer();
+                return sanitizer;
+            });
 
             var app = builder.Build();
 
