@@ -155,7 +155,7 @@ namespace BlazorBlog.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("BlogPosts");
+                    b.ToTable("BlogPosts", (string)null);
                 });
 
             modelBuilder.Entity("BlazorBlog.Data.Entities.Category", b =>
@@ -181,7 +181,7 @@ namespace BlazorBlog.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Categories");
+                    b.ToTable("Categories", (string)null);
                 });
 
             modelBuilder.Entity("BlazorBlog.Data.Entities.Subscriber", b =>
@@ -207,7 +207,7 @@ namespace BlazorBlog.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Subscribers");
+                    b.ToTable("Subscribers", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
