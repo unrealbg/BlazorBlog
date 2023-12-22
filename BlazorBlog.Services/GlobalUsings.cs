@@ -1,5 +1,7 @@
 // Global using directives
 
+global using System.ComponentModel.DataAnnotations;
+
 global using BlazorBlog.Data;
 global using BlazorBlog.Data.Entities;
 global using BlazorBlog.Services.Contracts;
