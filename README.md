@@ -26,6 +26,18 @@ To get started with the Blazor Blog project, follow these steps:
 git clone https://github.com/unrealbg/BlazorBlog.git
 ```
 
+## Configure Admin User
+Before running the application, you need to configure the AdminUser settings in the appsettings.json file:
+```bash
+"AdminUser": {
+  "Name": "Admin",
+  "Email": "admin@bblog.com",
+  "Password": "Admin@123",
+  "Role": "Admin"
+}
+```
+This step is crucial to ensure the application initializes correctly with an admin user account.
+
 ## Database Migrations
 
 Before running the application, ensure that the database is up-to-date with the latest migrations:
