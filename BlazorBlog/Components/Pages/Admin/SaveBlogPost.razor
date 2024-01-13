@@ -1,0 +1,239 @@
+﻿@page "/admin/manage-blog-posts/new"
+@page "/admin/manage-blog-posts/edit/{id:int?}"
+
+@using Blazored.TextEditor
+@using Ganss.Xss;
+
+@rendermode InteractiveServer
+
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject IWebHostEnvironment WebHostEnvironment
+@inject IBlogPostAdminService BlogPostService
+@inject ICategoryService CategoryService
+@inject IHtmlSanitizer HtmlSanitizer
+@inject NavigationManager NavigationManager
+
+<HeadContent>
+    <link href="//cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+    <link href="//cdn.quilljs.com/1.3.6/quill.bubble.css" rel="stylesheet">
+</HeadContent>
+
+<SectionContent SectionName="scripts">
+    <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+    <script src="_content/Blazored.TextEditor/quill-blot-formatter.min.js"></script>
+    <script src="_content/Blazored.TextEditor/Blazored-BlazorQuill.js"></script>
+</SectionContent>
+
+<AdminHeader Title="Create a new Blog Post" >
+    <ActionButtons>
+        <NavLink href="/admin/manage-blog-posts" class="btn btn-primary btn-sm">Go Back</NavLink>
+    </ActionButtons>
+    </AdminHeader>
+
+@if (_isLoading)
+{
+    <Loader LoaderText="@_loadingText" />
+}
+
+<EditForm Model="_blogPostDto" OnValidSubmit="SaveBlogPostAsync">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="mb-3">
+                <label class="form-label">Title</label>
+                <InputText @bind-Value="_blogPostDto.Title" class="form-control form-control-sm" placeholder="Blog post title" />
+                <ValidationMessage For="() => _blogPostDto.Title" class="text-danger" />
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Category</label>
+                <InputSelect @bind-Value="_blogPostDto.CategoryId" class="form-control form-control-sm">
+                    <option value="0">Select Category</option>
+                    @foreach (var category in _categories)
+                    {
+                        <option value="@category.Id">@category.Name</option>
+                    }
+                </InputSelect>
+                <ValidationMessage For="() => _blogPostDto.CategoryId" class="text-danger" />
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Introduction</label>
+                <InputText @bind-Value="_blogPostDto.Introduction" class="form-control form-control-sm" placeholder="Blog post introduction" />
+                <ValidationMessage For="() => _blogPostDto.Introduction" class="text-danger" />
+            </div>
+            @if (!string.IsNullOrWhiteSpace(_imageUrl))
+            {
+                <div class="mb-3">
+                    <img src="@_imageUrl" style="height: 200px" />
+                </div>
+            }
+            <div class="mb-3">
+                <label class="form-label">Upload Image</label>
+                <br />
+                <InputFile OnChange="HandleFileUploadAsync" />
+            </div>
+            <div class="mb-3">
+                <label class="form-label ml-4">
+                    <InputCheckbox @bind-Value="_blogPostDto.IsFeatured" class="form-check-input" />
+                    Featured?
+                </label>
+            </div>
+            <div class="mb-3">
+                <label class="form-label ml-4">
+                    <InputCheckbox @bind-Value="_blogPostDto.IsPublished" class="form-check-input" />
+                    Published?
+                </label>
+            </div>
+            @if (!string.IsNullOrWhiteSpace(_errorMessage))
+            {
+                <div class="mb-3">
+                    <div class="alert alert-danger">
+                        <p class="text-danger">@_errorMessage</p>
+                    </div>
+                </div>
+            }
+        </div>
+        <div class="col-sm-6 d-flex">
+            <div class="mb-3 flex-grow-1">
+                <label class="form-label">Content</label>
+                <BlazoredTextEditor @ref="@_quillHtml" Placeholder="Enter your blog post content here...">
+                    <ToolbarContent>
+                        <select class="ql-header">
+                            <option selected=""></option>
+                            <option value="1"></option>
+                            <option value="2"></option>
+                            <option value="3"></option>
+                            <option value="4"></option>
+                            <option value="5"></option>
+                        </select>
+                        <span class="ql-formats">
+                            <button class="ql-bold"></button>
+                            <button class="ql-italic"></button>
+                            <button class="ql-underline"></button>
+                            <button class="ql-strike"></button>
+                        </span>
+                        <span class="ql-formats">
+                            <button class="ql-color"></button>
+                            <button class="ql-background"></button>
+                        </span>
+                        <span class="ql-formats">
+                            <button class="ql-list" value="ordered"></button>
+                            <button class="ql-list" value="bullet"></button>
+                        </span>
+                        <span class="ql-formats">
+                            <button class="ql-link"></button>
+                        </span>
+                    </ToolbarContent>
+                </BlazoredTextEditor>
+            </div>
+        </div>
+    </div>
+    <div class="mb-3">
+        <button type="submit" class="btn btn-success">Save</button>
+    </div>
+</EditForm>
+
+@code {
+    private bool _isLoading;
+    private string? _loadingText;
+    private BlogPostDto _blogPostDto = new BlogPostDto();
+    private BlazoredTextEditor? _quillHtml;
+    private Category[] _categories = [];
+    private string? _errorMessage;
+    private IBrowserFile? _fileToUpload;
+    private string? _imageUrl;
+
+    [Parameter]
+    public int? Id {get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        _categories = await CategoryService.GetCategoriesAsync();
+    }
+
+    private async Task PreviewImageAsync(IBrowserFile file)
+    {
+        var extension = Path.GetExtension(file.Name)[1..];
+        using var imageStream = file.OpenReadStream();
+        using MemoryStream ms = new MemoryStream();
+        await imageStream.CopyToAsync(ms);
+        _imageUrl = $"data:image/{extension};base64,{Convert.ToBase64String(ms.ToArray())}";
+    }
+
+    private async Task HandleFileUploadAsync(InputFileChangeEventArgs e)
+    {
+        await PreviewImageAsync(e.File);
+        _fileToUpload = e.File;
+    }
+
+    private async Task SaveBlogPostAsync()
+    {
+        var content = await _quillHtml!.GetHTML();
+        if (string.IsNullOrEmpty(content))
+        {
+            _errorMessage = "Blog post content is required.";
+            return;
+        }
+
+        _blogPostDto.Content = HtmlSanitizer.Sanitize(content);
+        _loadingText = "Saving blog post";
+        _isLoading = true;
+
+        if (_fileToUpload is not null)
+        {
+            var uploadedFileUrl = await SaveFileAsync(_fileToUpload);
+
+            if (uploadedFileUrl is null)
+            {
+                return;
+            }
+    
+            _blogPostDto.Image = uploadedFileUrl;
+        }
+
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var userId = authState.User.GetUserId();
+
+        var blogPost = new BlogPost
+        {
+            Title = _blogPostDto.Title,
+            CategoryId = _blogPostDto.CategoryId,
+            Introduction = _blogPostDto.Introduction,
+            Content = _blogPostDto.Content,
+            IsFeatured = _blogPostDto.IsFeatured,
+            IsPublished = _blogPostDto.IsPublished,
+            Image = _blogPostDto.Image,
+            UserId = userId
+        };
+
+        await BlogPostService.SaveBlogPostAsync(blogPost, userId);
+        _fileToUpload = null;
+        // _isLoading = false;
+        NavigationManager.NavigateTo("/admin/manage-blog-posts");
+    }
+
+    private async Task<string?> SaveFileAsync(IBrowserFile file)
+    {
+        var webRootPath = WebHostEnvironment.WebRootPath;
+        var folderPath = Path.Combine(webRootPath, "images", "posts");
+        Directory.CreateDirectory(folderPath);
+
+        var randomFileName = Path.GetRandomFileName();
+        var extension = Path.GetExtension(file.Name);
+        var filePath = Path.Combine(folderPath, randomFileName + extension);
+
+        await using FileStream fs = new(filePath, FileMode.Create);
+
+        try
+        {
+            await file.OpenReadStream().CopyToAsync(fs);
+            return Path.Combine("images", "posts", randomFileName + extension).Replace("\\", "/");
+        }
+        catch (Exception ex)
+        {
+            _errorMessage = ex.Message;
+            fs.Close();
+            return null;
+        }
+    }
+}
