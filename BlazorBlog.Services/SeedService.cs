@@ -13,22 +13,22 @@
                            UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager,
                            IConfiguration config)
         {
-            this._ctx = ctx;
-            this._userStore = userStore;
-            this._userManager = userManager;
-            this._roleManager = roleManager;
-            this._adminUserSettings = config.GetSection("AdminUser").Get<AdminUserSettings>();
+            _ctx = ctx;
+            _userStore = userStore;
+            _userManager = userManager;
+            _roleManager = roleManager;
+            _adminUserSettings = config.GetSection("AdminUser").Get<AdminUserSettings>();
         }
 
         public async Task SeedDataAsync()
         {
-            await this.MigrateDatabaseAsync();
+            await MigrateDatabaseAsync();
 
-            if (await this._roleManager.FindByNameAsync(this._adminUserSettings.Role) is null)
+            if (await _roleManager.FindByNameAsync(_adminUserSettings.Role) is null)
             {
-                var adminRole = new IdentityRole(this._adminUserSettings.Role);
+                var adminRole = new IdentityRole(_adminUserSettings.Role);
 
-                var result = await this._roleManager.CreateAsync(adminRole);
+                var result = await _roleManager.CreateAsync(adminRole);
                 if (!result.Succeeded)
                 {
                     var errorsStr = result.Errors.Select(e => e.Description);
@@ -37,21 +37,21 @@
                 }
             }
 
-            var adminUser = await this._userManager.FindByEmailAsync(this._adminUserSettings.Email);
+            var adminUser = await _userManager.FindByEmailAsync(_adminUserSettings.Email);
 
             if (adminUser is null)
             {
                 adminUser = new ApplicationUser();
 
-                adminUser.Name = this._adminUserSettings.Name;
-                adminUser.Email = this._adminUserSettings.Email;
+                adminUser.Name = _adminUserSettings.Name;
+                adminUser.Email = _adminUserSettings.Email;
 
-                await this._userStore.SetUserNameAsync(adminUser, this._adminUserSettings.Email, CancellationToken.None);
+                await _userStore.SetUserNameAsync(adminUser, _adminUserSettings.Email, CancellationToken.None);
 
-                var emailStore = (IUserEmailStore<ApplicationUser>)this._userStore;
-                await emailStore.SetEmailAsync(adminUser, this._adminUserSettings.Email, CancellationToken.None);
+                var emailStore = (IUserEmailStore<ApplicationUser>)_userStore;
+                await emailStore.SetEmailAsync(adminUser, _adminUserSettings.Email, CancellationToken.None);
 
-                var result = await this._userManager.CreateAsync(adminUser, this._adminUserSettings.Password);
+                var result = await _userManager.CreateAsync(adminUser, _adminUserSettings.Password);
                 if (!result.Succeeded)
                 {
                     var errorsStr = result.Errors.Select(e => e.Description);
@@ -60,19 +60,19 @@
                 }
             }
 
-            if (!await this._ctx.Categories.AsNoTracking().AnyAsync())
+            if (!await _ctx.Categories.AsNoTracking().AnyAsync())
             {
-                await this._ctx.Categories.AddRangeAsync(Category.GetSeedCategories());
-                await this._ctx.SaveChangesAsync();
+                await _ctx.Categories.AddRangeAsync(Category.GetSeedCategories());
+                await _ctx.SaveChangesAsync();
             }
         }
 
         private async Task MigrateDatabaseAsync()
         {
 #if DEBUG
-            if (await this._ctx.Database.GetPendingMigrationsAsync() is { } migrations && migrations.Any())
+            if (await _ctx.Database.GetPendingMigrationsAsync() is { } migrations && migrations.Any())
             {
-                await this._ctx.Database.MigrateAsync();
+                await _ctx.Database.MigrateAsync();
             }
 #endif
         }
