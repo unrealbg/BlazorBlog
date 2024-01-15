@@ -77,7 +77,7 @@
 
     private async Task HandleShowOnNavBarChanged(Category category)
     {
-        this.loadingText = "Saving changes...";
+        this.loadingText = "Saving changes";
         this.isLoading = true;
         category.ShowOnNavBar = !category.ShowOnNavBar;
         await CategoryService.SaveCategoryAsync(category);
@@ -91,7 +91,7 @@
     {
         if (this.operatingCategory is not null)
         {
-            this.loadingText = "Saving changes...";
+            this.loadingText = "Saving changes";
             this.isLoading = true;
             await CategoryService.SaveCategoryAsync(this.operatingCategory);
             this.operatingCategory = null;
