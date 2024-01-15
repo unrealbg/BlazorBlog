@@ -35,31 +35,31 @@
     <Loader LoaderText="@_loadingText" />
 }
 
-<EditForm Model="_blogPostDto" OnValidSubmit="SaveBlogPostAsync">
+<EditForm Model="_blogPost" OnValidSubmit="SaveBlogPostAsync">
     <DataAnnotationsValidator />
     <ValidationSummary />
     <div class="row">
         <div class="col-sm-6">
             <div class="mb-3">
                 <label class="form-label">Title</label>
-                <InputText @bind-Value="_blogPostDto.Title" class="form-control form-control-sm" placeholder="Blog post title" />
-                <ValidationMessage For="() => _blogPostDto.Title" class="text-danger" />
+                <InputText @bind-Value="_blogPost.Title" class="form-control form-control-sm" placeholder="Blog post title" />
+                <ValidationMessage For="() => _blogPost.Title" class="text-danger" />
             </div>
             <div class="mb-3">
                 <label class="form-label">Category</label>
-                <InputSelect @bind-Value="_blogPostDto.CategoryId" class="form-control form-control-sm">
+                <InputSelect @bind-Value="_blogPost.CategoryId" class="form-control form-control-sm">
                     <option value="0">Select Category</option>
                     @foreach (var category in _categories)
                     {
                         <option value="@category.Id">@category.Name</option>
                     }
                 </InputSelect>
-                <ValidationMessage For="() => _blogPostDto.CategoryId" class="text-danger" />
+                <ValidationMessage For="() => _blogPost.CategoryId" class="text-danger" />
             </div>
             <div class="mb-3">
                 <label class="form-label">Introduction</label>
-                <InputText @bind-Value="_blogPostDto.Introduction" class="form-control form-control-sm" placeholder="Blog post introduction" />
-                <ValidationMessage For="() => _blogPostDto.Introduction" class="text-danger" />
+                <InputText @bind-Value="_blogPost.Introduction" class="form-control form-control-sm" placeholder="Blog post introduction" />
+                <ValidationMessage For="() => _blogPost.Introduction" class="text-danger" />
             </div>
             @if (!string.IsNullOrWhiteSpace(_imageUrl))
             {
@@ -74,13 +74,13 @@
             </div>
             <div class="mb-3">
                 <label class="form-label ml-4">
-                    <InputCheckbox @bind-Value="_blogPostDto.IsFeatured" class="form-check-input" />
+                    <InputCheckbox @bind-Value="_blogPost.IsFeatured" class="form-check-input" />
                     Featured?
                 </label>
             </div>
             <div class="mb-3">
                 <label class="form-label ml-4">
-                    <InputCheckbox @bind-Value="_blogPostDto.IsPublished" class="form-check-input" />
+                    <InputCheckbox @bind-Value="_blogPost.IsPublished" class="form-check-input" />
                     Published?
                 </label>
             </div>
@@ -124,7 +124,12 @@
                             <button class="ql-link"></button>
                         </span>
                     </ToolbarContent>
+                    <EditorContent>
+                        @((MarkupString)_blogPost.Content)
+                    </EditorContent>
                 </BlazoredTextEditor>
+
+                <ValidationMessage For="() => _blogPost.Content" class="text-danger" />
             </div>
         </div>
     </div>
@@ -136,7 +141,7 @@
 @code {
     private bool _isLoading;
     private string? _loadingText;
-    private BlogPostDto _blogPostDto = new BlogPostDto();
+    private BlogPost _blogPost = new BlogPost();
     private BlazoredTextEditor? _quillHtml;
     private Category[] _categories = [];
     private string? _errorMessage;
@@ -149,6 +154,20 @@
     protected override async Task OnInitializedAsync()
     {
         _categories = await CategoryService.GetCategoriesAsync();
+
+        if (Id.HasValue && Id > 0)
+        {
+            var blogPost = await BlogPostService.GetBlogPostByIdAsync(Id.Value);
+
+            if (blogPost is null)
+            {
+                NavigationManager.NavigateTo("/admin/manage-blog-posts", replace: true);
+                return;
+            }
+
+            _blogPost = blogPost;
+            _imageUrl = blogPost.Image;
+        }
     }
 
     private async Task PreviewImageAsync(IBrowserFile file)
@@ -168,48 +187,45 @@
 
     private async Task SaveBlogPostAsync()
     {
-        var content = await _quillHtml!.GetHTML();
-        if (string.IsNullOrEmpty(content))
+        try
         {
-            _errorMessage = "Blog post content is required.";
-            return;
-        }
+            var content = await _quillHtml!.GetHTML();
 
-        _blogPostDto.Content = HtmlSanitizer.Sanitize(content);
-        _loadingText = "Saving blog post";
-        _isLoading = true;
-
-        if (_fileToUpload is not null)
-        {
-            var uploadedFileUrl = await SaveFileAsync(_fileToUpload);
-
-            if (uploadedFileUrl is null)
+            if (string.IsNullOrEmpty(content))
             {
+                _errorMessage = "Blog post content is required.";
                 return;
             }
+
+            _blogPost.Content = content;
+            _loadingText = "Saving blog post";
+            _isLoading = true;
+
+            if (_fileToUpload is not null)
+            {
+                var uploadedFileUrl = await SaveFileAsync(_fileToUpload);
+
+                if (uploadedFileUrl is null)
+                {
+                    return;
+                }
     
-            _blogPostDto.Image = uploadedFileUrl;
+                _blogPost.Image = uploadedFileUrl;
+            }
+
+            var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+            var userId = authState.User.GetUserId();
+
+            await BlogPostService.SaveBlogPostAsync(_blogPost, userId);
+            _fileToUpload = null;
+            // _isLoading = false;
+            NavigationManager.NavigateTo("/admin/manage-blog-posts");
         }
-
-        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-        var userId = authState.User.GetUserId();
-
-        var blogPost = new BlogPost
+        catch (Exception ex)
         {
-            Title = _blogPostDto.Title,
-            CategoryId = _blogPostDto.CategoryId,
-            Introduction = _blogPostDto.Introduction,
-            Content = _blogPostDto.Content,
-            IsFeatured = _blogPostDto.IsFeatured,
-            IsPublished = _blogPostDto.IsPublished,
-            Image = _blogPostDto.Image,
-            UserId = userId
-        };
-
-        await BlogPostService.SaveBlogPostAsync(blogPost, userId);
-        _fileToUpload = null;
-        // _isLoading = false;
-        NavigationManager.NavigateTo("/admin/manage-blog-posts");
+            _errorMessage = ex.Message;
+            _isLoading = false;
+        }
     }
 
     private async Task<string?> SaveFileAsync(IBrowserFile file)
