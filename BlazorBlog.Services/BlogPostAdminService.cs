@@ -30,7 +30,7 @@
             });
         }
 
-        public async Task<BlogPost?> GetPostByIdAsync(int id) =>
+        public async Task<BlogPost?> GetBlogPostByIdAsync(int id) =>
             await this.ExecuteOnContext(async context =>
                 await context.BlogPosts
                     .AsNoTracking()
