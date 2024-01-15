@@ -24,7 +24,7 @@
     <script src="_content/Blazored.TextEditor/Blazored-BlazorQuill.js"></script>
 </SectionContent>
 
-<AdminHeader Title="Create a new Blog Post" >
+<AdminHeader Title="@(Id is > 0 ? "Edit Blog Post" : "New Blog Post")">
     <ActionButtons>
         <NavLink href="/admin/manage-blog-posts" class="btn btn-primary btn-sm">Go Back</NavLink>
     </ActionButtons>
@@ -201,6 +201,9 @@
             _loadingText = "Saving blog post";
             _isLoading = true;
 
+            string? imageUrlToDelete = null;
+
+
             if (_fileToUpload is not null)
             {
                 var uploadedFileUrl = await SaveFileAsync(_fileToUpload);
@@ -209,7 +212,12 @@
                 {
                     return;
                 }
-    
+
+                if (_blogPost.Id > 0 && !string.IsNullOrWhiteSpace(_blogPost.Image))
+                {
+                    imageUrlToDelete = _blogPost.Image;
+                }
+
                 _blogPost.Image = uploadedFileUrl;
             }
 
@@ -218,6 +226,12 @@
 
             await BlogPostService.SaveBlogPostAsync(_blogPost, userId);
             _fileToUpload = null;
+
+            if (imageUrlToDelete is not null)
+            {
+                DeleteExistingImage(imageUrlToDelete);
+            }
+
             // _isLoading = false;
             NavigationManager.NavigateTo("/admin/manage-blog-posts");
         }
@@ -250,6 +264,25 @@
             _errorMessage = ex.Message;
             fs.Close();
             return null;
+        }
+    }
+
+    private void DeleteExistingImage(string imageUrl)
+    {
+
+        var imageToDelete = Path.Combine(WebHostEnvironment.WebRootPath, imageUrl.Replace("/", "\\"));
+        var fullPath = Path.GetFullPath(imageToDelete);
+
+        try
+        {
+            if (File.Exists(fullPath))
+            {
+                File.Delete(fullPath);
+            }
+        }
+        catch
+        {
+            // ignored
         }
     }
 }
