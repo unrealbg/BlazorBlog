@@ -76,27 +76,9 @@
             });
         }
 
-        public async Task<BlogPost[]> GetRecentBlogPostsAsync(int count, int categoryId = 0)
-        {
-            return await QueryOnContextAsync(async context =>
-            {
-                var query = context.BlogPosts
-                    .AsNoTracking()
-                    .Include(p => p.Category)
-                    .Include(p => p.User)
-                    .Where(p => p.IsPublished);
+        public async Task<BlogPost[]> GetRecentBlogPostsAsync(int count, int categoryId = 0) => await GetPostsAsync(0, count, categoryId);
 
-                if (categoryId > 0)
-                {
-                    query = query.Where(p => p.CategoryId == categoryId);
-                }
-
-                return await query
-                    .OrderByDescending(p => p.PublishedAt)
-                    .Take(count)
-                    .ToArrayAsync();
-            });
-        }
+        public async Task<BlogPost[]> GetBlogPostsAsync(int pageIndex, int pageSize, int categoryId) => await GetPostsAsync(pageIndex * pageSize, pageSize, categoryId);
 
         public async Task<DetailPageModel> GetBlogPostBySlugAsync(string slug)
         {
@@ -123,6 +105,29 @@
                     .ToArrayAsync();
 
                 return new DetailPageModel(blogPost, relatedPosts);
+            });
+        }
+
+        private async Task<BlogPost[]> GetPostsAsync(int skip, int take, int categoryId = 0)
+        {
+            return await QueryOnContextAsync(async context =>
+            {
+                var query = context.BlogPosts
+                    .AsNoTracking()
+                    .Include(p => p.Category)
+                    .Include(p => p.User)
+                    .Where(p => p.IsPublished);
+
+                if (categoryId > 0)
+                {
+                    query = query.Where(p => p.CategoryId == categoryId);
+                }
+
+                return await query
+                    .OrderByDescending(p => p.PublishedAt)
+                    .Skip(skip)
+                    .Take(take)
+                    .ToArrayAsync();
             });
         }
     }
