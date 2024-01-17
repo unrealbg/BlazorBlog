@@ -29,12 +29,18 @@
                 </div>
                 <h5 class="font-weight-bold spanborder"><span>Latest</span></h5>
                 <BlogPostList Posts="_recent" />
+
+                <hr />
+                <div class="d-block">
+                    <a href="@CategorySlug-posts/all" class="btn btn-sm btn-outline-primary float-right" style="margin-bottom: 1rem">All @_category?.Name Posts</a>
+                </div>
+                <hr style="clear: right" />
             }
             else
             {
                 <h5 class="font-weight-bold spanborder"><span>@_category?.Name Posts</span></h5>
                 <div class="card border-0 m-5 box-shadow">
-                   <p class="p-5 text-center font-weight-bold" style="font-size: 25px">There are no posts in this category yet.</p>
+                    <p class="p-5 text-center font-weight-bold" style="font-size: 25px">There are no posts in this category yet.</p>
                 </div>
             }
         </div>
