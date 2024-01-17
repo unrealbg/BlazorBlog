@@ -25,5 +25,8 @@ namespace BlazorBlog.Services.Common
 
         [GeneratedRegex(@"[^0-9a-z_]")]
         private static partial Regex SlugRegex();
+
+        public static string ToDisplayDate(this DateTime? date) =>
+			date?.ToString("MMM dd") ?? string.Empty;
     }
 }
