@@ -1,45 +1,94 @@
-﻿@page "/category"
+﻿@page "/{categorySlug}-posts"
 
-<!--------------------------------------
-Main
---------------------------------------->
+@inject NavigationManager NavigationManager
+
+@inject IBlogPostService BlogPostService
+@inject ICategoryService CategoryService
+
 <div class="container mt-5 mb-5">
-	<div class="row">
-		<div class="col-md-8">
-			<h5 class="font-weight-bold spanborder"><span>Featured in Science</span></h5>
-			<div class="card border-0 mb-5 box-shadow">
-				<div style="background-image: url(./assets/img/demo/1.jpg); height: 350px; background-size: cover; background-repeat: no-repeat;">
-				</div>
-				<div class="card-body px-0 pb-0 d-flex flex-column align-items-start">
-					<h2 class="h2 font-weight-bold">
-						<a class="text-dark" href="./article.html">Brain Stimulation Relieves Depression Symptoms</a>
-					</h2>
-					<p class="card-text">
-						Researchers have found an effective target in the brain for electrical stimulation to improve mood in people suffering from depression.
-					</p>
-					<div>
-						<small class="d-block"><a class="text-muted" href="./author.html">Favid Rick</a></small>
-						<small class="text-muted">Dec 12 · 5 min read</small>
-					</div>
-				</div>
-			</div>
-			<h5 class="font-weight-bold spanborder"><span>Latest</span></h5>
-			<BlogPostList />
-		</div>
-		<div class="col-md-4 pl-4">
-			<div class="sticky-top">
-				<h5 class="font-weight-bold spanborder"><span>Popular in Science</span></h5>
-				<PopularBlogPostList />
-			</div>
-		</div>
-	</div>
+    <div class="row">
+        <div class="col-md-8">
+            @if (HasPosts)
+            {
+                <h5 class="font-weight-bold spanborder"><span>Featured in @_category?.Name</span></h5>
+                <div class="card border-0 mb-5 box-shadow">
+                    <div style="background-image: url(@_featured.Image); height: 350px; background-size: cover; background-repeat: no-repeat;">
+                    </div>
+                    <div class="card-body px-0 pb-0 d-flex flex-column align-items-start">
+                        <h2 class="h2 font-weight-bold">
+                            <a class="text-dark" href="posts/@_featured.Slug">@_featured.Title</a>
+                        </h2>
+                        <p class="card-text">
+                            @_featured.Introduction
+                        </p>
+                        <div>
+                            <small class="d-block">@_featured.User.Name</small>
+                            <small class="text-muted">@_featured.PublishedAt.ToDisplayDate()</small>
+                        </div>
+                    </div>
+                </div>
+                <h5 class="font-weight-bold spanborder"><span>Latest</span></h5>
+                <BlogPostList Posts="_recent" />
+            }
+            else
+            {
+                <h5 class="font-weight-bold spanborder"><span>@_category?.Name Posts</span></h5>
+                <div class="card border-0 m-5 box-shadow">
+                   <p class="p-5 text-center font-weight-bold" style="font-size: 25px">There are no posts in this category yet.</p>
+                </div>
+            }
+        </div>
+
+        @if (HasPosts)
+        {
+            <div class="col-md-4 pl-4">
+                <div class="sticky-top">
+                    <h5 class="font-weight-bold spanborder"><span>Popular in @_category?.Name</span></h5>
+                    <PopularBlogPostList Posts="_popular" />
+                </div>
+            </div>
+        }
+
+    </div>
 </div>
 
 <div class="container pt-4 pb-4">
-    <SubscribeBox/>
+    <SubscribeBox />
 </div>
-<!-- End Main -->
 
 @code {
 
+    private Category _category;
+
+    private BlogPost? _featured;
+    private BlogPost[] _popular = [];
+    private BlogPost[] _recent = [];
+
+    private bool HasPosts => _featured is not null;
+
+    [Parameter]
+    public string CategorySlug { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var category = await CategoryService.GetCategoryBySlugAsync(CategorySlug);
+
+        if (category is null)
+        {
+            NavigationManager.NavigateTo("/", replace: true);
+            return;
+        }
+
+        _category = category;
+
+        var posts = await Task.WhenAll(
+            BlogPostService.GetFeaturedBlogPostsAsync(1, _category.Id),
+            BlogPostService.GetPopularBlogPostsAsync(4, _category.Id),
+            BlogPostService.GetRecentBlogPostsAsync(5, _category.Id)
+        );
+
+        _featured = posts[0].FirstOrDefault();
+        _popular = posts[1];
+        _recent = posts[2];
+    }
 }
