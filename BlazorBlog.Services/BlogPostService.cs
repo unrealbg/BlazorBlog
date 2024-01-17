@@ -26,17 +26,31 @@
                     .AsNoTracking()
                     .Include(p => p.Category)
                     .Include(p => p.User)
-                    .Where(p => p.IsPublished && p.IsFeatured);
+                    .Where(p => p.IsPublished);
 
                 if (categoryId > 0)
                 {
                     query = query.Where(p => p.CategoryId == categoryId);
                 }
 
-                return await query
+                var records = await query
+                    .Where(p => p.IsFeatured)
                     .OrderBy(_ => Guid.NewGuid())
                     .Take(count)
                     .ToArrayAsync();
+
+                if (count > records.Length)
+                {
+                    var additionalRecords = await context.BlogPosts
+                        .Where(p => !p.IsFeatured)
+                        .OrderBy(_ => Guid.NewGuid())
+                        .Take(count - records.Length)
+                        .ToArrayAsync();
+
+                    records = [.. records, .. additionalRecords];
+                }
+
+                return records;
             });
         }
 
