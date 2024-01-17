@@ -18,7 +18,6 @@
         [Required, MaxLength(500)]
         public string Introduction { get; set; }
 
-        [Required]
         public string Content { get; set; }
 
         [Range(1, int.MaxValue, ErrorMessage = "Please select a valid category.")]
