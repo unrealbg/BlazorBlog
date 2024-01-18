@@ -5,11 +5,13 @@
 @inject IBlogPostService BlogPostService
 @inject ICategoryService CategoryService
 
+<PageTitle>@Utils.GetPageTitle(PageTitle)</PageTitle>
+
 <div class="container mt-5 mb-5">
     <div class="row">
         <div class="col-md-8">
 
-            <h5 class="font-weight-bold spanborder"><span>@_category?.Name Posts @(_pageNumber > 1 ? $"(Page - {_pageNumber})" : "")</span></h5>
+            <h5 class="font-weight-bold spanborder"><span>@PageTitle</span></h5>
             <BlogPostList Posts="_posts" />
             <hr />
             <div class="d-flex justify-content-between">
@@ -56,6 +58,7 @@
 @code {
     private const int PageSize = 2;
 
+    private string PageTitle => $"{_category?.Name} Posts {(_pageNumber > 1 ? $"(Page - {_pageNumber})" : "")}";
     private int _pageNumber = 1;
     private Category _category;
     private BlogPost[] _posts = [];
