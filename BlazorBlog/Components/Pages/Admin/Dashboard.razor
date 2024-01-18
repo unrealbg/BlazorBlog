@@ -1,7 +1,73 @@
 ﻿@page "/admin/dashboard"
 
+<PageTitle>@Utils.GetPageTitle("Dashboard")</PageTitle>
+
 
 <AdminHeader Title="Dashboard" />
 
-<p>Content of dashboard</p>
+<AuthorizeView>
+    <Authorized>
+        <div class="text-center">
+            <h1 class="display-4">Welcome, @context.User.GetUserName()</h1>
+            <p class="lead">You are logged in as an administrator.</p>
+        </div>
+    </Authorized>
+</AuthorizeView>
+
+<div>
+    <p>Welcome to your advanced single-page application, now leveraging the latest in:</p>
+    <ul>
+        <li>
+            <a href="https://docs.microsoft.com/aspnet/core/blazor">ASP.NET Core Blazor</a> with enhanced performance features, and <a href="https://dotnet.microsoft.com/apps/aspnet/web-apps/blazor">Blazor WebAssembly</a> with interactive rendering support.
+        </li>
+        <li>
+            <a href="https://docs.microsoft.com/aspnet/core/security/blazor">
+                Advanced authentication and authorization
+            </a> mechanisms for robust security.
+        </li>
+        <li>
+            <a href="https://docs.microsoft.com/aspnet/core/blazor/security/webassembly/hosted-with-identity-server">IdentityServer</a> integration for more secure user management.
+        </li>
+        <li>
+            <a href="https://docs.microsoft.com/aspnet/core/blazor/hosting-models">Hosted</a> as a standalone app, or <a href="https://docs.microsoft.com/aspnet/core/blazor/host-and-deploy/webassembly">hosted on ASP.NET Core</a> with improved deployment capabilities.
+        </li>
+        <li>
+            <a href="https://docs.microsoft.com/aspnet/core/grpc/browser">gRPC</a> with <a href="https://docs.microsoft.com/aspnet/core/grpc/aspnetcore">enhanced server streaming</a> for efficient communication.
+        </li>
+        <li>
+            <a href="https://docs.microsoft.com/aspnet/core/tutorials/signalr-blazor-webassembly">SignalR</a> for advanced client-to-server and <a href="https://docs.microsoft.com/aspnet/core/tutorials/signalr-blazor-webassembly-chat">client-to-client</a> messaging.
+        </li>
+        <li>
+            <a href="https://docs.microsoft.com/aspnet/core/blazor/state-management">
+                State management
+            </a> with improved handling and scalability.
+        </li>
+        <li>
+            <a href="https://docs.microsoft.com/aspnet/core/test/integration-tests">Unit testing</a> with extended capabilities and better integration.
+        </li>
+        <li>
+            <a href="https://docs.microsoft.com/aspnet/core/blazor/call-web-api">
+                Call Web API endpoints using <code>HttpClient</code>
+            </a> with enhanced request handling.
+        </li>
+        <li>
+            <a href="https://docs.microsoft.com/aspnet/core/fundamentals/configuration">
+                Advanced configuration options
+            </a> for complex scenarios.
+        </li>
+        <li><a href="https://docs.microsoft.com/aspnet/core/fundamentals/logging">Logging</a> with expanded capabilities for diagnostics and analytics.</li>
+        <li>
+            <a href="https://docs.microsoft.com/aspnet/core/blazor/fundamentals/dependency-injection">
+                Dependency injection
+            </a> with more flexible and powerful options.
+        </li>
+        <li>
+            <a href="https://docs.microsoft.com/aspnet/core/security/cors">
+                Enhanced support for cross-origin requests
+            </a> with better security.
+        </li>
+    </ul>
+</div>
+
+
 
