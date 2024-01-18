@@ -12,6 +12,7 @@
 @inject ICategoryService CategoryService
 @inject IHtmlSanitizer HtmlSanitizer
 @inject NavigationManager NavigationManager
+<PageTitle>@Utils.GetPageTitle(PageTitle)</PageTitle>
 
 <HeadContent>
     <link href="//cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
@@ -24,7 +25,7 @@
     <script src="_content/Blazored.TextEditor/Blazored-BlazorQuill.js"></script>
 </SectionContent>
 
-<AdminHeader Title="@(Id is > 0 ? "Edit Blog Post" : "New Blog Post")">
+<AdminHeader Title="@PageTitle">
     <ActionButtons>
         <NavLink href="/admin/manage-blog-posts" class="btn btn-primary btn-sm">Go Back</NavLink>
     </ActionButtons>
@@ -147,6 +148,7 @@
     private string? _errorMessage;
     private IBrowserFile? _fileToUpload;
     private string? _imageUrl;
+    private string PageTitle => Id is > 0 ? "Edit Blog Post" : "New Blog Post";
 
     [Parameter]
     public int? Id {get; set; }
