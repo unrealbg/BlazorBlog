@@ -2,7 +2,7 @@
 
 @inject IBlogPostService BlogPostService
 
-<PageTitle>Home</PageTitle>
+<PageTitle>@Utils.GetPageTitle("Home")</PageTitle>
 
 @if (_firstFeatured is not null)
 {
