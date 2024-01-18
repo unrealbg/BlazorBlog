@@ -5,6 +5,8 @@
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @inject IBlogPostAdminService BlogPostService
 
+<PageTitle>@Utils.GetPageTitle("Manage Blog Posts")</PageTitle>
+
 <AdminHeader Title="Manage Blog Posts">
     <ActionButtons>
         <a href="admin/manage-blog-posts/new" class="btn btn-primary btn-sm" data-enhance-nav="false">+ Add new Blog Post</a>
@@ -25,7 +27,7 @@
                 <label class="mb-0 d-block">@context.Title</label>
                 @if (context.IsPublished)
                 {
-                    <a href="/details" target="_blank">@context.Slug</a>
+                    <a href="posts/@context.Slug" target="_blank">@context.Slug</a>
                 }
                 else
                 {
@@ -97,7 +99,7 @@
             _isLoading = false;
             StateHasChanged();
 
-            return GridItemsProviderResult.From(pagedBlogs.Results, pagedBlogs.TotalCount);
+            return GridItemsProviderResult.From(pagedBlogs.Records, pagedBlogs.TotalCount);
         };
     }
 
