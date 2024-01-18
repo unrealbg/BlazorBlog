@@ -53,7 +53,8 @@ namespace BlazorBlog
                 .AddTransient<ISeedService, SeedService>()
                 .AddTransient<ICategoryService, CategoryService>()
                 .AddTransient<IBlogPostAdminService, BlogPostAdminService>()
-                .AddTransient<IBlogPostService, BlogPostService>();
+                .AddTransient<IBlogPostService, BlogPostService>()
+                .AddTransient<ISubscribeService, SubscribeService>();
 
             builder.Services.AddSingleton<IHtmlSanitizer, HtmlSanitizer>(provider =>
             {
