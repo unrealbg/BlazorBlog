@@ -3,6 +3,8 @@
 @inject NavigationManager NavigationManager
 @inject IBlogPostService BlogPostService
 
+<PageTitle>@Utils.GetPageTitle(_blogPost?.Title ?? "")</PageTitle>
+
 @if (_blogPost.Id > 0)
 {
     <div class="container">
