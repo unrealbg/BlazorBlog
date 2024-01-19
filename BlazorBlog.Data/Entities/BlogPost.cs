@@ -12,6 +12,7 @@
         [MaxLength(125)]
         public string Slug { get; set; }
 
+        [Required(ErrorMessage = "The image is required.")]
         [MaxLength(100)]
         public string Image { get; set; }
 
