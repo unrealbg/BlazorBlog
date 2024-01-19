@@ -10,6 +10,42 @@ Welcome to the Blazor Blog Project! This repository hosts a modern, responsive b
 - **Responsive Design**: Ensures a smooth experience across various devices and screen sizes.
 - **Interactive UI**: Offers dynamic user interactions with minimal latency.
 
+## Screenshots
+
+Below are some screenshots showcasing the different aspects and features of the Blazor Blog Project.
+
+### Main View
+![Main View of Blazor Blog](https://github.com/unrealbg/BlazorBlog/assets/3398536/1f060f1d-0d88-4188-90dd-1dc6c9e99c28 "Main View")
+*The main landing page of the Blazor Blog, showing an overview of the blog's layout and design.*
+
+### Recent Posts
+![Recent Posts on Blazor Blog](https://github.com/unrealbg/BlazorBlog/assets/3398536/3c27efce-669f-43a9-a4d6-659fd62266d0 "Recent Posts")
+*Continuation of the main view, displaying the latest blog posts.*
+
+### Dashboard
+![Dashboard on Blazor Blog](https://github.com/unrealbg/BlazorBlog/assets/3398536/82b167f4-f1f0-4b58-9efb-511bae2869a7 "Dashboard")
+*The dashboard interface for managing the blog.*
+
+### Manage Categories
+![Manage Categories on Blazor Blog](https://github.com/unrealbg/BlazorBlog/assets/3398536/5d25c658-2622-48f1-8dea-dc20875da0a3 "Manage Categories")
+*The section for managing blog categories.*
+
+### Manage Blog Posts
+![Manage Blog Posts on Blazor Blog](https://github.com/unrealbg/BlazorBlog/assets/3398536/5229d02b-1f18-4ae7-9258-a005418f11f3 "Manage Blog Posts")
+*Interface for managing individual blog posts.*
+
+### Manage Subscribers
+![Manage Subscribers on Blazor Blog](https://github.com/unrealbg/BlazorBlog/assets/3398536/d0de2709-93fd-4dc0-9b6b-76f76d75e6dc "Manage Subscribers")
+*The section dedicated to managing blog subscribers.*
+
+### Create a New Blog Post
+![Create New Blog Post on Blazor Blog](https://github.com/unrealbg/BlazorBlog/assets/3398536/5f95e8da-1ace-4bc3-b155-20dfdfa1c3d4 "Create New Blog Post")
+*The interface for creating a new blog post.*
+
+### Create a New Category
+![Create New Category on Blazor Blog](https://github.com/unrealbg/BlazorBlog/assets/3398536/cb22bc8d-5564-4bcd-9d0f-08b5ee342f18 "Create New Category")
+*The interface for adding a new category to the blog.*
+
 ## Getting Started
 
 To get started with the Blazor Blog project, follow these steps:
