@@ -2,42 +2,39 @@
 
 @rendermode @(new InteractiveServerRenderMode(prerender: false))
 
-@inject ICategoryService CategoryService
-@inject NavigationManager NavigationManager
-
 <PageTitle>@Utils.GetPageTitle("Manage Categories")</PageTitle>
 
 <AdminHeader Title="Manage Categories">
     <ActionButtons>
-        <button type="button" class="btn btn-primary btn-sm" @onclick="() => this.operatingCategory = new Category()">+ Add new Category</button>
+        <button type="button" class="btn btn-primary btn-sm" @onclick="() => this._operatingCategory = new Category()">+ Add new Category</button>
     </ActionButtons>
 </AdminHeader>
 
-@if (this.isLoading)
+@if (this._isLoading)
 {
-    <Loader LoaderText="@this.loadingText" />
+    <Loader LoaderText="@this._loadingText" />
 }
 
-@if (this.operatingCategory is not null)
+@if (this._operatingCategory is not null)
 {
     <div class="row">
         <div class="col-sm-6"></div>
         <div class="col-sm-6">
-            <EditForm Model="this.operatingCategory" OnValidSubmit="SaveCategoryAsync">
+            <EditForm Model="this._operatingCategory" OnValidSubmit="SaveCategoryAsync">
                 <DataAnnotationsValidator />
                 <div class="shadow p-3" style="display: grid; grid-template-columns: auto 150px; grid-column-gap: 15px">
                     <div>
                         <labl class="form-label">Category Name</labl>
-                        <InputText @bind-Value="this.operatingCategory.Name" class="form-control form-control-sm" placeholder="Category name" />
-                        <ValidationMessage For="() => this.operatingCategory.Name" />
+                        <InputText @bind-Value="this._operatingCategory.Name" class="form-control form-control-sm" placeholder="Category name" />
+                        <ValidationMessage For="() => this._operatingCategory.Name" />
                         <label class="form-label mt-2">
-                            <InputCheckbox @bind-Value="this.operatingCategory.ShowOnNavBar" />
+                            <InputCheckbox @bind-Value="this._operatingCategory.ShowOnNavBar" />
                             Show on Navbar
                         </label>
                     </div>
                     <div class="d-flex flex-column">
                         <button type="submit" class="btn btn-sm btn-success mb-2">Save</button>
-                        <button type="submit" class="btn btn-sm btn-danger" @onclick="() => this.operatingCategory = null">Cancel</button>
+                        <button type="submit" class="btn btn-sm btn-danger" @onclick="() => this._operatingCategory = null">Cancel</button>
                     </div>
                 </div>
             </EditForm>
@@ -45,7 +42,7 @@
     </div>
 }
 
-<QuickGrid Items="@categories" class="table table-bordered table-striped table-hover">
+<QuickGrid Items="@_categories" class="table table-bordered table-striped table-hover">
     <PropertyColumn Property="@(c => c.Id)" />
     <PropertyColumn Property="@(c => c.Name)" />
     <PropertyColumn Property="@(c => c.Slug)" />
@@ -67,47 +64,3 @@
         <button type="button" class="btn btn-sm btn-primary" @onclick="() => HandleEditCategory(context)">Edit</button>
     </TemplateColumn>
 </QuickGrid>
-
-@code {
-    private bool isLoading;
-    private string? loadingText;
-
-    private Category? operatingCategory;
-    private IQueryable<Category> categories = Enumerable.Empty<Category>().AsQueryable();
-
-    protected override async Task OnInitializedAsync() => await LoadCategoriesAsync();
-
-    private async Task HandleShowOnNavBarChanged(Category category)
-    {
-        this.loadingText = "Saving changes";
-        this.isLoading = true;
-        category.ShowOnNavBar = !category.ShowOnNavBar;
-        await CategoryService.SaveCategoryAsync(category);
-        this.isLoading = false;
-        this.NavigationManager.Refresh();
-    }
-
-    private void HandleEditCategory(Category category) => this.operatingCategory = category.Clone();
-
-    private async Task SaveCategoryAsync()
-    {
-        if (this.operatingCategory is not null)
-        {
-            this.loadingText = "Saving changes";
-            this.isLoading = true;
-            await CategoryService.SaveCategoryAsync(this.operatingCategory);
-            this.operatingCategory = null;
-            this.isLoading = false;
-
-            await this.LoadCategoriesAsync();
-        }
-    }
-
-    private async Task LoadCategoriesAsync()
-    {
-        this.loadingText = "Fetching categories";
-        this.isLoading = true;
-        this.categories = (await this.CategoryService.GetCategoriesAsync()).AsQueryable();
-        this.isLoading = false;
-    }
-}

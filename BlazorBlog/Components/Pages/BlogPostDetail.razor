@@ -1,8 +1,5 @@
 ﻿@page "/posts/{blogPostSlug}"
 
-@inject NavigationManager NavigationManager
-@inject IBlogPostService BlogPostService
-
 <PageTitle>@Utils.GetPageTitle(_blogPost?.Title ?? "")</PageTitle>
 
 @if (_blogPost.Id > 0)
@@ -52,25 +49,3 @@
     </div>
 }
 
-    @code {
-    private BlogPost _blogPost = new BlogPost();
-    private BlogPost[] _relatedPosts = [];
-
-    [Parameter]
-    public string BlogPostSlug { get; set; }
-
-    protected override async Task OnInitializedAsync()
-    {
-        var result = await BlogPostService.GetBlogPostBySlugAsync(BlogPostSlug);
-
-        if (result.IsEmpty)
-        {
-            NavigationManager.NavigateTo("/", replace: true);
-            return;
-        }
-
-        _blogPost = result.BlogPost;
-        _relatedPosts = result.RelatedPosts;
-    }
-
-}

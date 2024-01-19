@@ -1,7 +1,5 @@
 namespace BlazorBlog.Components.Account
 {
-    using Microsoft.AspNetCore.Components;
-
     using System.Diagnostics.CodeAnalysis;
 
     internal sealed class IdentityRedirectManager(NavigationManager navigationManager)

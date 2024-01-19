@@ -1,14 +1,9 @@
 namespace BlazorBlog
 {
-    using Components;
     using Components.Account;
     using Data;
     using Services;
-    using Services.Contracts;
-
     using Ganss.Xss;
-
-    using Microsoft.AspNetCore.Components.Authorization;
     using Microsoft.AspNetCore.Identity;
     using Microsoft.EntityFrameworkCore;
 

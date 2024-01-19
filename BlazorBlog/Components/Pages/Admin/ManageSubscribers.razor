@@ -2,8 +2,6 @@
 
 @rendermode @(new InteractiveServerRenderMode(prerender: false))
 
-@inject ISubscribeService SubscriberService
-
 <PageTitle>@Utils.GetPageTitle("Manage Subscribers")</PageTitle>
 
 <AdminHeader Title="Manage Subscribers" />
@@ -20,29 +18,3 @@
 </QuickGrid>
 <Paginator State="_paginationState" />
 
-@code {
-    private bool _isLoading;
-    private GridItemsProvider<Subscriber>? _subscribersProvider;
-
-    private const int PageSize = 5;
-    private PaginationState _paginationState = new PaginationState()
-        {
-            ItemsPerPage = PageSize
-        };
-
-    protected override void OnInitialized()
-    {
-        _subscribersProvider = async request =>
-        {
-            _isLoading = true;
-            StateHasChanged();
-
-            var result = await SubscriberService.GetSubscribersAsync(request.StartIndex, request.Count ?? PageSize);
-
-            _isLoading = false;
-            StateHasChanged();
-
-            return GridItemsProviderResult.From(result.Records, result.TotalCount);
-        };
-    }
-}
