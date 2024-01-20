@@ -5,6 +5,9 @@
         private bool _isLoading;
         private string? _loadingText;
 
+        private BlogPost _selectedBlogPost;
+        private bool _showConfirmationModal = false;
+
         private const int PageSize = 10;
 
         private PaginationState _paginationState = new PaginationState
@@ -103,6 +106,27 @@
             };
 
             StateHasChanged();
+        }
+
+        private void ConfirmDeleteBlogPost(BlogPost blogPost)
+        {
+            _selectedBlogPost = blogPost;
+            _showConfirmationModal = true;
+        }
+
+        private async Task DeleteBlogPost()
+        {
+            if (_selectedBlogPost != null)
+            {
+                await HandleDeleteBlogPost(_selectedBlogPost);
+            }
+
+            _showConfirmationModal = false;
+        }
+
+        private void CancelDelete()
+        {
+            _showConfirmationModal = false;
         }
     }
 }

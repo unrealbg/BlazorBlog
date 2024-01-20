@@ -10,6 +10,18 @@
     </ActionButtons>
 </AdminHeader>
 
+@if (_showConfirmationModal)
+{
+    <div class="modal-backdrop">
+        <div class="modal-content">
+            <h3>Confirm Delete</h3>
+            <p>Are you sure you want to delete this blog post?</p>
+            <button class="btn btn-danger mb-1" @onclick="DeleteBlogPost">Да</button>
+            <button class="btn btn-success" @onclick="CancelDelete">Не</button>
+        </div>
+    </div>
+}
+
 @if (_isLoading)
 {
     <Loader LoaderText="@_loadingText" />
@@ -64,8 +76,7 @@
     </TemplateColumn>
     <TemplateColumn>
         <a href="admin/manage-blog-posts/edit/@context.Id" data-enhance-nav="false" class="btn btn-primary btn-sm admin-button">Edit</a>
-        <button class="btn btn-danger btn-sm admin-button" Type="submit" @onclick="()=>HandleDeleteBlogPost(context)">Delete</button>
+        <button class="btn btn-danger btn-sm admin-button" Type="submit" @onclick="()=>ConfirmDeleteBlogPost(context)">Delete</button>
     </TemplateColumn>
 </QuickGrid>
-
 <Paginator State="_paginationState" />
