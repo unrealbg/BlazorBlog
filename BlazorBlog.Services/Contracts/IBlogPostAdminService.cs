@@ -7,5 +7,7 @@
         Task<BlogPost?> GetBlogPostByIdAsync(int id);
 
         Task<BlogPost> SaveBlogPostAsync(BlogPost blogPost, string userId);
+
+        Task<bool> DeleteBlogPostAsync(int id);
     }
 }

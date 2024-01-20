@@ -95,13 +95,28 @@
                     }
                     else
                     {
-                            blogPost.PublishedAt = null;
+                        blogPost.PublishedAt = null;
                     }
                 }
 
                 await context.SaveChangesAsync();
                 return blogPost;
             });
+        }
+
+        public async Task<bool> DeleteBlogPostAsync(int id)
+        {
+            bool result = await this.ExecuteOnContext(async context =>
+            {
+                var blogPost = await context.BlogPosts.FindAsync(id);
+                if (blogPost is null) return false;
+                context.BlogPosts.Remove(blogPost);
+                await context.SaveChangesAsync();
+                return true;
+
+            });
+
+            return result;
         }
 
         private async Task<TResult> ExecuteOnContext<TResult>(Func<ApplicationDbContext, Task<TResult>> query)
