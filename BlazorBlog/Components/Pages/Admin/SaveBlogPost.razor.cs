@@ -69,15 +69,16 @@
         {
             await PreviewImageAsync(e.File);
             _fileToUpload = e.File;
+            _blogPost.Image = e.File.Name;
         }
 
         private async Task SaveBlogPostAsync()
         {
             try
             {
-                var content = await _quillHtml!.GetHTML();
+                var content = await _quillHtml!.GetText();
 
-                if (string.IsNullOrEmpty(content))
+                if (string.IsNullOrWhiteSpace(content))
                 {
                     _errorMessage = "Blog post content is required.";
                     return;
@@ -110,7 +111,15 @@
                 var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
                 var userId = authState.User.GetUserId();
 
-                await BlogPostService.SaveBlogPostAsync(_blogPost, userId);
+                var result  = await BlogPostService.SaveBlogPostAsync(_blogPost, userId);
+
+                if (result is null)
+                {
+                    _errorMessage = "Something went wrong while saving the blog post.";
+                    _isLoading = false;
+                    return;
+                }
+
                 _fileToUpload = null;
 
                 if (imageUrlToDelete is not null)
