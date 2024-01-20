@@ -64,7 +64,7 @@
 
             try
             {
-                await using var imageStream = file.OpenReadStream();
+                await using var imageStream = file.OpenReadStream(maxAllowedSize: 10000000);
                 using MemoryStream ms = new MemoryStream();
                 await imageStream.CopyToAsync(ms);
                 _imageUrl = $"data:image/{extension};base64,{Convert.ToBase64String(ms.ToArray())}";
