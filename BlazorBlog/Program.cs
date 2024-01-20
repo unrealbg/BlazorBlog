@@ -44,6 +44,8 @@ namespace BlazorBlog
 
             builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
 
+            builder.Services.AddScoped<IToastService, ToastService>();
+
             builder.Services
                 .AddTransient<ISeedService, SeedService>()
                 .AddTransient<ICategoryService, CategoryService>()
