@@ -1,9 +1,5 @@
 ﻿namespace BlazorBlog.Components.Pages.Admin
 {
-
-    using Ganss.Xss;
-    using Blazored.TextEditor;
-
     public partial class SaveBlogPost
     {
         private bool _isLoading;
@@ -30,10 +26,10 @@
         ICategoryService CategoryService { get; set; }
 
         [Inject]
-        IHtmlSanitizer HtmlSanitizer { get; set; }
+        NavigationManager NavigationManager { get; set; }
 
         [Inject]
-        NavigationManager NavigationManager { get; set; }
+        IToastService ToastService { get; set; }
 
         [Parameter]
         public int? Id { get; set; }
@@ -64,14 +60,14 @@
 
             try
             {
-                await using var imageStream = file.OpenReadStream(maxAllowedSize: 10000000);
+                await using var imageStream = file.OpenReadStream(maxAllowedSize: 10 * 1024 * 1024);
                 using MemoryStream ms = new MemoryStream();
                 await imageStream.CopyToAsync(ms);
                 _imageUrl = $"data:image/{extension};base64,{Convert.ToBase64String(ms.ToArray())}";
             }
             catch (Exception)
             {
-                _errorMessage = "The selected file is not a valid image.";
+                ToastService.ShowToast(ToastLevel.Warning, "The selected file is not a valid image.", heading: "Warning");
             }
         }
 
@@ -90,7 +86,7 @@
 
                 if (string.IsNullOrWhiteSpace(content))
                 {
-                    _errorMessage = "Blog post content is required.";
+                    ToastService.ShowToast(ToastLevel.Warning, "The content is required.", heading: "Warning");
                     return;
                 }
 
@@ -125,7 +121,7 @@
 
                 if (result is null)
                 {
-                    _errorMessage = "Something went wrong while saving the blog post.";
+                    ToastService.ShowToast(ToastLevel.Error, "Something went wrong while saving the blog post.", heading: "Error");
                     _isLoading = false;
                     return;
                 }
@@ -140,9 +136,9 @@
                 // _isLoading = false;
                 NavigationManager.NavigateTo("/admin/manage-blog-posts");
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                _errorMessage = ex.Message;
+                ToastService.ShowToast(ToastLevel.Error, "Something went wrong while saving the blog post.", heading: "Error");
                 _isLoading = false;
             }
         }
@@ -164,9 +160,9 @@
                 await file.OpenReadStream().CopyToAsync(fs);
                 return Path.Combine("images", "posts", randomFileName + extension).Replace("\\", "/");
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                _errorMessage = ex.Message;
+                ToastService.ShowToast(ToastLevel.Error, "Something went wrong while saving the file.", heading: "Error");
                 fs.Close();
                 return null;
             }

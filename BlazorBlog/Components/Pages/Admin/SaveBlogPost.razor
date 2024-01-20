@@ -1,8 +1,6 @@
 ﻿@page "/admin/manage-blog-posts/new"
 @page "/admin/manage-blog-posts/edit/{id:int?}"
 
-@using Blazored.TextEditor
-@using Ganss.Xss;
 
 @rendermode InteractiveServer
 
@@ -81,9 +79,7 @@
             </div>
             @if (!string.IsNullOrWhiteSpace(_errorMessage))
             {
-                <div class="mb-3">
-                        <p class="text-danger">@_errorMessage</p>
-                </div>
+                ToastService.ShowToast(ToastLevel.Error, _errorMessage, "Error");
             }
         </div>
         <div class="col-sm-6 d-flex">
