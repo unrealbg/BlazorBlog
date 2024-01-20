@@ -39,9 +39,12 @@
             {
                 _loadingText = "Saving changes";
                 _isLoading = true;
+
+                var isCategoryExisting = _operatingCategory.Id > 0;
+
                 await CategoryService.SaveCategoryAsync(_operatingCategory);
 
-                var operation = _operatingCategory.Id == 0 ? "added" : "updated";
+                var operation = isCategoryExisting ? "updated" : "added";
                 ToastService.ShowToast(ToastLevel.Success, $"Category {operation} successfully.", heading: "Success");
 
                 _operatingCategory = null;
