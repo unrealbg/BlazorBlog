@@ -63,7 +63,8 @@
         }
     </TemplateColumn>
     <TemplateColumn>
-        <a href="admin/manage-blog-posts/edit/@context.Id" data-enhance-nav="false" class="btn btn-primary btn-sm">Edit</a>
+        <a href="admin/manage-blog-posts/edit/@context.Id" data-enhance-nav="false" class="btn btn-primary btn-sm admin-button">Edit</a>
+        <button class="btn btn-danger btn-sm admin-button" Type="submit" @onclick="()=>HandleDeleteBlogPost(context)">Delete</button>
     </TemplateColumn>
 </QuickGrid>
 

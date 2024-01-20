@@ -1,3 +1,7 @@
 ﻿.table > tbody > tr > td {
     vertical-align: middle;
 }
+
+.admin-button {
+    width: 70px;
+}

@@ -20,6 +20,9 @@
         [Inject]
         private AuthenticationStateProvider AuthenticationStateProvider { get; set; }
 
+        [Inject]
+        private IToastService ToastService { get; set; }
+
         protected override void OnInitialized()
         {
             _blogPostProvider = async request =>
@@ -60,6 +63,46 @@
 
             await BlogPostService.SaveBlogPostAsync(blogPost, userId);
             _isLoading = false;
+        }
+
+        private async Task HandleDeleteBlogPost(BlogPost blogPost)
+        {
+            _loadingText = "Deleting blog post";
+            _isLoading = true;
+
+            var isDeleted = await BlogPostService.DeleteBlogPostAsync(blogPost.Id);
+
+            if (isDeleted)
+            {
+                ToastService.ShowToast(ToastLevel.Success, "Blog post deleted successfully.", heading: "Success");
+            }
+            else
+            {
+                ToastService.ShowToast(ToastLevel.Error, "Something went wrong while deleting the blog post.", heading: "Error");
+            }
+
+            RefreshBlogPosts();
+
+            _isLoading = false;
+        }
+
+        private void RefreshBlogPosts()
+        {
+            _blogPostProvider = async request =>
+            {
+                _isLoading = true;
+                _loadingText = "Fetching blog posts";
+                StateHasChanged();
+
+                var pagedBlogs = await BlogPostService.GetBlogPostsAsync(request.StartIndex, request.Count ?? PageSize);
+
+                _isLoading = false;
+                StateHasChanged();
+
+                return GridItemsProviderResult.From(pagedBlogs.Records, pagedBlogs.TotalCount);
+            };
+
+            StateHasChanged();
         }
     }
 }
