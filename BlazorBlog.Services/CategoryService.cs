@@ -59,6 +59,20 @@
             });
         }
 
+        public async Task<bool> DeleteCategoryAsync(int id)
+        {
+           var result = await this.ExecuteOnContext(async context =>
+            {
+                var category = await context.Categories.FindAsync(id);
+                context.Categories.Remove(category);
+                await context.SaveChangesAsync();
+
+                return true;
+            });
+
+            return result;
+        }
+
         public async Task<Category?> GetCategoryBySlugAsync(string slug) =>
             await ExecuteOnContext(async context =>
                 await context.Categories
