@@ -114,14 +114,16 @@
             _showConfirmationModal = true;
         }
 
-        private async Task DeleteBlogPost()
+        private async Task OnModalConfirm(bool isConfirmed)
         {
-            if (_selectedBlogPost != null)
-            {
-                await HandleDeleteBlogPost(_selectedBlogPost);
-            }
-
             _showConfirmationModal = false;
+            if (isConfirmed)
+            {
+                if (_selectedBlogPost != null)
+                {
+                    await HandleDeleteBlogPost(_selectedBlogPost);
+                }
+            }
         }
 
         private void CancelDelete()
