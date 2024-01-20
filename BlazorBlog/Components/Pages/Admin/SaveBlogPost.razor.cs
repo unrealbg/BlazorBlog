@@ -2,6 +2,8 @@
 {
     public partial class SaveBlogPost
     {
+        private const int MaxFileLenght = 10 * 1024 * 1024;
+
         private bool _isLoading;
         private string? _loadingText;
         private BlogPost _blogPost = new BlogPost();
@@ -60,7 +62,7 @@
 
             try
             {
-                await using var imageStream = file.OpenReadStream(maxAllowedSize: 10 * 1024 * 1024);
+                await using var imageStream = file.OpenReadStream(maxAllowedSize: MaxFileLenght);
                 using MemoryStream ms = new MemoryStream();
                 await imageStream.CopyToAsync(ms);
                 _imageUrl = $"data:image/{extension};base64,{Convert.ToBase64String(ms.ToArray())}";
@@ -157,7 +159,7 @@
 
             try
             {
-                await file.OpenReadStream().CopyToAsync(fs);
+                await file.OpenReadStream(maxAllowedSize: MaxFileLenght).CopyToAsync(fs);
                 return Path.Combine("images", "posts", randomFileName + extension).Replace("\\", "/");
             }
             catch (Exception)
@@ -167,6 +169,7 @@
                 return null;
             }
         }
+
 
         private void DeleteExistingImage(string imageUrl)
         {
