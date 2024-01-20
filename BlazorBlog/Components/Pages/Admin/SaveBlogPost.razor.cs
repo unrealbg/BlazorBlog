@@ -11,27 +11,28 @@
         private BlogPost _blogPost = new BlogPost();
         private BlazoredTextEditor? _quillHtml;
         private Category[] _categories = [];
+        private string? _content = default!;
         private string? _errorMessage;
         private IBrowserFile? _fileToUpload;
         private string? _imageUrl;
         private string PageTitle => Id is > 0 ? "Edit Blog Post" : "New Blog Post";
 
-        [Inject] 
+        [Inject]
         AuthenticationStateProvider AuthenticationStateProvider { get; set; }
 
-        [Inject] 
+        [Inject]
         IWebHostEnvironment WebHostEnvironment { get; set; }
 
-        [Inject] 
+        [Inject]
         IBlogPostAdminService BlogPostService { get; set; }
 
-        [Inject] 
+        [Inject]
         ICategoryService CategoryService { get; set; }
 
-        [Inject] 
+        [Inject]
         IHtmlSanitizer HtmlSanitizer { get; set; }
 
-        [Inject] 
+        [Inject]
         NavigationManager NavigationManager { get; set; }
 
         [Parameter]
@@ -53,16 +54,25 @@
 
                 _blogPost = blogPost;
                 _imageUrl = blogPost.Image;
+                _content = blogPost.Content;
             }
         }
 
         private async Task PreviewImageAsync(IBrowserFile file)
         {
             var extension = Path.GetExtension(file.Name)[1..];
-            using var imageStream = file.OpenReadStream();
-            using MemoryStream ms = new MemoryStream();
-            await imageStream.CopyToAsync(ms);
-            _imageUrl = $"data:image/{extension};base64,{Convert.ToBase64String(ms.ToArray())}";
+
+            try
+            {
+                await using var imageStream = file.OpenReadStream();
+                using MemoryStream ms = new MemoryStream();
+                await imageStream.CopyToAsync(ms);
+                _imageUrl = $"data:image/{extension};base64,{Convert.ToBase64String(ms.ToArray())}";
+            }
+            catch (Exception)
+            {
+                _errorMessage = "The selected file is not a valid image.";
+            }
         }
 
         private async Task HandleFileUploadAsync(InputFileChangeEventArgs e)
@@ -84,7 +94,7 @@
                     return;
                 }
 
-                _blogPost.Content = content;
+                _blogPost.Content = await _quillHtml.GetHTML();
                 _loadingText = "Saving blog post";
                 _isLoading = true;
 
@@ -111,7 +121,7 @@
                 var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
                 var userId = authState.User.GetUserId();
 
-                var result  = await BlogPostService.SaveBlogPostAsync(_blogPost, userId);
+                var result = await BlogPostService.SaveBlogPostAsync(_blogPost, userId);
 
                 if (result is null)
                 {

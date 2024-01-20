@@ -89,7 +89,7 @@
         <div class="col-sm-6 d-flex">
             <div class="mb-3 flex-grow-1">
                 <label class="form-label">Content</label>
-                <BlazoredTextEditor @ref="@_quillHtml" Placeholder="Enter your blog post content here...">
+                <BlazoredTextEditor ToolbarCSSClass="form-control" EditorCssClass="form-control" @ref="@_quillHtml" Placeholder="Enter your blog post content here...">
                     <ToolbarContent>
                         <select class="ql-header">
                             <option selected=""></option>
@@ -118,11 +118,11 @@
                         </span>
                     </ToolbarContent>
                     <EditorContent>
-                        @((MarkupString)_blogPost.Content)
+                        @((MarkupString)_content)
                     </EditorContent>
                 </BlazoredTextEditor>
 
-                <ValidationMessage For="() => _blogPost.Content" class="text-danger" />
+                @* <ValidationMessage For="() => _blogPost.Content" class="text-danger" /> *@
             </div>
         </div>
     </div>
