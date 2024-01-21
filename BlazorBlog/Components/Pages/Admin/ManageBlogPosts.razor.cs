@@ -77,7 +77,7 @@
 
             if (isDeleted)
             {
-                ToastService.ShowToast(ToastLevel.Success, "Blog post deleted successfully.", heading: "Success");
+                ToastService.ShowToast(ToastLevel.Success, $"Blog post <span style='color:yellow;'>*{blogPost.Title}*</span> deleted successfully.", heading: "Success");
             }
             else
             {
