@@ -41,8 +41,8 @@
 
                 if (count > records.Length)
                 {
-                    var additionalRecords = await context.BlogPosts
-                        .Where(p => !p.IsFeatured)
+                    var additionalRecords = await query
+                        .Where(b => !b.IsFeatured)
                         .OrderBy(_ => Guid.NewGuid())
                         .Take(count - records.Length)
                         .ToArrayAsync();
