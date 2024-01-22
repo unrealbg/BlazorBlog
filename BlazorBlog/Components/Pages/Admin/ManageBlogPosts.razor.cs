@@ -91,34 +91,24 @@
             if (isDeleted)
             {
                 ToastService.ShowToast(ToastLevel.Success, $"Blog post <span style='color:yellow;'>*{blogPost.Title}*</span> deleted successfully.", heading: "Success");
+                RemovePostFromLocalCollection(blogPost.Id);
             }
             else
             {
                 ToastService.ShowToast(ToastLevel.Error, "Something went wrong while deleting the blog post.", heading: "Error");
             }
 
-            RefreshBlogPosts();
-
             _isLoading = false;
+            StateHasChanged();
         }
 
-        private void RefreshBlogPosts()
+        private void RemovePostFromLocalCollection(int postId)
         {
-            _blogPostProvider = async request =>
+            var postToRemove = _currentBlogPosts.FirstOrDefault(p => p.Id == postId);
+            if (postToRemove != null)
             {
-                _isLoading = true;
-                _loadingText = "Fetching blog posts";
-                StateHasChanged();
-
-                var pagedBlogs = await BlogPostService.GetBlogPostsAsync(request.StartIndex, request.Count ?? PageSize);
-
-                _isLoading = false;
-                StateHasChanged();
-
-                return GridItemsProviderResult.From(pagedBlogs.Records, pagedBlogs.TotalCount);
-            };
-
-            StateHasChanged();
+                _currentBlogPosts.Remove(postToRemove);
+            }
         }
 
         private void ConfirmDeleteBlogPost(BlogPost blogPost)
