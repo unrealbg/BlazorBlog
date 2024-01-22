@@ -8,6 +8,8 @@
         private BlogPost _selectedBlogPost;
         private bool _showConfirmationModal = false;
 
+        private List<BlogPost> _currentBlogPosts = new List<BlogPost>();
+
         private const int PageSize = 10;
 
         private PaginationState _paginationState = new PaginationState
@@ -32,27 +34,25 @@
             {
                 _isLoading = true;
                 _loadingText = "Fetching blog posts";
-
                 StateHasChanged();
 
                 var pagedBlogs = await BlogPostService.GetBlogPostsAsync(request.StartIndex, request.Count ?? PageSize);
+                _currentBlogPosts = pagedBlogs.Records.ToList();
 
                 _isLoading = false;
                 StateHasChanged();
 
-                return GridItemsProviderResult.From(pagedBlogs.Records, pagedBlogs.TotalCount);
+                return GridItemsProviderResult.From(_currentBlogPosts, pagedBlogs.TotalCount);
             };
         }
 
         private async Task HandleFeaturedChanged(BlogPost blogPost)
         {
-            blogPost.IsFeatured = !blogPost.IsFeatured;
             await SaveChangesAsync(blogPost);
         }
 
         private async Task HandlePublishedChanged(BlogPost blogPost)
         {
-            blogPost.IsPublished = !blogPost.IsPublished;
             await SaveChangesAsync(blogPost);
         }
 
@@ -64,9 +64,22 @@
             var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
             var userId = authState.User.GetUserId();
 
-            await BlogPostService.SaveBlogPostAsync(blogPost, userId);
+            var updatedBlogPost = await BlogPostService.SaveBlogPostAsync(blogPost, userId);
+
+            if (updatedBlogPost != null)
+            {
+                var index = _currentBlogPosts.FindIndex(b => b.Id == updatedBlogPost.Id);
+
+                if (index != -1)
+                {
+                    _currentBlogPosts[index] = updatedBlogPost;
+                }
+            }
+
             _isLoading = false;
+            StateHasChanged();
         }
+
 
         private async Task HandleDeleteBlogPost(BlogPost blogPost)
         {

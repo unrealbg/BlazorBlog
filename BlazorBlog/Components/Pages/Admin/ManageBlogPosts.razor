@@ -41,32 +41,16 @@
     </TemplateColumn>
     <PropertyColumn Property="@(b => b.Category.Name)" Title="Category" />
     <TemplateColumn Title="Featured">
-        @if (context.IsFeatured)
-        {
-            <label class="text-success">
-                <input type="checkbox" @onchange="@(() => HandleFeaturedChanged(context))" checked /> Yes
-            </label>
-        }
-        else
-        {
-            <label class="text-danger">
-                <input type="checkbox" @onchange="@(() => HandleFeaturedChanged(context))" /> No
-            </label>
-        }
+        <label class="switch">
+            <input type="checkbox" @bind="context.IsFeatured" @bind:after="(() => HandleFeaturedChanged(context))" />
+            <span class="switch-slider"></span>
+        </label>
     </TemplateColumn>
     <TemplateColumn Title="Published">
-        @if (context.IsPublished)
-        {
-            <label class="text-success">
-                <input type="checkbox" @onchange="@(() => HandlePublishedChanged(context))" checked /> Yes
-            </label>
-        }
-        else
-        {
-            <label class="text-danger">
-                <input type="checkbox" @onchange="@(() => HandlePublishedChanged(context))" /> No
-            </label>
-        }
+        <label class="switch">
+            <input type="checkbox" @bind="context.IsPublished" @bind:after="(() => HandlePublishedChanged(context))" />
+            <span class="switch-slider"></span>
+        </label>
     </TemplateColumn>
     <TemplateColumn>
         <a href="admin/manage-blog-posts/edit/@context.Id" data-enhance-nav="false" class="btn btn-primary btn-sm admin-button">Edit</a>
