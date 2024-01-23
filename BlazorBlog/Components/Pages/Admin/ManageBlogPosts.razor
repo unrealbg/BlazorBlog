@@ -22,9 +22,9 @@
 }
 
 <QuickGrid ItemsProvider="_blogPostProvider" Pagination="_paginationState" class="table table-bordered table-striped table-hover">
-    <PropertyColumn Property="@(b => b.Id)" />
-    <TemplateColumn>
-        <div class="py-2" style="display: grid; grid-template-columns: 60px auto; grid-column-gap: 10px;">
+    <PropertyColumn Property="@(b => b.Id)" Align="Align.Center" />
+    <TemplateColumn Title="Blog post" Align="Align.Center">
+        <div class="py-2 center-content" style="display: grid; grid-template-columns: 60px auto; grid-column-gap: 10px;">
             <img src="@context.Image" style="height: 60px; width: 60px; object-fit: cover" />
             <div>
                 <label class="mb-0 d-block">@context.Title</label>
@@ -39,22 +39,22 @@
             </div>
         </div>
     </TemplateColumn>
-    <PropertyColumn Property="@(b => b.Category.Name)" Title="Category" />
-    <TemplateColumn Title="Featured">
+    <PropertyColumn Property="@(b => b.Category.Name)" Title="Category" Align="Align.Center" />
+    <TemplateColumn Title="Featured" Align="Align.Center">
         <label class="switch">
             <input type="checkbox" @bind="context.IsFeatured" @bind:after="(() => HandleFeaturedChanged(context))" />
             <span class="switch-slider"></span>
         </label>
     </TemplateColumn>
-    <TemplateColumn Title="Published">
+    <TemplateColumn Title="Published" Align="Align.Center">
         <label class="switch">
             <input type="checkbox" @bind="context.IsPublished" @bind:after="(() => HandlePublishedChanged(context))" />
             <span class="switch-slider"></span>
         </label>
     </TemplateColumn>
-    <TemplateColumn>
-        <a href="admin/manage-blog-posts/edit/@context.Id" data-enhance-nav="false" class="btn btn-primary btn-sm admin-button">Edit</a>
-        <button class="btn btn-danger btn-sm admin-button" Type="submit" @onclick="()=>ConfirmDeleteBlogPost(context)">Delete</button>
+    <TemplateColumn Title="Actions" Align="Align.Center">
+        <a href="admin/manage-blog-posts/edit/@context.Id" data-enhance-nav="false" class="btn btn-primary btn-sm admin-button mr-1" style="width: 80px;">Edit</a>
+        <button class="btn btn-danger btn-sm admin-button" Type="submit" style="width: 80px;" @onclick="()=>ConfirmDeleteBlogPost(context)">Delete</button>
     </TemplateColumn>
 </QuickGrid>
 <Paginator State="_paginationState" />
