@@ -48,25 +48,17 @@
 }
 
 <QuickGrid Items="@_categories" class="table table-bordered table-striped table-hover">
-    <PropertyColumn Property="@(c => c.Id)" />
-    <PropertyColumn Property="@(c => c.Name)" />
-    <PropertyColumn Property="@(c => c.Slug)" />
-    <TemplateColumn Title="Show on Navbar">
-        @if (context.ShowOnNavBar)
-        {
-            <label class="text-success">
-                <input type="checkbox" @onchange="@(() => HandleShowOnNavBarChanged(context))" checked /> Yes
+    <PropertyColumn Property="@(c => c.Id)" Align="Align.Center" />
+    <PropertyColumn Property="@(c => c.Name)" Align="Align.Center" />
+    <PropertyColumn Property="@(c => c.Slug)" Align="Align.Center" />
+    <TemplateColumn Title="Show on Navbar" Align="Align.Center">
+            <label class="switch">
+                <input type="checkbox" @bind="context.ShowOnNavBar" @bind:after="(() => HandleShowOnNavBarChanged(context))" />
+                <span class="switch-slider round"></span>
             </label>
-        }
-        else
-        {
-            <label class="text-danger">
-                <input type="checkbox" @onchange="@(() => HandleShowOnNavBarChanged(context))" /> No
-            </label>
-        }
     </TemplateColumn>
-    <TemplateColumn>
-        <button type="button" class="btn btn-sm btn-primary" @onclick="() => HandleEditCategory(context)">Edit</button>
-        <button type="button" class="btn btn-sm btn-danger" @onclick="() => ConfirmDeleteCategory(context)">Delete</button>
+    <TemplateColumn Title="Actions" Align="Align.Center">
+        <button type="button" class="btn btn-sm btn-primary mr-1" style="width: 80px;" @onclick="() => HandleEditCategory(context)">Edit</button>
+        <button type="button" class="btn btn-sm btn-danger" style="width: 80px;" @onclick="() => ConfirmDeleteCategory(context)">Delete</button>
     </TemplateColumn>
 </QuickGrid>
