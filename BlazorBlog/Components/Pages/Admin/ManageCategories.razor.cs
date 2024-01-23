@@ -25,7 +25,6 @@
         {
             _loadingText = "Saving changes";
             _isLoading = true;
-            category.ShowOnNavBar = !category.ShowOnNavBar;
             await CategoryService.SaveCategoryAsync(category);
             _isLoading = false;
             NavigationManager.Refresh();
