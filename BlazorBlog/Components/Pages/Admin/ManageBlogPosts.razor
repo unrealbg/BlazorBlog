@@ -24,7 +24,7 @@
 <QuickGrid ItemsProvider="_blogPostProvider" Pagination="_paginationState" class="table table-bordered table-striped table-hover">
     <PropertyColumn Property="@(b => b.Id)" Align="Align.Center" />
     <TemplateColumn Title="Blog post" Align="Align.Center">
-        <div class="py-2 center-content" style="display: grid; grid-template-columns: 60px auto; grid-column-gap: 10px;">
+        <div class="py-2" style="display: grid; grid-template-columns: 60px auto; grid-column-gap: 10px;">
             <img src="@context.Image" style="height: 60px; width: 60px; object-fit: cover" />
             <div>
                 <label class="mb-0 d-block">@context.Title</label>
