@@ -1,4 +1,6 @@
-﻿namespace BlazorBlog.Services.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace BlazorBlog.Data.Models
 {
     public class BlogPostDto
     {

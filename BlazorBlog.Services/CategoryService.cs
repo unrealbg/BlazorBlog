@@ -1,89 +1,34 @@
 ﻿namespace BlazorBlog.Services
 {
+    using Repository.Contracts;
+
     public class CategoryService : ICategoryService
     {
-        private readonly IDbContextFactory<ApplicationDbContext> _contextFactory;
+        private readonly ICategoryRepository _categoryRepository;
 
-        public CategoryService(IDbContextFactory<ApplicationDbContext> contextFactory)
+        public CategoryService(ICategoryRepository categoryRepository)
         {
-            this._contextFactory = contextFactory;
+            _categoryRepository = categoryRepository;
         }
 
         public async Task<Category[]> GetCategoriesAsync()
         {
-            return await this.ExecuteOnContext(async context =>
-            {
-                var categories = await context.Categories
-                    .AsNoTracking()
-                    .ToArrayAsync();
-                return categories;
-            });
+            return await _categoryRepository.GetCategoriesAsync();
         }
 
         public async Task<Category> SaveCategoryAsync(Category category)
         {
-            return await this.ExecuteOnContext(async context =>
-            {
-                if (category.Id == 0)
-                {
-                    if (await context.Categories
-                            .AsNoTracking()
-                            .AnyAsync(c => c.Name == category.Name))
-                    {
-                        throw new InvalidOperationException($"Category with the name {category.Name} already exist");
-                    }
-
-                    category.Slug = category.Name.ToSlug();
-                    await context.Categories.AddAsync(category);
-                    await context.SaveChangesAsync();
-                }
-                else
-                {
-                    if (await context.Categories
-                            .AsNoTracking()
-                            .AnyAsync(c => c.Name == category.Name && c.Id != category.Id))
-                    {
-                        throw new InvalidOperationException($"Category with the name {category.Name} already exist");
-                    }
-
-                    var dbCategory = await context.Categories.FindAsync(category.Id);
-
-                    dbCategory.Name = category.Name;
-                    dbCategory.ShowOnNavBar = category.ShowOnNavBar;
-
-                    category.Slug = dbCategory.Slug;
-                }
-
-                await context.SaveChangesAsync();
-                return category;
-            });
+            return await _categoryRepository.SaveCategoryAsync(category);
         }
 
         public async Task<bool> DeleteCategoryAsync(int id)
         {
-           var result = await this.ExecuteOnContext(async context =>
-            {
-                var category = await context.Categories.FindAsync(id);
-                context.Categories.Remove(category);
-                await context.SaveChangesAsync();
-
-                return true;
-            });
-
-            return result;
+            return await _categoryRepository.DeleteCategoryAsync(id);
         }
 
-        public async Task<Category?> GetCategoryBySlugAsync(string slug) =>
-            await ExecuteOnContext(async context =>
-                await context.Categories
-                    .AsNoTracking()
-                    .FirstOrDefaultAsync(c => c.Slug == slug)
-                );
-
-        private async Task<TResult> ExecuteOnContext<TResult>(Func<ApplicationDbContext, Task<TResult>> query)
+        public async Task<Category?> GetCategoryBySlugAsync(string slug)
         {
-            await using var context = this._contextFactory.CreateDbContext();
-            return await query.Invoke(context);
+            return await _categoryRepository.GetCategoryBySlugAsync(slug);
         }
     }
 }

@@ -1,4 +1,6 @@
-﻿namespace BlazorBlog.Services.Contracts;
+﻿using BlazorBlog.Data.Models;
+
+namespace BlazorBlog.Services.Contracts;
 
 public interface ISubscribeService
 {

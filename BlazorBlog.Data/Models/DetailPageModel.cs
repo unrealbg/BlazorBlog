@@ -1,4 +1,6 @@
-﻿namespace BlazorBlog.Services.Models;
+﻿using BlazorBlog.Data.Entities;
+
+namespace BlazorBlog.Data.Models;
 
 public record DetailPageModel(BlogPost BlogPost, BlogPost[] RelatedPosts)
 {

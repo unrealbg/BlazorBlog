@@ -1,11 +1,14 @@
 namespace BlazorBlog
 {
+    using Services.BlazorBlog.Services;
     using Components.Account;
     using Data;
     using Services;
     using Ganss.Xss;
     using Microsoft.AspNetCore.Identity;
     using Microsoft.EntityFrameworkCore;
+    using Repository.Contracts;
+    using Repository;
 
     public class Program
     {
@@ -47,11 +50,14 @@ namespace BlazorBlog
             builder.Services.AddScoped<IToastService, ToastService>();
 
             builder.Services
-                .AddTransient<ISeedService, SeedService>()
-                .AddTransient<ICategoryService, CategoryService>()
-                .AddTransient<IBlogPostAdminService, BlogPostAdminService>()
-                .AddTransient<IBlogPostService, BlogPostService>()
-                .AddTransient<ISubscribeService, SubscribeService>();
+                .AddScoped<ISeedService, SeedService>()
+                .AddScoped<ICategoryService, CategoryService>()
+                .AddScoped<IBlogPostAdminService, BlogPostAdminService>()
+                .AddScoped<IBlogPostService, BlogPostService>()
+                .AddScoped<ISubscribeService, SubscribeService>()
+                .AddScoped<IBlogPostRepository, BlogPostRepository>()
+                .AddScoped<ICategoryRepository, CategoryRepository>()
+                .AddScoped<ISubscriberRepository, SubscriberRepository>();
 
             builder.Services.AddSingleton<IHtmlSanitizer, HtmlSanitizer>(provider =>
             {
