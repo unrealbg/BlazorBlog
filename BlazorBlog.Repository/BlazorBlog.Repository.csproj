@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\BlazorBlog.Repository\BlazorBlog.Repository.csproj" />
+    <ProjectReference Include="..\BlazorBlog.Data\BlazorBlog.Data.csproj" />
   </ItemGroup>
 
 </Project>
