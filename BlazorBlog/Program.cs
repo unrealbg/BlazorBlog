@@ -56,6 +56,7 @@ namespace BlazorBlog
                 .AddScoped<IBlogPostService, BlogPostService>()
                 .AddScoped<ISubscribeService, SubscribeService>()
                 .AddScoped<IBlogPostRepository, BlogPostRepository>()
+                .AddScoped<IBlogPostAdminRepository, BlogPostAdminRepository>()
                 .AddScoped<ICategoryRepository, CategoryRepository>()
                 .AddScoped<ISubscriberRepository, SubscriberRepository>();
 

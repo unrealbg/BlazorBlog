@@ -5,31 +5,31 @@
 
     public class BlogPostAdminService : IBlogPostAdminService
     {
-        private readonly IBlogPostRepository _blogPostRepository;
+        private readonly IBlogPostAdminRepository _blogPostAdminRepository;
 
-        public BlogPostAdminService(IBlogPostRepository blogPostRepository)
+        public BlogPostAdminService(IBlogPostAdminRepository blogPostAdminRepository)
         {
-            _blogPostRepository = blogPostRepository;
+            _blogPostAdminRepository = blogPostAdminRepository;
         }
 
         public async Task<PageResult<BlogPost>> GetBlogPostsAsync(int startIndex, int pageSize)
         {
-            return await _blogPostRepository.GetBlogPostsAsync(startIndex, pageSize);
+            return await _blogPostAdminRepository.GetBlogPostsAsync(startIndex, pageSize);
         }
 
         public async Task<BlogPost?> GetBlogPostByIdAsync(int id)
         {
-            return await _blogPostRepository.GetBlogPostByIdAsync(id);
+            return await _blogPostAdminRepository.GetBlogPostByIdAsync(id);
         }
 
         public async Task<BlogPost> SaveBlogPostAsync(BlogPost blogPost, string userId)
         {
-            return await _blogPostRepository.SaveBlogPostAsync(blogPost, userId);
+            return await _blogPostAdminRepository.SaveBlogPostAsync(blogPost, userId);
         }
 
         public async Task<bool> DeleteBlogPostAsync(int id)
         {
-            return await _blogPostRepository.DeleteBlogPostAsync(id);
+            return await _blogPostAdminRepository.DeleteBlogPostAsync(id);
         }
     }
 }
