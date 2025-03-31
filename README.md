@@ -115,5 +115,3 @@ Distributed under the MIT License. See `LICENSE` for more information.
 
 ### Contact
 Zhelyazko Zhelyazkov -  [admin@unrealbg.com](mailto:admin@unrealbg.com)
-
-Project Link:  [https://github.com/unrealbg/BlazorBlog](https://github.com/unrealbg/BlazorBlog)
