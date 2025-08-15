@@ -14,9 +14,11 @@
         [Parameter]
         public string BlogPostSlug { get; set; }
 
+        private readonly CancellationTokenSource _cts = new();
+
         protected override async Task OnInitializedAsync()
         {
-            var result = await BlogPostService.GetBlogPostBySlugAsync(BlogPostSlug);
+            var result = await BlogPostService.GetBlogPostBySlugAsync(BlogPostSlug, _cts.Token);
 
             if (result.IsEmpty)
             {
@@ -26,6 +28,12 @@
 
             _blogPost = result.BlogPost;
             _relatedPosts = result.RelatedPosts;
+        }
+
+        public void Dispose()
+        {
+            _cts.Cancel();
+            _cts.Dispose();
         }
     }
 }
