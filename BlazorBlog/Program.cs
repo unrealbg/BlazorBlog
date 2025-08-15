@@ -42,6 +42,9 @@ namespace BlazorBlog
 
             var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 
+            builder.Services.AddDbContextPool<ApplicationDbContext>(options =>
+                options.UseSqlServer(connectionString));
+
             builder.Services.AddPooledDbContextFactory<ApplicationDbContext>(options =>
                 options.UseSqlServer(connectionString));
 
