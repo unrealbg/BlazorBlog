@@ -1,10 +1,13 @@
-﻿using BlazorBlog.Data.Models;
-
-namespace BlazorBlog.Services.Contracts;
-
-public interface ISubscribeService
+﻿namespace BlazorBlog.Services.Contracts
 {
-    Task<string?> AddSubscriberAsync(Subscriber subscriber);
+    using System.Threading;
 
-    Task<PageResult<Subscriber>> GetSubscribersAsync(int startIndex, int pageSize);
+    using BlazorBlog.Data.Models;
+
+    public interface ISubscribeService
+    {
+        Task<string?> AddSubscriberAsync(Subscriber subscriber, CancellationToken cancellationToken = default);
+
+        Task<PageResult<Subscriber>> GetSubscribersAsync(int startIndex, int pageSize, CancellationToken cancellationToken = default);
+    }
 }
