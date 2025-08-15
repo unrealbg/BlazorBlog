@@ -1,6 +1,6 @@
 ﻿namespace BlazorBlog.Components.Pages.Admin
 {
-    public partial class ManageBlogPosts
+    public partial class ManageBlogPosts : IDisposable
     {
         private bool _isLoading;
         private string? _loadingText;
@@ -28,6 +28,8 @@
         [Inject]
         private IToastService ToastService { get; set; }
 
+        private readonly CancellationTokenSource _cts = new();
+
         protected override void OnInitialized()
         {
             _blogPostProvider = async request =>
@@ -36,7 +38,7 @@
                 _loadingText = "Fetching blog posts";
                 StateHasChanged();
 
-                var pagedBlogs = await BlogPostService.GetBlogPostsAsync(request.StartIndex, request.Count ?? PageSize);
+                var pagedBlogs = await BlogPostService.GetBlogPostsAsync(request.StartIndex, request.Count ?? PageSize, _cts.Token);
                 _currentBlogPosts = pagedBlogs.Records.ToList();
 
                 _isLoading = false;
@@ -64,7 +66,7 @@
             var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
             var userId = authState.User.GetUserId();
 
-            var updatedBlogPost = await BlogPostService.SaveBlogPostAsync(blogPost, userId);
+            var updatedBlogPost = await BlogPostService.SaveBlogPostAsync(blogPost, userId, _cts.Token);
 
             if (updatedBlogPost != null)
             {
@@ -86,7 +88,7 @@
             _loadingText = "Deleting blog post";
             _isLoading = true;
 
-            var isDeleted = await BlogPostService.DeleteBlogPostAsync(blogPost.Id);
+            var isDeleted = await BlogPostService.DeleteBlogPostAsync(blogPost.Id, _cts.Token);
 
             if (isDeleted)
             {
@@ -132,6 +134,12 @@
         private void CancelDelete()
         {
             _showConfirmationModal = false;
+        }
+
+        public void Dispose()
+        {
+            _cts.Cancel();
+            _cts.Dispose();
         }
     }
 }
