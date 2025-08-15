@@ -1,17 +1,20 @@
 ﻿namespace BlazorBlog.Services.Contracts
 {
-    using Data.Models;
+    using System.Threading;
+
+    using BlazorBlog.Data.Entities;
+    using BlazorBlog.Data.Models;
 
     public interface IBlogPostService
     {
-        Task<BlogPost[]> GetFeaturedBlogPostsAsync(int count, int categoryId = 0);
+        Task<BlogPost[]> GetFeaturedBlogPostsAsync(int count, int categoryId = 0, CancellationToken cancellationToken = default);
 
-        Task<BlogPost[]> GetPopularBlogPostsAsync(int count, int categoryId = 0);
+        Task<BlogPost[]> GetPopularBlogPostsAsync(int count, int categoryId = 0, CancellationToken cancellationToken = default);
 
-        Task<BlogPost[]> GetRecentBlogPostsAsync(int count, int categoryId = 0);
+        Task<BlogPost[]> GetRecentBlogPostsAsync(int count, int categoryId = 0, CancellationToken cancellationToken = default);
 
-        Task<BlogPost[]> GetBlogPostsAsync(int pageIndex, int pageSize, int categoryId);
+        Task<BlogPost[]> GetBlogPostsAsync(int pageIndex, int pageSize, int categoryId, CancellationToken cancellationToken = default);
 
-        Task<DetailPageModel> GetBlogPostBySlugAsync(string slug);
+        Task<DetailPageModel> GetBlogPostBySlugAsync(string slug, CancellationToken cancellationToken = default);
     }
 }
