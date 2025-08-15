@@ -15,6 +15,8 @@
         private string? _imageUrl;
         private string PageTitle => Id is > 0 ? "Edit Blog Post" : "New Blog Post";
 
+        private readonly CancellationTokenSource _cts = new();
+
         [Inject]
         AuthenticationStateProvider AuthenticationStateProvider { get; set; }
 
@@ -38,11 +40,11 @@
 
         protected override async Task OnInitializedAsync()
         {
-            _categories = await CategoryService.GetCategoriesAsync();
+            _categories = await CategoryService.GetCategoriesAsync(_cts.Token);
 
             if (Id.HasValue && Id > 0)
             {
-                var blogPost = await BlogPostService.GetBlogPostByIdAsync(Id.Value);
+                var blogPost = await BlogPostService.GetBlogPostByIdAsync(Id.Value, _cts.Token);
 
                 if (blogPost is null)
                 {
@@ -64,7 +66,7 @@
             {
                 await using var imageStream = file.OpenReadStream(maxAllowedSize: MaxFileLenght);
                 using MemoryStream ms = new MemoryStream();
-                await imageStream.CopyToAsync(ms);
+                await imageStream.CopyToAsync(ms, _cts.Token);
                 _imageUrl = $"data:image/{extension};base64,{Convert.ToBase64String(ms.ToArray())}";
             }
             catch (Exception)
@@ -119,7 +121,7 @@
                 var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
                 var userId = authState.User.GetUserId();
 
-                var result = await BlogPostService.SaveBlogPostAsync(_blogPost, userId);
+                var result = await BlogPostService.SaveBlogPostAsync(_blogPost, userId, _cts.Token);
 
                 if (result is null)
                 {
@@ -135,7 +137,6 @@
                     DeleteExistingImage(imageUrlToDelete);
                 }
 
-                // _isLoading = false;
                 NavigationManager.NavigateTo("/admin/manage-blog-posts");
             }
             catch (Exception)
@@ -159,7 +160,7 @@
 
             try
             {
-                await file.OpenReadStream(maxAllowedSize: MaxFileLenght).CopyToAsync(fs);
+                await file.OpenReadStream(maxAllowedSize: MaxFileLenght).CopyToAsync(fs, _cts.Token);
                 return Path.Combine("images", "posts", randomFileName + extension).Replace("\\", "/");
             }
             catch (Exception)
@@ -188,6 +189,12 @@
             {
                 // ignored
             }
+        }
+
+        public void Dispose()
+        {
+            _cts.Cancel();
+            _cts.Dispose();
         }
     }
 }
