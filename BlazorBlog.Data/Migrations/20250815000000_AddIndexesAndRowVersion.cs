@@ -1,12 +1,12 @@
-using System;
-using BlazorBlog.Data;
-using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Migrations;
-
-#nullable disable
-
 namespace BlazorBlog.Migrations
 {
+    using System;
+    using BlazorBlog.Data;
+    using Microsoft.EntityFrameworkCore.Infrastructure;
+    using Microsoft.EntityFrameworkCore.Migrations;
+
+    #nullable disable
+
     [DbContext(typeof(ApplicationDbContext))]
     [Migration("20250815000000_AddIndexesAndRowVersion")]
     public partial class AddIndexesAndRowVersion : Migration
