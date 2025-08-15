@@ -52,10 +52,15 @@
             }
             else
             {
-                var existingBlogPost = await context.BlogPosts.FindAsync(blogPost.Id);
+                var existingBlogPost = await context.BlogPosts.FirstOrDefaultAsync(x => x.Id == blogPost.Id);
                 if (existingBlogPost == null)
                 {
                     throw new InvalidOperationException($"Blog post not found.");
+                }
+
+                if (blogPost.RowVersion != null)
+                {
+                    context.Entry(existingBlogPost).Property(p => p.RowVersion).OriginalValue = blogPost.RowVersion;
                 }
 
                 existingBlogPost.Title = blogPost.Title;
@@ -69,7 +74,15 @@
                 existingBlogPost.PublishedAt = blogPost.PublishedAt;
             }
 
-            await context.SaveChangesAsync();
+            try
+            {
+                await context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException ex)
+            {
+                throw new InvalidOperationException("The blog post was modified by another user. Please refresh and try again.", ex);
+            }
+
             return blogPost;
         }
 
