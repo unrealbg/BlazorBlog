@@ -57,7 +57,8 @@ namespace BlazorBlog
                 .AddScoped<ISubscribeService, SubscribeService>()
                 .AddScoped<IBlogPostRepository, BlogPostRepository>()
                 .AddScoped<ICategoryRepository, CategoryRepository>()
-                .AddScoped<ISubscriberRepository, SubscriberRepository>();
+                .AddScoped<ISubscriberRepository, SubscriberRepository>()
+                .AddScoped<ISlugService, SlugService>();
 
             builder.Services.AddSingleton<IHtmlSanitizer, HtmlSanitizer>(provider =>
             {
