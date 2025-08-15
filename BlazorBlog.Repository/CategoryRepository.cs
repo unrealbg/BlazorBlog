@@ -1,10 +1,19 @@
 ﻿namespace BlazorBlog.Repository
 {
-    using Common;
     using Data.Entities;
     using Data;
     using Contracts;
     using Microsoft.EntityFrameworkCore;
+
+    public static class SlugHelper
+    {
+        public static string ToSlug(string text)
+        {
+            text = text.ToLowerInvariant().Replace(' ', '-');
+            text = System.Text.RegularExpressions.Regex.Replace(text, "[^0-9a-z_]", "-");
+            return text.Replace("--", "-").Trim('-');
+        }
+    }
 
     public class CategoryRepository : ICategoryRepository
     {
@@ -32,7 +41,7 @@
                 {
                     throw new InvalidOperationException($"Category with the name {category.Name} already exists.");
                 }
-                category.Slug = category.Name.ToSlug();
+                category.Slug = SlugHelper.ToSlug(category.Name);
                 await context.Categories.AddAsync(category);
             }
             else
@@ -41,7 +50,7 @@
                 if (dbCategory != null)
                 {
                     dbCategory.Name = category.Name;
-                    dbCategory.Slug = category.Name.ToSlug();
+                    dbCategory.Slug = SlugHelper.ToSlug(category.Name);
                     dbCategory.ShowOnNavBar = category.ShowOnNavBar;
                 }
             }
