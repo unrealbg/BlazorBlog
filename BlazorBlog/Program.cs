@@ -1,6 +1,5 @@
 namespace BlazorBlog
 {
-    using Services.BlazorBlog.Services;
     using Components.Account;
     using Data;
     using Services;
@@ -57,6 +56,9 @@ namespace BlazorBlog
                 .AddDefaultTokenProviders();
 
             builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
+
+            builder.Services.AddMemoryCache();
+            builder.Services.AddSingleton<BlazorBlog.Services.Utilities.IBlogCacheSignal, BlazorBlog.Services.Utilities.BlogCacheSignal>();
 
             builder.Services.AddScoped<IToastService, ToastService>();
 
