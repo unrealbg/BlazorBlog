@@ -9,6 +9,7 @@
 
         Task<BlogPost?> GetBlogPostByIdAsync(int id);
 
+        // Persist the given blog post. No business rules here, only persistence.
         Task<BlogPost> SaveBlogPostAsync(BlogPost blogPost, string userId);
 
         Task<bool> DeleteBlogPostAsync(int id);
@@ -22,5 +23,9 @@
         Task<BlogPost[]> GetBlogPostsAsync(int pageIndex, int pageSize, int categoryId);
 
         Task<DetailPageModel> GetBlogPostBySlugAsync(string slug);
+
+        // Helper queries for business logic in services
+        Task<bool> TitleExistsAsync(string title, int? excludeId = null);
+        Task<bool> SlugExistsAsync(string slug, int? excludeId = null);
     }
 }

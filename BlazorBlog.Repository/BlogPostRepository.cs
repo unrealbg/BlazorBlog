@@ -47,20 +47,7 @@
             await using var context = await _contextFactory.CreateDbContextAsync();
             if (blogPost.Id == 0)
             {
-                var isTitleExist = await context.BlogPosts
-                    .AsNoTracking()
-                    .AnyAsync(b => b.Title == blogPost.Title);
-
-                if (isTitleExist)
-                {
-                    throw new InvalidOperationException($"A blog post with this same title already exists.");
-                }
-
-                blogPost.Slug = GenerateSlug(blogPost.Title);
-                blogPost.CreatedAt = DateTime.UtcNow;
                 blogPost.UserId = userId;
-                blogPost.PublishedAt = blogPost.IsPublished ? DateTime.UtcNow : null;
-
                 await context.BlogPosts.AddAsync(blogPost);
             }
             else
@@ -71,7 +58,6 @@
                     throw new InvalidOperationException($"Blog post not found.");
                 }
 
-                // Обновяване на съществуващия пост
                 existingBlogPost.Title = blogPost.Title;
                 existingBlogPost.Image = blogPost.Image;
                 existingBlogPost.Introduction = blogPost.Introduction;
@@ -79,12 +65,8 @@
                 existingBlogPost.CategoryId = blogPost.CategoryId;
                 existingBlogPost.IsFeatured = blogPost.IsFeatured;
                 existingBlogPost.IsPublished = blogPost.IsPublished;
-            
-
-                if (blogPost.IsPublished && existingBlogPost.PublishedAt == null)
-                {
-                    existingBlogPost.PublishedAt = DateTime.UtcNow;
-                }
+                existingBlogPost.Slug = blogPost.Slug;
+                existingBlogPost.PublishedAt = blogPost.PublishedAt;
             }
 
             await context.SaveChangesAsync();
@@ -100,11 +82,6 @@
             context.BlogPosts.Remove(blogPost);
             await context.SaveChangesAsync();
             return true;
-        }
-
-        private string GenerateSlug(string title)
-        {
-            return title.ToLower().Replace(" ", "-");
         }
 
         public async Task<BlogPost[]> GetBlogPostsAsync(int pageIndex, int pageSize, int categoryId)
@@ -145,13 +122,12 @@
             }
 
             var records = await query
-                .OrderBy(_ => Guid.NewGuid())
+                .OrderByDescending(p => p.PublishedAt)
                 .Take(count)
                 .ToArrayAsync();
 
             return records;
         }
-
 
         public async Task<BlogPost[]> GetPopularBlogPostsAsync(int count, int categoryId = 0)
         {
@@ -212,11 +188,33 @@
                 .Include(p => p.Category)
                 .Include(p => p.User)
                 .Where(p => p.CategoryId == blogPost.CategoryId && p.Id != blogPost.Id && p.IsPublished)
-                .OrderBy(_ => Guid.NewGuid())
+                .OrderByDescending(p => p.PublishedAt)
                 .Take(4)
                 .ToArrayAsync();
 
             return new DetailPageModel(blogPost, relatedPosts);
+        }
+
+        public async Task<bool> TitleExistsAsync(string title, int? excludeId = null)
+        {
+            await using var context = await _contextFactory.CreateDbContextAsync();
+            var query = context.BlogPosts.AsNoTracking().Where(b => b.Title == title);
+            if (excludeId.HasValue)
+            {
+                query = query.Where(b => b.Id != excludeId.Value);
+            }
+            return await query.AnyAsync();
+        }
+
+        public async Task<bool> SlugExistsAsync(string slug, int? excludeId = null)
+        {
+            await using var context = await _contextFactory.CreateDbContextAsync();
+            var query = context.BlogPosts.AsNoTracking().Where(b => b.Slug == slug);
+            if (excludeId.HasValue)
+            {
+                query = query.Where(b => b.Id != excludeId.Value);
+            }
+            return await query.AnyAsync();
         }
     }
 }
