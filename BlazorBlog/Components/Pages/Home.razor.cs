@@ -11,13 +11,14 @@
         [Inject] 
         IBlogPostService BlogPostService { get; set; }
 
+        private readonly CancellationTokenSource _cts = new();
 
         protected override async Task OnInitializedAsync()
         {
             var posts = await Task.WhenAll(
-                BlogPostService.GetFeaturedBlogPostsAsync(5),
-                BlogPostService.GetPopularBlogPostsAsync(4),
-                BlogPostService.GetRecentBlogPostsAsync(5)
+                BlogPostService.GetFeaturedBlogPostsAsync(5, cancellationToken: _cts.Token),
+                BlogPostService.GetPopularBlogPostsAsync(4, cancellationToken: _cts.Token),
+                BlogPostService.GetRecentBlogPostsAsync(5, cancellationToken: _cts.Token)
             );
 
             _featured = posts[0];
@@ -31,6 +32,12 @@
 
             _firstFeatured = _featured[0];
             _featured = _featured.Skip(1).ToArray();
+        }
+
+        public void Dispose()
+        {
+            _cts.Cancel();
+            _cts.Dispose();
         }
     }
 }
