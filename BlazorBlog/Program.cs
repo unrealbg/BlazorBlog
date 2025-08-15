@@ -9,12 +9,20 @@ namespace BlazorBlog
     using Microsoft.EntityFrameworkCore;
     using Repository.Contracts;
     using Repository;
+    using Microsoft.Extensions.Logging;
+    using Serilog;
 
     public class Program
     {
         public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+
+            // Serilog: read configuration and set as host logger
+            Log.Logger = new LoggerConfiguration()
+                .ReadFrom.Configuration(builder.Configuration)
+                .CreateLogger();
+            builder.Host.UseSerilog(Log.Logger, true);
 
             // Add services to the container.
             builder.Services.AddRazorComponents()
@@ -68,6 +76,9 @@ namespace BlazorBlog
 
             var app = builder.Build();
 
+            // Apply pending EF Core migrations automatically at startup.
+            await ApplyMigrationsAsync(app.Services);
+
             // Seed the database.
             await SeedDataAsync(app.Services);
 
@@ -79,7 +90,6 @@ namespace BlazorBlog
             else
             {
                 app.UseExceptionHandler("/Error");
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
 
@@ -96,11 +106,41 @@ namespace BlazorBlog
 
             app.Run();
 
+            static async Task ApplyMigrationsAsync(IServiceProvider services)
+            {
+                await using var scope = services.CreateAsyncScope();
+                var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
+                try
+                {
+                    logger.LogInformation("Applying database migrations...");
+                    var factory = scope.ServiceProvider.GetRequiredService<IDbContextFactory<ApplicationDbContext>>();
+                    await using var db = await factory.CreateDbContextAsync();
+                    await db.Database.MigrateAsync();
+                    logger.LogInformation("Database migrations applied successfully.");
+                }
+                catch (Exception ex)
+                {
+                    logger.LogError(ex, "Error applying database migrations.");
+                    throw;
+                }
+            }
+
             static async Task SeedDataAsync(IServiceProvider services)
             {
-                var scope = services.CreateScope();
-                var seedService = scope.ServiceProvider.GetRequiredService<ISeedService>();
-                await seedService.SeedDataAsync();
+                using var scope = services.CreateScope();
+                var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
+                try
+                {
+                    logger.LogInformation("Seeding initial data (if required)...");
+                    var seedService = scope.ServiceProvider.GetRequiredService<ISeedService>();
+                    await seedService.SeedDataAsync();
+                    logger.LogInformation("Seeding completed.");
+                }
+                catch (Exception ex)
+                {
+                    logger.LogError(ex, "Error while seeding data.");
+                    throw;
+                }
             }
         }
     }
