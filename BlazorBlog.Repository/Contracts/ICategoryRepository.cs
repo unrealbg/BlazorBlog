@@ -1,16 +1,18 @@
 ﻿namespace BlazorBlog.Repository.Contracts
 {
+    using System.Threading;
+
     using BlazorBlog.Data.Entities;
 
     public interface ICategoryRepository
     {
-        Task<Category[]> GetCategoriesAsync();
+        Task<Category[]> GetCategoriesAsync(CancellationToken cancellationToken = default);
 
-        Task<Category> SaveCategoryAsync(Category category);
+        Task<Category> SaveCategoryAsync(Category category, CancellationToken cancellationToken = default);
 
-        Task<bool> DeleteCategoryAsync(int id);
+        Task<bool> DeleteCategoryAsync(int id, CancellationToken cancellationToken = default);
 
-        Task<Category?> GetCategoryBySlugAsync(string slug);
+        Task<Category?> GetCategoryBySlugAsync(string slug, CancellationToken cancellationToken = default);
     }
 
 }
