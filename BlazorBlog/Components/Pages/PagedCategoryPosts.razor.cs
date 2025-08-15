@@ -25,6 +25,8 @@
         [Parameter]
         public int? UriPageNumber { get; set; }
 
+        private readonly CancellationTokenSource _cts = new();
+
         protected override async Task OnInitializedAsync()
         {
             if (UriPageNumber.HasValue)
@@ -38,7 +40,7 @@
                 _pageNumber = UriPageNumber.Value;
             }
 
-            var category = await CategoryService.GetCategoryBySlugAsync(CategorySlug);
+            var category = await CategoryService.GetCategoryBySlugAsync(CategorySlug, _cts.Token);
 
             if (category is null)
             {
@@ -49,12 +51,18 @@
             _category = category;
 
             var posts = await Task.WhenAll(
-                BlogPostService.GetPopularBlogPostsAsync(4, _category.Id),
-                BlogPostService.GetBlogPostsAsync(_pageNumber - 1, PageSize, _category.Id)
+                BlogPostService.GetPopularBlogPostsAsync(4, _category.Id, _cts.Token),
+                BlogPostService.GetBlogPostsAsync(_pageNumber - 1, PageSize, _category.Id, _cts.Token)
             );
 
             _popular = posts[0];
             _posts = posts[1];
+        }
+
+        public void Dispose()
+        {
+            _cts.Cancel();
+            _cts.Dispose();
         }
     }
 }
