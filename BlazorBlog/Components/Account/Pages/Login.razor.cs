@@ -3,6 +3,8 @@
     public partial class Login
     {
         private string? _errorMessage;
+    private bool _showPassword;
+    private bool _isSubmitting;
 
         [CascadingParameter]
         private HttpContext HttpContext { get; set; } = default!;
@@ -12,20 +14,20 @@
 
         [SupplyParameterFromQuery] private string? ReturnUrl { get; set; } = "/admin/dashboard";
 
-        [Inject] 
-        SignInManager<ApplicationUser> SignInManager { get; set; }
+    [Inject] 
+    SignInManager<BlazorBlog.Infrastructure.Persistence.ApplicationUser> SignInManager { get; set; } = default!;
 
-        [Inject] 
-        ILogger<Login> Logger { get; set; }
+    [Inject] 
+    ILogger<Login> Logger { get; set; } = default!;
 
-        [Inject] 
-        NavigationManager NavigationManager { get; set; }
+    [Inject] 
+    NavigationManager NavigationManager { get; set; } = default!;
 
-        [Inject] 
-        IdentityRedirectManager RedirectManager { get; set; }
+    [Inject] 
+    IdentityRedirectManager RedirectManager { get; set; } = default!;
 
-        [Inject]
-        UserManager<ApplicationUser> UserManager { get; set; }
+    [Inject]
+    UserManager<BlazorBlog.Infrastructure.Persistence.ApplicationUser> UserManager { get; set; } = default!;
 
         protected override async Task OnInitializedAsync()
         {
@@ -52,28 +54,41 @@
 
         private async Task PerformLoginAsync()
         {
-            var user = await UserManager.FindByEmailAsync(Input.Email);
-
-            if (user is null)
+            _isSubmitting = true;
+            try
             {
-                _errorMessage = "Error: Invalid login attempt.";
-                return;
+                var user = await UserManager.FindByEmailAsync(Input.Email);
+
+                if (user is null)
+                {
+                    _errorMessage = "Error: Invalid login attempt.";
+                    return;
+                }
+
+                var result = await SignInManager.CheckPasswordSignInAsync(user, Input.Password, false);
+
+                if (!result.Succeeded)
+                {
+                    _errorMessage = "Error: Incorrect Password!";
+                    return;
+                }
+
+                var additionalClaims = new[] { new System.Security.Claims.Claim(AppConstants.ClaimNames.FullName, user.Name) };
+
+                await SignInManager.SignInWithClaimsAsync(user, Input.RememberMe, additionalClaims);
+
+                Logger.LogInformation("User logged in.");
+                RedirectManager.RedirectTo(ReturnUrl);
             }
-
-            var result = await SignInManager.CheckPasswordSignInAsync(user, Input.Password, false);
-
-            if (!result.Succeeded)
+            finally
             {
-                _errorMessage = "Error: Incorrect Password!";
-                return;
+                _isSubmitting = false;
             }
+        }
 
-            Claim[] additionalClaims = [new Claim(AppConstants.ClaimNames.FullName, user.Name)];
-
-            await SignInManager.SignInWithClaimsAsync(user, Input.RememberMe, additionalClaims);
-
-            Logger.LogInformation("User logged in.");
-            RedirectManager.RedirectTo(ReturnUrl);
+        private void ToggleShowPassword()
+        {
+            _showPassword = !_showPassword;
         }
     }
 }

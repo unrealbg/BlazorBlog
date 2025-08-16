@@ -1,5 +1,7 @@
 ﻿@page "/admin/manage-subscribers"
 
+@attribute [Authorize(Roles = "Admin")]
+
 @rendermode @(new InteractiveServerRenderMode(prerender: false))
 
 <PageTitle>@Utils.GetPageTitle("Manage Subscribers")</PageTitle>
@@ -11,7 +13,7 @@
     <Loader LoaderText="Fetching subscribers..." />
 }
 
-<QuickGrid ItemsProvider="_subscribersProvider" Pagination="_paginationState" class="table table-bordered table-striped">
+<QuickGrid ItemsProvider="_subscribersProvider" TItem="BlazorBlog.Domain.Entities.Subscriber" Pagination="_paginationState" class="table table-bordered table-striped">
     <PropertyColumn Property="c => c.Name" />
     <PropertyColumn Property="c => c.Email" />
     <PropertyColumn Property="c => c.SubscribedOn" Format="dd-MMM-yyyy hh:mm:ss" Title="Subscribed On" />

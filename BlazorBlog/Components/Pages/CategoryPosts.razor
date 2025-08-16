@@ -9,18 +9,25 @@
             {
                 <h5 class="font-weight-bold spanborder"><span>Featured in @_category?.Name</span></h5>
                 <div class="card border-0 mb-5 box-shadow">
-                    <div style="background-image: url(@_featured.Image); height: 350px; background-size: cover; background-repeat: no-repeat;">
+                    <div style="background-image: url(@_featured!.Image); height: 350px; background-size: cover; background-repeat: no-repeat;">
                     </div>
                     <div class="card-body px-0 pb-0 d-flex flex-column align-items-start">
                         <h2 class="h2 font-weight-bold">
-                            <a class="text-dark" href="posts/@_featured.Slug">@_featured.Title</a>
+                            @if (!string.IsNullOrWhiteSpace(_featured!.Slug))
+                            {
+                                <a class="text-dark" href="/posts/@_featured!.Slug">@_featured!.Title</a>
+                            }
+                            else
+                            {
+                                <span class="text-dark">@_featured!.Title</span>
+                            }
                         </h2>
                         <p class="card-text">
-                            @_featured.Introduction
+                            @_featured!.Introduction
                         </p>
                         <div>
-                            <small class="d-block">@_featured.User.Name</small>
-                            <small class="text-muted">@_featured.PublishedAt.ToDisplayDate()</small>
+                            <small class="d-block">@_featured!.AuthorName</small>
+                            <small class="text-muted">@_featured!.PublishedAtDisplay</small>
                         </div>
                     </div>
                 </div>
@@ -29,7 +36,7 @@
 
                 <hr />
                 <div class="d-block">
-                    <a href="@CategorySlug-posts/all" class="btn btn-sm btn-outline-primary float-right" style="margin-bottom: 1rem">All @_category?.Name Posts</a>
+                    <a href="/@CategorySlug-posts/all" class="btn btn-sm btn-outline-primary float-right" style="margin-bottom: 1rem">All @_category?.Name Posts</a>
                 </div>
                 <hr style="clear: right" />
             }

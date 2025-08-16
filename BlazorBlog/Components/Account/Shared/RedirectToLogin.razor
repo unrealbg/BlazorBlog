@@ -1,0 +1,11 @@
+@inject NavigationManager Navigation
+
+<p>Redirecting to login…</p>
+
+@code {
+    protected override void OnInitialized()
+    {
+        var returnUrl = Uri.EscapeDataString(Navigation.Uri);
+        Navigation.NavigateTo($"login?returnUrl={returnUrl}");
+    }
+}

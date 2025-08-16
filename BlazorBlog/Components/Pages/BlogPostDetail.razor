@@ -10,16 +10,16 @@
                 <div class="row justify-content-between">
                     <div class="col-md-6 pt-6 pb-6 pr-6 align-self-center">
                         <p class="text-uppercase font-weight-bold">
-                            <a class="text-danger" href="@_blogPost.Category.Slug-posts">@_blogPost.Category.Name</a>
+                            <a class="text-danger" href="@_categorySlug-posts">@_categoryName</a>
                         </p>
                         <h1 class="display-4 secondfont mb-3 font-weight-bold">@_blogPost.Title</h1>
                         <p class="mb-3">
                             @_blogPost.Introduction
                         </p>
                         <div class="d-flex align-items-center">
-                            <img class="rounded-circle" src="https://ui-avatars.com/api/?background=0D8ABC&color=fff&name= @_blogPost.User.Name" width="70">
+                            <img class="rounded-circle" src="https://ui-avatars.com/api/?background=0D8ABC&color=fff&name=@_authorName" width="70">
                             <small class="ml-2">
-                                @_blogPost.User.Name <span class="text-muted d-block">@_blogPost.PublishedAt.ToDisplayDate()</span>
+                                @_authorName <span class="text-muted d-block">@_publishedAt</span>
                             </small>
                         </div>
                     </div>

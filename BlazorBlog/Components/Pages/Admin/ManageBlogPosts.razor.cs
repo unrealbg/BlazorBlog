@@ -1,11 +1,13 @@
 ﻿namespace BlazorBlog.Components.Pages.Admin
 {
-    public partial class ManageBlogPosts : IDisposable
+    using BlogPost = BlazorBlog.Domain.Entities.BlogPost;
+
+    public partial class ManageBlogPosts
     {
         private bool _isLoading;
         private string? _loadingText;
 
-        private BlogPost _selectedBlogPost;
+    private BlogPost _selectedBlogPost = new();
         private bool _showConfirmationModal = false;
 
         private List<BlogPost> _currentBlogPosts = new List<BlogPost>();
@@ -17,21 +19,31 @@
             ItemsPerPage = PageSize
         };
 
-        private GridItemsProvider<BlogPost> _blogPostProvider { get; set; }
-
-        [Inject]
-        private IBlogPostAdminService BlogPostService { get; set; }
-
-        [Inject]
-        private AuthenticationStateProvider AuthenticationStateProvider { get; set; }
-
-        [Inject]
-        private IToastService ToastService { get; set; }
+    private GridItemsProvider<BlogPost> _blogPostProvider { get; set; } = default!;
+        private QuickGrid<BlogPost>? _grid;
 
         private readonly CancellationTokenSource _cts = new();
 
-        protected override void OnInitialized()
+        private Dictionary<int, string> _categoryNames = new();
+
+    [Inject]
+    private IBlogPostAdminService BlogPostService { get; set; } = default!;
+
+    [Inject]
+    private ICategoryService CategoryService { get; set; } = default!;
+
+    [Inject]
+    private AuthenticationStateProvider AuthenticationStateProvider { get; set; } = default!;
+
+    [Inject]
+    private IToastService ToastService { get; set; } = default!;
+
+        protected override async Task OnInitializedAsync()
         {
+            // Preload categories for CategoryId -> Name mapping
+            var categories = await CategoryService.GetCategoriesAsync(_cts.Token);
+            _categoryNames = categories.ToDictionary(c => c.Id, c => c.Name);
+
             _blogPostProvider = async request =>
             {
                 _isLoading = true;
@@ -48,14 +60,27 @@
             };
         }
 
+        private string GetCategoryName(int categoryId)
+            => _categoryNames.TryGetValue(categoryId, out var name) ? name : $"#{categoryId}";
+
         private async Task HandleFeaturedChanged(BlogPost blogPost)
         {
             await SaveChangesAsync(blogPost);
+            await RefreshGridAsync();
         }
 
         private async Task HandlePublishedChanged(BlogPost blogPost)
         {
             await SaveChangesAsync(blogPost);
+            await RefreshGridAsync();
+        }
+
+        private async Task RefreshGridAsync()
+        {
+            if (_grid is not null)
+            {
+                await _grid.RefreshDataAsync();
+            }
         }
 
         private async Task SaveChangesAsync(BlogPost blogPost)
@@ -71,7 +96,6 @@
             if (updatedBlogPost != null)
             {
                 var index = _currentBlogPosts.FindIndex(b => b.Id == updatedBlogPost.Id);
-
                 if (index != -1)
                 {
                     _currentBlogPosts[index] = updatedBlogPost;
@@ -81,7 +105,6 @@
             _isLoading = false;
             StateHasChanged();
         }
-
 
         private async Task HandleDeleteBlogPost(BlogPost blogPost)
         {
@@ -93,24 +116,12 @@
             if (isDeleted)
             {
                 ToastService.ShowToast(ToastLevel.Success, $"Blog post <span style='color:yellow;'>*{blogPost.Title}*</span> deleted successfully.", heading: "Success");
-                RemovePostFromLocalCollection(blogPost.Id);
-            }
-            else
-            {
-                ToastService.ShowToast(ToastLevel.Error, "Something went wrong while deleting the blog post.", heading: "Error");
+                _currentBlogPosts.Remove(blogPost);
+                await RefreshGridAsync();
             }
 
             _isLoading = false;
             StateHasChanged();
-        }
-
-        private void RemovePostFromLocalCollection(int postId)
-        {
-            var postToRemove = _currentBlogPosts.FirstOrDefault(p => p.Id == postId);
-            if (postToRemove != null)
-            {
-                _currentBlogPosts.Remove(postToRemove);
-            }
         }
 
         private void ConfirmDeleteBlogPost(BlogPost blogPost)
@@ -124,22 +135,8 @@
             _showConfirmationModal = false;
             if (isConfirmed)
             {
-                if (_selectedBlogPost != null)
-                {
-                    await HandleDeleteBlogPost(_selectedBlogPost);
-                }
+                await HandleDeleteBlogPost(_selectedBlogPost);
             }
-        }
-
-        private void CancelDelete()
-        {
-            _showConfirmationModal = false;
-        }
-
-        public void Dispose()
-        {
-            _cts.Cancel();
-            _cts.Dispose();
         }
     }
 }

@@ -1,34 +1,110 @@
 ﻿@page "/Account/Login"
 
 <PageTitle>@Utils.GetPageTitle("Login")</PageTitle>
-<div class="container d-flex justify-content-center align-items-center" style="min-height: calc(100vh - 250px)">
-    <div class="col-sm-4 shadow py-3 rounded">
-    <h1 class="text-center">Log in</h1>
-    <StatusMessage Message="@_errorMessage"/>
+
+<style>
+    .login-viewport {
+        min-height: calc(100vh - 250px);
+        display: grid;
+        place-items: center;
+        padding: 2rem 1rem;
+        background: var(--lightblue, #f8f9fb);
+    }
+    .login-card {
+        width: min(480px, 94vw);
+        background: var(--white, #fff);
+        border: 1px solid var(--gray, #e5e7eb);
+        border-radius: 10px;
+        box-shadow: var(--box-shadow-lg, 0 10px 25px rgba(0,0,0,.08));
+        padding: 0 1.25rem 1.1rem 1.25rem;
+        position: relative;
+    }
+    .login-card::before{
+        content: "";
+        position: absolute; inset: 0 0 auto 0;
+        height: 4px;
+        border-top-left-radius: 10px; border-top-right-radius: 10px;
+        background: linear-gradient(90deg, var(--primary,#03a87c), color-mix(in srgb, var(--primary,#03a87c) 65%, #09ebaf));
+    }
+    .login-header { margin: 1rem 0 .75rem 0; }
+    .login-title { font-weight: 700; font-size: 1.15rem; margin: 0; }
+    .login-sub { color: #6c757d; margin: .25rem 0 0 0; font-size: .95rem; }
+    .input-wrap { position: relative; }
+    .form-label { font-weight: 600; margin-bottom: .35rem; }
+    .form-control.login-input { padding-right: 3.5rem; border-radius: 10px; background-color: color-mix(in srgb, var(--primary,#03a87c) 5%, #fff); }
+    .form-control.login-input::placeholder{ color: #9aa2a9; }
+    .form-control.login-input:focus { border-color: var(--primary, #03a87c); box-shadow: 0 0 0 0.2rem color-mix(in srgb, var(--primary,#03a87c) 25%, transparent); background-color: color-mix(in srgb, var(--primary,#03a87c) 9%, #fff); }
+    .control-wrap { position: relative; }
+    .showpass-btn { position:absolute; right:.65rem; top:50%; transform: translateY(-50%); display:flex; align-items:center; justify-content:center; width: 2.25rem; height: 2.25rem; background:transparent; border:0; color:#6c757d; cursor:pointer; padding:0; z-index:2; border-radius:6px; }
+    .showpass-btn:hover{ color: var(--primary,#03a87c); }
+    .showpass-btn:focus-visible{ outline: none; box-shadow: 0 0 0 2px #fff, 0 0 0 4px color-mix(in srgb, var(--primary,#03a87c) 60%, #0000); }
+    .remember-line { display:flex; align-items:center; gap:.5rem; flex:1; }
+    .remember-line .form-check-input { float:none; position:static; margin: 0 .5rem 0 0 !important; width: 1.05rem; height: 1.05rem; vertical-align: middle; }
+    .remember-line label { margin: 0; line-height: 1.2; }
+    .link { color: var(--primary, #03a87c); text-decoration:none; }
+    .link:hover { text-decoration:underline; }
+    .divider { height:1px; background:#e5e7eb; margin:.75rem 0; }
+    .err { color:#e50000; margin:.25rem 0 .5rem 0; }
+    .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+    .spinner { width: 16px; height: 16px; border: 2px solid rgba(3,168,124,.35); border-top-color: var(--white, #fff); border-radius: 50%; display:inline-block; animation: spin 1s linear infinite; }
+    @@keyframes spin { to { transform: rotate(360deg); } }
+    @@media (max-width: 480px) { .login-card { padding: 1rem; } }
+    .btn.login-btn { color: #fff; background: linear-gradient(180deg, color-mix(in srgb, var(--primary,#03a87c) 94%, #fff), var(--primary,#03a87c)); border-color: var(--primary, #03a87c); border-radius: 10px; }
+    .btn.login-btn:hover { filter: brightness(.98); }
+    .btn.login-btn:disabled { opacity: .75; }
+    .actions { display:flex; align-items:center; justify-content:space-between; gap: .75rem; width:100%; }
+    .actions .link { margin-left:auto; }
+ </style>
+
+<div class="login-viewport">
+    <div class="login-card">
+        <div class="login-header">
+            <h1 class="login-title">Welcome back</h1>
+            <p class="login-sub">Sign in to continue</p>
+        </div>
+        <StatusMessage Message="@_errorMessage" />
         <EditForm Model="Input" method="post" OnValidSubmit="PerformLoginAsync" FormName="login">
-        <DataAnnotationsValidator/>
-        <h5 class="text-center">Use a local account to log in.</h5>
-        <hr/>
-        <ValidationSummary class="text-danger" role="alert"/>
-        <div class="form-floating mb-3">
-            <label for="email" class="form-label">Email</label>
-            <InputText @bind-Value="Input.Email" class="form-control" autocomplete="username" aria-required="true" placeholder="name@example.com"/>
-            <ValidationMessage For="() => Input.Email" class="text-danger"/>
-        </div>
-        <div class="form-floating mb-3">
-            <label for="password" class="form-label">Password</label>
-            <InputText type="password" @bind-Value="Input.Password" class="form-control" autocomplete="current-password" aria-required="true" placeholder="password"/>
-            <ValidationMessage For="() => Input.Password" class="text-danger"/>
-        </div>
-        <div class="checkbox mb-3 ml-4">
-            <label class="form-label">
-                <InputCheckbox @bind-Value="Input.RememberMe" class="darker-border-checkbox form-check-input"/>
-                Remember me
-            </label>
-        </div>
-        <div>
-            <button type="submit" class="w-100 btn btn-lg btn-primary">Log in</button>
-        </div>
-    </EditForm>
+            <DataAnnotationsValidator />
+            <ValidationSummary class="err" role="alert" />
+
+            <div class="input-wrap mb-3">
+                <label for="email" class="form-label">Email</label>
+                <InputText id="email" @bind-Value="Input.Email" class="form-control login-input" autocomplete="username" aria-required="true" placeholder="name@example.com" />
+                <ValidationMessage For="() => Input.Email" class="err" />
+            </div>
+
+            <div class="input-wrap mb-3">
+                <label for="password" class="form-label">Password</label>
+                <div class="control-wrap">
+                    <InputText id="password" type="@(_showPassword ? "text" : "password")" @bind-Value="Input.Password" @bind-Value:event="oninput" class="form-control login-input" autocomplete="current-password" aria-required="true" placeholder="••••••••" />
+                    <button type="button" class="showpass-btn" title="Toggle password visibility" aria-pressed="@_showPassword" aria-label="@(_showPassword ? "Hide password" : "Show password")" @onclick="ToggleShowPassword">
+                    @if (_showPassword)
+                    {
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M2 5l17 17-1.5 1.5L16 20.5A13.9 13.9 0 0112 21C7 21 2.7 17.9 1 14c.7-1.5 1.8-2.9 3.1-4.1L.5 6.5 2 5zM7 9l2.2 2.2a5 5 0 016.6 6.6L18 19a12 12 0 003-5c-1.7-3.9-6-7-11-7-1.1 0-2.1.1-3 .3z"/></svg>
+                    }
+                    else
+                    {
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M12 5C7 5 2.7 8.1 1 12c1.7 3.9 6 7 11 7s9.3-3.1 11-7c-1.7-3.9-6-7-11-7zm0 12a5 5 0 115-5 5 5 0 01-5 5z"/></svg>
+                    }
+                    </button>
+                </div>
+                <ValidationMessage For="() => Input.Password" class="err" />
+            </div>
+
+            <div class="actions mb-3">
+                <div class="remember-line">
+                    <InputCheckbox id="rememberMe" @bind-Value="Input.RememberMe" class="form-check-input darker-border-checkbox" />
+                    <label for="rememberMe">Remember me</label>
+                </div>
+                <a href="/Account/ForgotPassword" class="link" title="Forgot password?">Forgot password?</a>
+            </div>
+
+            <div class="divider"></div>
+
+            <button type="submit" class="w-100 btn login-btn" disabled="@_isSubmitting">
+                @if (_isSubmitting) { <span class="spinner" aria-hidden="true"></span> }
+                <span class="ms-1">Log in</span>
+            </button>
+        </EditForm>
     </div>
 </div>

@@ -1,6 +1,7 @@
 ﻿@page "/admin/manage-blog-posts/new"
 @page "/admin/manage-blog-posts/edit/{id:int?}"
 
+@attribute [Authorize(Roles = "Admin")]
 
 @rendermode InteractiveServer
 
@@ -28,31 +29,31 @@
     <Loader LoaderText="@_loadingText" />
 }
 
-<EditForm Model="_blogPost" OnValidSubmit="SaveBlogPostAsync">
+<EditForm EditContext="_editContext" OnSubmit="SubmitAsync">
     <DataAnnotationsValidator />
     <ValidationSummary />
     <div class="row">
         <div class="col-sm-6">
             <div class="mb-3">
                 <label class="form-label">Title</label>
-                <InputText @bind-Value="_blogPost.Title" class="form-control form-control-sm" placeholder="Blog post title" />
-                <ValidationMessage For="() => _blogPost.Title" class="text-danger" />
+                <InputText @bind-Value="_blogPostVm.Title" class="form-control form-control-sm" placeholder="Blog post title" />
+                <ValidationMessage For="() => _blogPostVm.Title" class="text-danger" />
             </div>
             <div class="mb-3">
                 <label class="form-label">Category</label>
-                <InputSelect @bind-Value="_blogPost.CategoryId" class="form-control form-control-sm">
+                <InputSelect @bind-Value="_blogPostVm.CategoryId" class="form-control form-control-sm">
                     <option value="0">Select Category</option>
                     @foreach (var category in _categories)
                     {
                         <option value="@category.Id">@category.Name</option>
                     }
                 </InputSelect>
-                <ValidationMessage For="() => _blogPost.CategoryId" class="text-danger" />
+                <ValidationMessage For="() => _blogPostVm.CategoryId" class="text-danger" />
             </div>
             <div class="mb-3">
                 <label class="form-label">Introduction</label>
-                <InputText @bind-Value="_blogPost.Introduction" class="form-control form-control-sm" placeholder="Blog post introduction" />
-                <ValidationMessage For="() => _blogPost.Introduction" class="text-danger" />
+                <InputText @bind-Value="_blogPostVm.Introduction" class="form-control form-control-sm" placeholder="Blog post introduction" />
+                <ValidationMessage For="() => _blogPostVm.Introduction" class="text-danger" />
             </div>
             @if (!string.IsNullOrWhiteSpace(_imageUrl))
             {
@@ -67,19 +68,19 @@
             </div>
             <div class="mb-3">
                 <label class="form-label ml-4">
-                    <InputCheckbox @bind-Value="_blogPost.IsFeatured" class="form-check-input" />
+                    <InputCheckbox @bind-Value="_blogPostVm.IsFeatured" class="form-check-input" />
                     Featured?
                 </label>
             </div>
             <div class="mb-3">
                 <label class="form-label ml-4">
-                    <InputCheckbox @bind-Value="_blogPost.IsPublished" class="form-check-input" />
+                    <InputCheckbox @bind-Value="_blogPostVm.IsPublished" class="form-check-input" />
                     Published?
                 </label>
             </div>
             @if (!string.IsNullOrWhiteSpace(_errorMessage))
             {
-                ToastService.ShowToast(ToastLevel.Error, _errorMessage, "Error");
+                ToastService.ShowToast(BlazorBlog.Application.UI.ToastLevel.Error, _errorMessage, "Error");
             }
         </div>
         <div class="col-sm-6 d-flex">
@@ -114,11 +115,9 @@
                         </span>
                     </ToolbarContent>
                     <EditorContent>
-                        @((MarkupString)_content)
+                        @((MarkupString)(_content ?? string.Empty))
                     </EditorContent>
                 </BlazoredTextEditor>
-
-                @* <ValidationMessage For="() => _blogPost.Content" class="text-danger" /> *@
             </div>
         </div>
     </div>

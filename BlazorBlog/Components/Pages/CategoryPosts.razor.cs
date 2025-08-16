@@ -1,23 +1,25 @@
 ﻿namespace BlazorBlog.Components.Pages
 {
+    using Category = BlazorBlog.Domain.Entities.Category;
+
     public partial class CategoryPosts
     {
-        private Category _category;
+        private Category _category = new();
 
-        private BlogPost? _featured;
-        private BlogPost[] _popular = [];
-        private BlogPost[] _recent = [];
+        private BlogPostVm? _featured;
+        private BlogPostVm[] _popular = [];
+        private BlogPostVm[] _recent = [];
 
         private bool HasPosts => _featured is not null;
 
-        [Inject] NavigationManager NavigationManager { get; set; }
+    [Inject] NavigationManager NavigationManager { get; set; } = default!;
 
-        [Inject] IBlogPostService BlogPostService { get; set; }
+    [Inject] IBlogPostService BlogPostService { get; set; } = default!;
 
-        [Inject] ICategoryService CategoryService { get; set; }
+    [Inject] ICategoryService CategoryService { get; set; } = default!;
 
         [Parameter]
-        public string CategorySlug { get; set; }
+    public string CategorySlug { get; set; } = string.Empty;
 
         protected override async Task OnInitializedAsync()
         {
