@@ -17,7 +17,7 @@ namespace BlazorBlog.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.0")
+                .HasAnnotation("ProductVersion", "9.0.8")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -52,7 +52,7 @@ namespace BlazorBlog.Migrations
                         .HasMaxLength(25)
                         .HasColumnType("nvarchar(25)");
 
-                    b.Property<string>("NormalizedEmail")
+                    b.Property<string>(("NormalizedEmail"))
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
 
@@ -132,6 +132,11 @@ namespace BlazorBlog.Migrations
                     b.Property<DateTime?>("PublishedAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
                     b.Property<string>("Slug")
                         .IsRequired()
                         .HasMaxLength(125)
@@ -153,7 +158,16 @@ namespace BlazorBlog.Migrations
 
                     b.HasIndex("CategoryId");
 
+                    b.HasIndex("IsPublished", "CategoryId");
+
+                    b.HasIndex("IsPublished", "PublishedAt");
+
+                    b.HasIndex("Slug")
+                        .IsUnique();
+
                     b.HasIndex("UserId");
+
+                    b.HasIndex("ViewCount");
 
                     b.ToTable("BlogPosts", (string)null);
                 });

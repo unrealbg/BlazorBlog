@@ -5,6 +5,7 @@
     using Data;
     using Contracts;
     using Microsoft.EntityFrameworkCore;
+    using System.Threading;
 
     public class SubscriberRepository : ISubscriberRepository
     {
@@ -15,11 +16,11 @@
             _contextFactory = contextFactory;
         }
 
-        public async Task<string?> AddSubscriberAsync(Subscriber subscriber)
+        public async Task<string?> AddSubscriberAsync(Subscriber subscriber, CancellationToken cancellationToken = default)
         {
-            await using var context = await _contextFactory.CreateDbContextAsync();
+            await using var context = await _contextFactory.CreateDbContextAsync(cancellationToken);
             var existingSubscriber = await context.Subscribers
-                .FirstOrDefaultAsync(s => s.Email == subscriber.Email);
+                .FirstOrDefaultAsync(s => s.Email == subscriber.Email, cancellationToken);
 
             if (existingSubscriber != null)
             {
@@ -28,23 +29,23 @@
 
             subscriber.SubscribedOn = DateTime.UtcNow;
 
-            await context.Subscribers.AddAsync(subscriber);
-            await context.SaveChangesAsync();
+            await context.Subscribers.AddAsync(subscriber, cancellationToken);
+            await context.SaveChangesAsync(cancellationToken);
 
             return null;
         }
 
-        public async Task<PageResult<Subscriber>> GetSubscribersAsync(int startIndex, int pageSize)
+        public async Task<PageResult<Subscriber>> GetSubscribersAsync(int startIndex, int pageSize, CancellationToken cancellationToken = default)
         {
-            await using var context = await _contextFactory.CreateDbContextAsync();
-            var totalRecords = await context.Subscribers.CountAsync();
+            await using var context = await _contextFactory.CreateDbContextAsync(cancellationToken);
+            var totalRecords = await context.Subscribers.CountAsync(cancellationToken);
 
             var records = await context.Subscribers
                 .AsNoTracking()
                 .OrderByDescending(s => s.SubscribedOn)
                 .Skip(startIndex)
                 .Take(pageSize)
-                .ToArrayAsync();
+                .ToArrayAsync(cancellationToken);
 
             return new PageResult<Subscriber>(records, totalRecords);
         }

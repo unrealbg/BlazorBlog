@@ -1,12 +1,15 @@
-﻿namespace BlazorBlog.Services.Contracts;
-
-public interface ICategoryService
+﻿namespace BlazorBlog.Services.Contracts
 {
-    Task<Category[]> GetCategoriesAsync();
+    using System.Threading;
 
-    Task<Category> SaveCategoryAsync(Category category);
+    public interface ICategoryService
+    {
+        Task<Category[]> GetCategoriesAsync(CancellationToken cancellationToken = default);
 
-    Task<Category?> GetCategoryBySlugAsync(string slug);
+        Task<Category> SaveCategoryAsync(Category category, CancellationToken cancellationToken = default);
 
-    Task<bool> DeleteCategoryAsync(int id);
+        Task<Category?> GetCategoryBySlugAsync(string slug, CancellationToken cancellationToken = default);
+
+        Task<bool> DeleteCategoryAsync(int id, CancellationToken cancellationToken = default);
+    }
 }

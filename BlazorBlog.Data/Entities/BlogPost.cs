@@ -1,7 +1,12 @@
 ﻿namespace BlazorBlog.Data.Entities
 {
     using System.ComponentModel.DataAnnotations;
+    using Microsoft.EntityFrameworkCore;
 
+    [Index(nameof(Slug), IsUnique = true)]
+    [Index(nameof(IsPublished), nameof(CategoryId))]
+    [Index(nameof(IsPublished), nameof(PublishedAt))]
+    [Index(nameof(ViewCount))]
     public class BlogPost
     {
         public int Id { get; set; }
@@ -41,5 +46,8 @@
         public DateTime CreatedAt { get; set; }
 
         public DateTime? PublishedAt { get; set; }
+
+        [Timestamp]
+        public byte[]? RowVersion { get; set; }
     }
 }

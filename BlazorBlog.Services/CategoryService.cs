@@ -1,5 +1,7 @@
 ﻿namespace BlazorBlog.Services
 {
+    using System.Threading;
+
     using Repository.Contracts;
 
     public class CategoryService : ICategoryService
@@ -11,24 +13,24 @@
             _categoryRepository = categoryRepository;
         }
 
-        public async Task<Category[]> GetCategoriesAsync()
+        public async Task<Category[]> GetCategoriesAsync(CancellationToken cancellationToken = default)
         {
-            return await _categoryRepository.GetCategoriesAsync();
+            return await _categoryRepository.GetCategoriesAsync(cancellationToken);
         }
 
-        public async Task<Category> SaveCategoryAsync(Category category)
+        public async Task<Category> SaveCategoryAsync(Category category, CancellationToken cancellationToken = default)
         {
-            return await _categoryRepository.SaveCategoryAsync(category);
+            return await _categoryRepository.SaveCategoryAsync(category, cancellationToken);
         }
 
-        public async Task<bool> DeleteCategoryAsync(int id)
+        public async Task<bool> DeleteCategoryAsync(int id, CancellationToken cancellationToken = default)
         {
-            return await _categoryRepository.DeleteCategoryAsync(id);
+            return await _categoryRepository.DeleteCategoryAsync(id, cancellationToken);
         }
 
-        public async Task<Category?> GetCategoryBySlugAsync(string slug)
+        public async Task<Category?> GetCategoryBySlugAsync(string slug, CancellationToken cancellationToken = default)
         {
-            return await _categoryRepository.GetCategoryBySlugAsync(slug);
+            return await _categoryRepository.GetCategoryBySlugAsync(slug, cancellationToken);
         }
     }
 }
