@@ -1,4 +1,6 @@
-﻿@inject ISubscribeService SubscriberService
+﻿@using Subscriber = BlazorBlog.Domain.Entities.Subscriber
+@inject ISubscribeService SubscriberService
+@inject IValidator<Subscriber> Validator
 
 @attribute [StreamRendering ]
 
@@ -9,7 +11,7 @@
             Get the latest news right in your inbox. It's free and you can unsubscribe at any time. We hate spam as much as we do, so we never spam!
         </div>
         <div class="col-md-6">
-            <EditForm Model="Subscriber" method="post" OnValidSubmit="SubscribeAsync" FormName="subscribe-form" Enhance>
+            <EditForm EditContext="_editContext" method="post" OnSubmit="SubscribeAsync" FormName="subscribe-form" Enhance>
                 <DataAnnotationsValidator />
                 <div class="row">
                     <div class="col-md-6">
@@ -43,8 +45,32 @@
 
     private string? _message;
 
+    private EditContext _editContext = default!;
+    private ValidationMessageStore? _messageStore;
+
+    protected override void OnInitialized()
+    {
+        _editContext = new EditContext(Subscriber);
+        _messageStore = new ValidationMessageStore(_editContext);
+    }
+
     private async Task SubscribeAsync()
     {
+        _message = null;
+        _messageStore!.Clear();
+
+        var validationResult = await Validator.ValidateAsync(Subscriber);
+        if (!validationResult.IsValid)
+        {
+            foreach (var error in validationResult.Errors)
+            {
+                var fi = new FieldIdentifier(Subscriber, error.PropertyName);
+                _messageStore.Add(fi, error.ErrorMessage);
+            }
+            _editContext.NotifyValidationStateChanged();
+            return;
+        }
+
         _message = "Subscribing...";
 
         var errorMessage = await SubscriberService.AddSubscriberAsync(Subscriber);
@@ -57,6 +83,8 @@
         {
             _message = "You have successfully subscribed.";
             Subscriber = new Subscriber();
+            _editContext = new EditContext(Subscriber);
+            _messageStore = new ValidationMessageStore(_editContext);
         }
     }
 }
