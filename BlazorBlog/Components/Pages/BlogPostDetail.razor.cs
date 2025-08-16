@@ -2,17 +2,21 @@
 {
     public partial class BlogPostDetail
     {
-        private BlogPost _blogPost = new BlogPost();
-        private BlogPost[] _relatedPosts = [];
+        private BlogPostVm _blogPost = new BlogPostVm();
+        private BlogPostVm[] _relatedPosts = [];
+        private string _categorySlug = string.Empty;
+        private string _categoryName = string.Empty;
+        private string _authorName = string.Empty;
+        private string _publishedAt = string.Empty;
 
-        [Inject] 
-        NavigationManager NavigationManager { get; set; }
+    [Inject] 
+    NavigationManager NavigationManager { get; set; } = default!;
 
-        [Inject] 
-        IBlogPostService BlogPostService { get; set; }
+    [Inject] 
+    IBlogPostService BlogPostService { get; set; } = default!;
 
-        [Parameter]
-        public string BlogPostSlug { get; set; }
+    [Parameter]
+    public string BlogPostSlug { get; set; } = string.Empty;
 
         private readonly CancellationTokenSource _cts = new();
 
@@ -28,6 +32,12 @@
 
             _blogPost = result.BlogPost;
             _relatedPosts = result.RelatedPosts;
+
+            // Pull enriched fields from VM once Service populates them
+            _categorySlug = _blogPost.CategorySlug ?? string.Empty;
+            _categoryName = _blogPost.CategoryName ?? string.Empty;
+            _authorName = _blogPost.AuthorName ?? string.Empty;
+            _publishedAt = _blogPost.PublishedAtDisplay ?? string.Empty;
         }
 
         public void Dispose()

@@ -1,26 +1,28 @@
 ﻿namespace BlazorBlog.Components.Pages
 {
+    using Category = BlazorBlog.Domain.Entities.Category;
+
     public partial class PagedCategoryPosts
     {
         private const int PageSize = 2;
 
         private string PageTitle => $"{_category?.Name} Posts {(_pageNumber > 1 ? $"(Page - {_pageNumber})" : "")}";
         private int _pageNumber = 1;
-        private Category _category;
-        private BlogPost[] _posts = [];
-        private BlogPost[] _popular = [];
+    private Category _category = new();
+        private BlogPostVm[] _posts = [];
+        private BlogPostVm[] _popular = [];
 
-        [Inject] 
-        NavigationManager NavigationManager { get; set; }
+    [Inject] 
+    NavigationManager NavigationManager { get; set; } = default!;
 
-        [Inject] 
-        IBlogPostService BlogPostService { get; set; }
+    [Inject] 
+    IBlogPostService BlogPostService { get; set; } = default!;
 
-        [Inject] 
-        ICategoryService CategoryService { get; set; }
+    [Inject] 
+    ICategoryService CategoryService { get; set; } = default!;
 
-        [Parameter]
-        public string CategorySlug { get; set; }
+    [Parameter]
+    public string CategorySlug { get; set; } = string.Empty;
 
         [Parameter]
         public int? UriPageNumber { get; set; }

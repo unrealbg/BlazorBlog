@@ -2,14 +2,14 @@
 {
     public partial class Home
     {
-        private BlogPost[] _featured = [];
-        private BlogPost[] _popular = [];
-        private BlogPost[] _recent = [];
+        private BlogPostVm[] _featured = [];
+        private BlogPostVm[] _popular = [];
+        private BlogPostVm[] _recent = [];
 
-        private BlogPost _firstFeatured = default!;
+        private BlogPostVm _firstFeatured = default!;
 
-        [Inject] 
-        IBlogPostService BlogPostService { get; set; }
+    [Inject] 
+    IBlogPostService BlogPostService { get; set; } = default!;
 
         private readonly CancellationTokenSource _cts = new();
 
