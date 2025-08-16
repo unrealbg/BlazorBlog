@@ -1,12 +1,14 @@
 ﻿@page "/admin/manage-categories"
 
+@attribute [Authorize(Roles = "Admin")]
+
 @rendermode @(new InteractiveServerRenderMode(prerender: false))
 
 <PageTitle>@Utils.GetPageTitle("Manage Categories")</PageTitle>
 
 <AdminHeader Title="Manage Categories">
     <ActionButtons>
-        <button type="button" class="btn btn-primary btn-sm" @onclick="() => this._operatingCategory = new Category()">+ Add new Category</button>
+        <button type="button" class="btn btn-primary btn-sm" @onclick="StartAddCategory">+ Add new Category</button>
     </ActionButtons>
 </AdminHeader>
 
@@ -25,7 +27,7 @@
     <div class="row">
         <div class="col-sm-6"></div>
         <div class="col-sm-6">
-            <EditForm Model="this._operatingCategory" OnValidSubmit="SaveCategoryAsync">
+            <EditForm EditContext="_editContext" OnSubmit="SaveCategoryAsync">
                 <DataAnnotationsValidator />
                 <div class="shadow p-3" style="display: grid; grid-template-columns: auto 150px; grid-column-gap: 15px">
                     <div>
@@ -39,7 +41,7 @@
                     </div>
                     <div class="d-flex flex-column">
                         <button type="submit" class="btn btn-sm btn-success mb-2">Save</button>
-                        <button type="submit" class="btn btn-sm btn-danger" @onclick="() => this._operatingCategory = null">Cancel</button>
+                        <button type="button" class="btn btn-sm btn-danger" @onclick="() => CancelEdit()">Cancel</button>
                     </div>
                 </div>
             </EditForm>
@@ -54,11 +56,12 @@
     <TemplateColumn Title="Show on Navbar" Align="Align.Center">
             <label class="switch">
                 <input type="checkbox" @bind="context.ShowOnNavBar" @bind:after="(() => HandleShowOnNavBarChanged(context))" />
-                <span class="switch-slider round"></span>
-            </label>
+            <span class="switch-slider"></span>
+        </label>
     </TemplateColumn>
     <TemplateColumn Title="Actions" Align="Align.Center">
-        <button type="button" class="btn btn-sm btn-primary mr-1" style="width: 80px;" @onclick="() => HandleEditCategory(context)">Edit</button>
-        <button type="button" class="btn btn-sm btn-danger" style="width: 80px;" @onclick="() => ConfirmDeleteCategory(context)">Delete</button>
+        <button type="button" class="btn btn-primary btn-sm admin-button" @onclick="() => HandleEditCategory(context)">Edit</button>
+        <button type="button" class="btn btn-danger btn-sm admin-button" @onclick="() => ConfirmDeleteCategory(context)">Delete</button>
     </TemplateColumn>
 </QuickGrid>
+<Paginator State="_paginationState" />

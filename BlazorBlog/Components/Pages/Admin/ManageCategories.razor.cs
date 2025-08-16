@@ -1,47 +1,98 @@
 ﻿namespace BlazorBlog.Components.Pages.Admin
 {
-    public partial class ManageCategories
+    using Category = BlazorBlog.Domain.Entities.Category;
+
+    public partial class ManageCategories : IDisposable
     {
         private bool _isLoading;
         private string? _loadingText;
 
         private bool _showConfirmationModal = false;
 
-        private Category? _operatingCategory;
+        private Category? _operatingCategory; // for add/edit form only
+        private Category? _categoryToDelete;  // for delete confirmation only
         private IQueryable<Category> _categories = Enumerable.Empty<Category>().AsQueryable();
+
+        private readonly CancellationTokenSource _cts = new();
+
+        private const int PageSize = 10;
+        private PaginationState _paginationState = new PaginationState
+        {
+            ItemsPerPage = PageSize
+        };
+
+        private EditContext _editContext = default!;
+        private ValidationMessageStore? _messageStore;
+
+    [Inject]
+    IValidator<Category> Validator { get; set; } = default!;
 
         protected override async Task OnInitializedAsync() => await LoadCategoriesAsync();
 
-        [Inject]
-        ICategoryService CategoryService { get; set; }
+    [Inject]
+    ICategoryService CategoryService { get; set; } = default!;
 
-        [Inject]
-        NavigationManager NavigationManager { get; set; }
+    [Inject]
+    NavigationManager NavigationManager { get; set; } = default!;
 
-        [Inject]
-        IToastService ToastService { get; set; }
+    [Inject]
+    IToastService ToastService { get; set; } = default!;
 
         private async Task HandleShowOnNavBarChanged(Category category)
         {
             _loadingText = "Saving changes";
             _isLoading = true;
-            await CategoryService.SaveCategoryAsync(category);
+            await CategoryService.SaveCategoryAsync(category, _cts.Token);
             _isLoading = false;
             NavigationManager.Refresh();
         }
 
-        private void HandleEditCategory(Category category) => _operatingCategory = category.Clone();
+        private void StartAddCategory()
+        {
+            _operatingCategory = new Category();
+            _editContext = new EditContext(_operatingCategory);
+            _messageStore = new ValidationMessageStore(_editContext);
+        }
+
+        private void HandleEditCategory(Category category)
+        {
+            _operatingCategory = new Category { Id = category.Id, Name = category.Name, Slug = category.Slug, ShowOnNavBar = category.ShowOnNavBar };
+            _editContext = new EditContext(_operatingCategory);
+            _messageStore = new ValidationMessageStore(_editContext);
+        }
+
+        private void CancelEdit()
+        {
+            _operatingCategory = null;
+            _editContext = new EditContext(new Category());
+            _messageStore = new ValidationMessageStore(_editContext);
+        }
 
         private async Task SaveCategoryAsync()
         {
             if (_operatingCategory is not null)
             {
+                _messageStore!.Clear();
+
+                var validation = await Validator.ValidateAsync(_operatingCategory, _cts.Token);
+                if (!validation.IsValid)
+                {
+                    foreach (var error in validation.Errors)
+                    {
+                        var fi = new FieldIdentifier(_operatingCategory, error.PropertyName);
+                        _messageStore.Add(fi, error.ErrorMessage);
+                    }
+                    _editContext.NotifyValidationStateChanged();
+                    return;
+                }
+
                 _loadingText = "Saving changes";
                 _isLoading = true;
 
                 var isCategoryExisting = _operatingCategory.Id > 0;
 
-                await CategoryService.SaveCategoryAsync(_operatingCategory);
+                var saved = await CategoryService.SaveCategoryAsync(_operatingCategory, _cts.Token);
+                _operatingCategory = saved;
 
                 var operation = isCategoryExisting ? "updated" : "added";
                 ToastService.ShowToast(ToastLevel.Success, $"Category {operation} successfully.", heading: "Success");
@@ -57,56 +108,54 @@
         {
             _loadingText = "Fetching categories";
             _isLoading = true;
-            _categories = (await CategoryService.GetCategoriesAsync()).AsQueryable();
+            _categories = (await CategoryService.GetCategoriesAsync(_cts.Token)).AsQueryable();
             _isLoading = false;
         }
 
         private void ConfirmDeleteCategory(Category category)
         {
-            _operatingCategory = category;
+            _categoryToDelete = category; // keep separate from editing
             _showConfirmationModal = true;
         }
 
         private async Task DeleteCategoryAsync(int id)
         {
-            if (_operatingCategory is not null)
+            _loadingText = "Deleting category";
+            _isLoading = true;
+
+            var isDeleted = await CategoryService.DeleteCategoryAsync(id, _cts.Token);
+
+            if (!isDeleted)
             {
-                _loadingText = "Deleting category";
-                _isLoading = true;
-                var isDeleted = await CategoryService.DeleteCategoryAsync(id);
-
-                if (!isDeleted)
-                {
-                    ToastService.ShowToast(ToastLevel.Error, "Failed to delete category", heading: "Error");
-                    _isLoading = false;
-                    return;
-                }
-
-                ToastService.ShowToast(ToastLevel.Success, "Category deleted successfully.", heading: "Success");
-
-                _operatingCategory = null;
-
+                ToastService.ShowToast(ToastLevel.Error, "Failed to delete category", heading: "Error");
                 _isLoading = false;
-
-                await LoadCategoriesAsync();
+                return;
             }
+
+            ToastService.ShowToast(ToastLevel.Success, "Category deleted successfully.", heading: "Success");
+
+            _operatingCategory = null; // ensure form not rendered
+            _categoryToDelete = null;
+
+            _isLoading = false;
+
+            await LoadCategoriesAsync();
         }
 
         private async Task OnModalConfirm(bool isConfirmed)
         {
             _showConfirmationModal = false;
-            if (isConfirmed)
+            if (isConfirmed && _categoryToDelete is not null)
             {
-                if (_operatingCategory != null)
-                {
-                    await DeleteCategoryAsync(_operatingCategory.Id);
-                }
+                await DeleteCategoryAsync(_categoryToDelete.Id);
             }
+            _categoryToDelete = null;
         }
 
-        private void CancelDelete()
+        public void Dispose()
         {
-            _showConfirmationModal = false;
+            _cts.Cancel();
+            _cts.Dispose();
         }
     }
 }
