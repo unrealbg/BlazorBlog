@@ -1,15 +1,15 @@
 namespace BlazorBlog
 {
     using Components.Account;
-    using Data;
-    using Services;
+    using BlazorBlog.Infrastructure;
     using Ganss.Xss;
     using Microsoft.AspNetCore.Identity;
     using Microsoft.EntityFrameworkCore;
-    using Repository.Contracts;
-    using Repository;
+    using BlazorBlog.Application;
     using Microsoft.Extensions.Logging;
     using Serilog;
+    using BlazorBlog.Infrastructure.Persistence;
+
 
     public class Program
     {
@@ -23,7 +23,6 @@ namespace BlazorBlog
                 .CreateLogger();
             builder.Host.UseSerilog(Log.Logger, true);
 
-            // Add services to the container.
             builder.Services.AddRazorComponents()
                 .AddInteractiveServerComponents(options => options.DetailedErrors = true);
 
@@ -39,45 +38,15 @@ namespace BlazorBlog
                 })
                 .AddIdentityCookies();
 
-            var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+            builder.Services.AddInfrastructure(builder.Configuration);
 
-            builder.Services.AddDbContextPool<ApplicationDbContext>(options =>
-                options.UseSqlServer(connectionString));
-
-            builder.Services.AddPooledDbContextFactory<ApplicationDbContext>(options =>
-                options.UseSqlServer(connectionString));
+            builder.Services.AddApplication();
 
             builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-            builder.Services.AddIdentityCore<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = false)
-                .AddRoles<IdentityRole>()
-                .AddEntityFrameworkStores<ApplicationDbContext>()
-                .AddSignInManager()
-                .AddDefaultTokenProviders();
+            builder.Services.AddInfrastructureServices();
 
-            builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
-
-            builder.Services.AddMemoryCache();
-            builder.Services.AddSingleton<BlazorBlog.Services.Utilities.IBlogCacheSignal, BlazorBlog.Services.Utilities.BlogCacheSignal>();
-
-            builder.Services.AddScoped<IToastService, ToastService>();
-
-            builder.Services
-                .AddScoped<ISeedService, SeedService>()
-                .AddScoped<ICategoryService, CategoryService>()
-                .AddScoped<IBlogPostAdminService, BlogPostAdminService>()
-                .AddScoped<IBlogPostService, BlogPostService>()
-                .AddScoped<ISubscribeService, SubscribeService>()
-                .AddScoped<IBlogPostRepository, BlogPostRepository>()
-                .AddScoped<ICategoryRepository, CategoryRepository>()
-                .AddScoped<ISubscriberRepository, SubscriberRepository>()
-                .AddScoped<ISlugService, SlugService>();
-
-            builder.Services.AddSingleton<IHtmlSanitizer, HtmlSanitizer>(provider =>
-            {
-                var sanitizer = new HtmlSanitizer();
-                return sanitizer;
-            });
+            builder.Services.AddSingleton<IHtmlSanitizer, HtmlSanitizer>(_ => new HtmlSanitizer());
 
             var app = builder.Build();
 
@@ -99,27 +68,28 @@ namespace BlazorBlog
             }
 
             app.UseHttpsRedirection();
-
             app.UseStaticFiles();
             app.UseAntiforgery();
 
             app.MapRazorComponents<App>()
                 .AddInteractiveServerRenderMode();
 
-            // Add additional endpoints required by the Identity /Account Razor components.
             app.MapAdditionalIdentityEndpoints();
+
+                // Lightweight health endpoint
+                app.MapGet("/health", () => Results.Ok(new { status = "ok", timeUtc = DateTime.UtcNow }))
+                    .WithName("Health");
 
             app.Run();
 
-            static async Task ApplyMigrationsAsync(IServiceProvider services)
+        static async Task ApplyMigrationsAsync(IServiceProvider services)
             {
                 await using var scope = services.CreateAsyncScope();
                 var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
                 try
                 {
                     logger.LogInformation("Applying database migrations...");
-                    var factory = scope.ServiceProvider.GetRequiredService<IDbContextFactory<ApplicationDbContext>>();
-                    await using var db = await factory.CreateDbContextAsync();
+            var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
                     await db.Database.MigrateAsync();
                     logger.LogInformation("Database migrations applied successfully.");
                 }
