@@ -38,4 +38,12 @@
     <Folder Include="wwwroot\images\posts\" />
   </ItemGroup>
 
+  <!-- Optional: build Tailwind CSS on publish -->
+  <Target Name="BuildTailwindCss" BeforeTargets="Publish">
+    <Message Text="Building Tailwind CSS..." Importance="High" />
+    <Exec Command="npm ci" WorkingDirectory="$(MSBuildProjectDirectory)" Condition="Exists('package-lock.json')" />
+    <Exec Command="npm install" WorkingDirectory="$(MSBuildProjectDirectory)" Condition="!Exists('package-lock.json')" />
+    <Exec Command="npx tailwindcss -c tailwind.config.js -i ./Styles/tailwind.css -o ./wwwroot/app.css --minify" WorkingDirectory="$(MSBuildProjectDirectory)" />
+  </Target>
+
 </Project>
