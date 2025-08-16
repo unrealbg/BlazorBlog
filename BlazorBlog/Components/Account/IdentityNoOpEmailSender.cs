@@ -1,6 +1,6 @@
 namespace BlazorBlog.Components.Account
 {
-    using BlazorBlog.Data;
+    using BlazorBlog.Infrastructure.Persistence;
 
     using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Identity.UI.Services;

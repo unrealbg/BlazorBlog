@@ -2,7 +2,7 @@ namespace BlazorBlog.Components.Account
 {
     using System.Security.Claims;
 
-    using Data;
+    using BlazorBlog.Infrastructure.Persistence;
 
     using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Mvc;
