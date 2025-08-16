@@ -8,7 +8,7 @@
 
 <AdminHeader Title="Manage Categories">
     <ActionButtons>
-        <button type="button" class="btn btn-primary btn-sm" @onclick="StartAddCategory">+ Add new Category</button>
+    <button type="button" class="inline-flex items-center rounded-md bg-brand-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-brand-700" @onclick="StartAddCategory">+ Add new Category</button>
     </ActionButtons>
 </AdminHeader>
 
@@ -24,24 +24,25 @@
 
 @if (this._operatingCategory is not null)
 {
-    <div class="row">
-        <div class="col-sm-6"></div>
-        <div class="col-sm-6">
+    <div class="grid grid-cols-1 gap-6 lg:grid-cols-12">
+        <div class="lg:col-span-6 lg:col-start-7">
             <EditForm EditContext="_editContext" OnSubmit="SaveCategoryAsync">
                 <DataAnnotationsValidator />
-                <div class="shadow p-3" style="display: grid; grid-template-columns: auto 150px; grid-column-gap: 15px">
-                    <div>
-                        <labl class="form-label">Category Name</labl>
-                        <InputText @bind-Value="this._operatingCategory.Name" class="form-control form-control-sm" placeholder="Category name" />
-                        <ValidationMessage For="() => this._operatingCategory.Name" />
-                        <label class="form-label mt-2">
-                            <InputCheckbox @bind-Value="this._operatingCategory.ShowOnNavBar" />
-                            Show on Navbar
-                        </label>
-                    </div>
-                    <div class="d-flex flex-column">
-                        <button type="submit" class="btn btn-sm btn-success mb-2">Save</button>
-                        <button type="button" class="btn btn-sm btn-danger" @onclick="() => CancelEdit()">Cancel</button>
+                <div class="rounded-xl border border-slate-200/60 bg-white p-4 shadow-soft dark:border-slate-800 dark:bg-slate-900">
+                    <div class="grid grid-cols-1 gap-4 lg:grid-cols-12 lg:gap-6">
+                        <div class="lg:col-span-9">
+                            <label class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-200">Category Name</label>
+                            <InputText @bind-Value="this._operatingCategory.Name" class="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 placeholder-slate-400 shadow-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100" placeholder="Category name" />
+                            <ValidationMessage For="() => this._operatingCategory.Name" />
+                            <label class="mt-3 inline-flex items-center gap-2 text-sm text-slate-700 dark:text-slate-300">
+                                <InputCheckbox @bind-Value="this._operatingCategory.ShowOnNavBar" />
+                                Show on Navbar
+                            </label>
+                        </div>
+                        <div class="lg:col-span-3 flex flex-col justify-start gap-2">
+                            <button type="submit" class="inline-flex items-center justify-center rounded-md bg-emerald-600 px-3 py-2 text-sm font-medium text-white hover:bg-emerald-700">Save</button>
+                            <button type="button" class="inline-flex items-center justify-center rounded-md bg-red-600 px-3 py-2 text-sm font-medium text-white hover:bg-red-700" @onclick="() => CancelEdit()">Cancel</button>
+                        </div>
                     </div>
                 </div>
             </EditForm>
@@ -49,19 +50,25 @@
     </div>
 }
 
-<QuickGrid Items="@_categories" class="table table-bordered table-striped table-hover">
+<div class="mt-6 overflow-hidden rounded-xl border border-slate-200/60 bg-white shadow-soft dark:border-slate-800 dark:bg-slate-900">
+<QuickGrid Items="@_categories" class="w-full text-left text-sm divide-y divide-slate-200 dark:divide-slate-800 [&_thead_th]:bg-slate-50 dark:[&_thead_th]:bg-slate-800 [&_thead_th]:text-slate-700 dark:[&_thead_th]:text-slate-200 [&_th]:px-3 [&_td]:px-3 [&_th]:py-2 [&_td]:py-2 [&_tbody_tr:nth-child(odd)]:bg-slate-50 dark:[&_tbody_tr:nth-child(odd)]:bg-slate-800/40">
     <PropertyColumn Property="@(c => c.Id)" Align="Align.Center" />
     <PropertyColumn Property="@(c => c.Name)" Align="Align.Center" />
     <PropertyColumn Property="@(c => c.Slug)" Align="Align.Center" />
     <TemplateColumn Title="Show on Navbar" Align="Align.Center">
-            <label class="switch">
-                <input type="checkbox" @bind="context.ShowOnNavBar" @bind:after="(() => HandleShowOnNavBarChanged(context))" />
-            <span class="switch-slider"></span>
+        <label class="inline-flex cursor-pointer items-center">
+            <input type="checkbox" @bind="context.ShowOnNavBar" @bind:after="(() => HandleShowOnNavBarChanged(context))" class="peer sr-only" />
+            <span class="relative h-5 w-9 rounded-full bg-slate-300 transition-colors peer-checked:bg-emerald-600">
+                <span class="absolute left-0.5 top-0.5 h-4 w-4 rounded-full bg-white shadow transition-transform peer-checked:translate-x-4"></span>
+            </span>
         </label>
     </TemplateColumn>
     <TemplateColumn Title="Actions" Align="Align.Center">
-        <button type="button" class="btn btn-primary btn-sm admin-button" @onclick="() => HandleEditCategory(context)">Edit</button>
-        <button type="button" class="btn btn-danger btn-sm admin-button" @onclick="() => ConfirmDeleteCategory(context)">Delete</button>
+        <button type="button" class="mr-2 inline-flex items-center rounded-md bg-brand-600 px-3 py-1 text-xs font-medium text-white hover:bg-brand-700" @onclick="() => HandleEditCategory(context)">Edit</button>
+        <button type="button" class="inline-flex items-center rounded-md bg-red-600 px-3 py-1 text-xs font-medium text-white hover:bg-red-700" @onclick="() => ConfirmDeleteCategory(context)">Delete</button>
     </TemplateColumn>
 </QuickGrid>
-<Paginator State="_paginationState" />
+</div>
+<div class="mt-4">
+    <Paginator State="_paginationState" />
+</div>

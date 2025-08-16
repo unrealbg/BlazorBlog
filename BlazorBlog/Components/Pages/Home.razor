@@ -4,45 +4,48 @@
 
 @if (_firstFeatured is not null)
 {
-    <div class="container">
-        <div class="jumbotron jumbotron-fluid mb-3 pt-0 pb-0 bg-lightblue position-relative">
-            <div class="pl-4 pr-0 h-100 tofront">
-                <div class="row justify-content-between">
-                    <div class="col-md-6 pt-6 pb-6 align-self-center">
-                        <h1 class="secondfont mb-3 font-weight-bold">@_firstFeatured.Title</h1>
-                        <p class="mb-3">
-                            @_firstFeatured.Introduction
-                        </p>
+        <section class="relative overflow-hidden border-b border-slate-100 bg-gradient-to-tr from-brand-700 via-brand-600 to-accent-600 text-white dark:border-slate-900">
+            <div class="relative mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+                <div class="grid items-center gap-8 md:grid-cols-2">
+                    <div>
+                        <h1 class="mb-3 text-3xl font-extrabold leading-tight sm:text-4xl md:text-5xl">@_firstFeatured.Title</h1>
+                        <p class="mb-4 text-white/90">@_firstFeatured.Introduction</p>
                         @if (!string.IsNullOrWhiteSpace(_firstFeatured.Slug))
                         {
-                            <a href="/posts/@_firstFeatured.Slug" class="btn btn-dark">Read More</a>
+                            <a href="/posts/@_firstFeatured.Slug" class="inline-flex items-center rounded-xl bg-white px-4 py-2 text-sm font-semibold text-brand-700 shadow-soft transition hover:shadow">Read More</a>
                         }
                         else
                         {
-                            <button class="btn btn-dark" disabled title="This post has no slug yet">Read More</button>
+                            <button class="inline-flex items-center cursor-not-allowed rounded-xl border border-white/40 px-4 py-2 text-sm font-semibold text-white/70" disabled title="This post has no slug yet">Read More</button>
                         }
                     </div>
-                    <div class="col-md-6 d-none d-md-block pr-0 shano-div-class" style="background-image: url(@_firstFeatured.Image);"> </div>
-
+                    <div class="hidden md:block">
+                        <div class="aspect-[16/9] w-full rounded-2xl bg-slate-100 bg-cover bg-center shadow-sm dark:bg-slate-800" style="background-image:url('@_firstFeatured.Image')"></div>
+                    </div>
                 </div>
             </div>
-        </div>
-    </div>
+        </section>
 }
 
-<div class="container pt-4 pb-4">
+<div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
     <FeaturedBlogPosts Posts="_featured" />
-</div>
-
-<div class="container">
-    <div class="row justify-content-between">
-        <div class="col-md-8">
-            <h5 class="font-weight-bold spanborder"><span>Latest Posts</span></h5>
-            <BlogPostList Posts="_recent" />
-        </div>
-        <div class="col-md-4 pl-4">
-            <h5 class="font-weight-bold spanborder"><span>Popular</span></h5>
-            <PopularBlogPostList Posts="_popular" />
-        </div>
     </div>
-</div>
+
+<div class="mx-auto max-w-7xl px-4 pb-10 sm:px-6 lg:px-8">
+    <div class="grid gap-8 lg:grid-cols-12">
+        <section class="lg:col-span-8">
+            <div class="mb-6 flex items-center justify-between">
+                <h2 class="text-xl font-bold">Latest Posts</h2>
+            </div>
+            <BlogPostList Posts="_recent" />
+        </section>
+        <aside class="lg:col-span-4">
+            <div class="lg:sticky lg:top-24 space-y-6">
+                <div>
+                    <h2 class="text-xl font-bold">Popular</h2>
+                    <PopularBlogPostList Posts="_popular" />
+                </div>
+            </div>
+        </aside>
+    </div>
+    </div>

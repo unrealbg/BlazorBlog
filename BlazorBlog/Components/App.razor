@@ -6,21 +6,52 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <base href="/" />
 
-    <!-- Google Font -->
-    <link href="https://fonts.googleapis.com/css?family=Playfair+Display:400,700|Source+Sans+Pro:400,600,700" rel="stylesheet">
-    <!-- Main CSS -->
-    <link href="assets/css/main.css" rel="stylesheet" />
+        <!-- TailwindCSS CDN (prototype). For production prefer PostCSS build. -->
+        <script src="https://cdn.tailwindcss.com"></script>
+        <script>
+            tailwind.config = {
+                theme: {
+                    extend: {
+                        colors: {
+                            brand: { 50:'#eef2ff',100:'#e0e7ff',200:'#c7d2fe',300:'#a5b4fc',400:'#818cf8',500:'#6366f1',600:'#4f46e5',700:'#4338ca',800:'#3730a3',900:'#312e81' },
+                            accent: { 400:'#f59e0b',500:'#f59e0b',600:'#d97706' }
+                        },
+                        boxShadow: { soft: '0 10px 30px -12px rgba(0,0,0,0.25)' }
+                    }
+                }
+            }
+        </script>
 
-    <link rel="stylesheet" href="app.css" />
+        <!-- Inter font -->
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+        <style>
+            html { font-family: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji"; }
+        </style>
+
+        <!-- Dark mode init -->
+        <script>
+            (() => {
+                const stored = localStorage.getItem('theme');
+                const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                if (stored === 'dark' || (!stored && prefersDark)) {
+                    document.documentElement.classList.add('dark');
+                } else {
+                    document.documentElement.classList.remove('dark');
+                }
+            })();
+        </script>
+
     <link rel="stylesheet" href="BlazorBlog.styles.css" />
     <link rel="icon" type="image/png" href="favicon.png" />
 
     <HeadOutlet />
 </head>
 
-<body>
+<body class="bg-white text-slate-800 dark:bg-slate-950 dark:text-slate-100 selection:bg-brand-500/20">
     <Routes />
-    <!-- Main JS -->
+    <!-- Theme helpers (menu/theme toggles) -->
     <script src="assets/js/functions.js" type="text/javascript"></script>
 
     <SectionOutlet SectionName="scripts" />

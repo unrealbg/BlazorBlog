@@ -1,20 +1,16 @@
-document.addEventListener('DOMContentLoaded', _ => {
-    const topNav = document.getElementsByClassName('.topnav')[0];
+document.addEventListener("DOMContentLoaded", () => {
+  // Mobile nav toggle for Tailwind header
+  const menuBtn = document.getElementById("menuBtn");
+  const mobileNav = document.getElementById("mobileNav");
+  menuBtn?.addEventListener("click", () =>
+    mobileNav?.classList.toggle("hidden")
+  );
 
-    if (topNav) {
-        window.onscroll = () => {
-            if (window.scrollY > 50) {
-                topNav.classList.add('scrollednav', 'py-0');
-            }
-            else {
-                topNav.classList.remove('scrollednav', 'py-0');
-            }
-        }
-    }
+  // Theme toggle (dark/light)
+  const themeBtn = document.getElementById("themeToggle");
+  themeBtn?.addEventListener("click", () => {
+    const root = document.documentElement;
+    const isDark = root.classList.toggle("dark");
+    localStorage.setItem("theme", isDark ? "dark" : "light");
+  });
 });
-
-function toggleMenu(e) {
-    e.target.classList.toggle('collapsed');
-    const navBarWrapper = document.getElementById('top-navbar-menu-wrapper');
-    navBarWrapper.classList.toggle('show');
-}

@@ -13,10 +13,14 @@
     <Loader LoaderText="Fetching subscribers..." />
 }
 
-<QuickGrid ItemsProvider="_subscribersProvider" TItem="BlazorBlog.Domain.Entities.Subscriber" Pagination="_paginationState" class="table table-bordered table-striped">
+<div class="overflow-hidden rounded-xl border border-slate-200/60 bg-white shadow-soft dark:border-slate-800 dark:bg-slate-900">
+<QuickGrid ItemsProvider="_subscribersProvider" TItem="BlazorBlog.Domain.Entities.Subscriber" Pagination="_paginationState" class="w-full text-left text-sm divide-y divide-slate-200 dark:divide-slate-800 [&_thead_th]:bg-slate-50 dark:[&_thead_th]:bg-slate-800 [&_thead_th]:text-slate-700 dark:[&_thead_th]:text-slate-200 [&_th]:px-3 [&_td]:px-3 [&_th]:py-2 [&_td]:py-2 [&_tbody_tr:nth-child(odd)]:bg-slate-50 dark:[&_tbody_tr:nth-child(odd)]:bg-slate-800/40">
     <PropertyColumn Property="c => c.Name" />
     <PropertyColumn Property="c => c.Email" />
     <PropertyColumn Property="c => c.SubscribedOn" Format="dd-MMM-yyyy hh:mm:ss" Title="Subscribed On" />
 </QuickGrid>
-<Paginator State="_paginationState" />
+</div>
+<div class="mt-4">
+    <Paginator State="_paginationState" />
+</div>
 

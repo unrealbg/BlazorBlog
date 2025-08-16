@@ -3,14 +3,13 @@
 
 <PageTitle>@Utils.GetPageTitle(PageTitle)</PageTitle>
 
-<div class="container mt-5 mb-5">
-    <div class="row">
-        <div class="col-md-8">
+<div class="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
+    <div class="grid grid-cols-1 gap-8 lg:grid-cols-12">
+        <div class="lg:col-span-8">
 
-            <h5 class="font-weight-bold spanborder"><span>@PageTitle</span></h5>
+            <h5 class="mb-4 text-base font-semibold tracking-wide text-slate-700 dark:text-slate-300">@PageTitle</h5>
             <BlogPostList Posts="_posts" />
-            <hr />
-            <div class="d-flex justify-content-between">
+            <div class="my-6 flex items-center justify-between">
                 @if (_pageNumber > 1)
                 {
                     var prevPageUrl = $"{CategorySlug}-posts/all";
@@ -19,32 +18,31 @@
                         prevPageUrl += $"/page-{_pageNumber - 1}";
                     }
 
-                    <a href="@prevPageUrl" class="btn btn-sm btn-outline-primary">Previous Page</a>
+                    <a href="@prevPageUrl" class="inline-flex items-center rounded-md border border-brand-600 px-3 py-1 text-sm font-medium text-brand-700 hover:bg-brand-50 dark:text-brand-400">Previous Page</a>
                 }
                 else
                 {
-                    <span>&nbsp;</span>
+                    <span></span>
                 }
 
                 @if(_posts.Length == PageSize)
                 {
                     var nextPageUrl = $"{CategorySlug}-posts/all/page-{_pageNumber + 1}";
-                    <a href="@nextPageUrl" class="btn btn-sm btn-outline-primary">Next Page</a>
+                    <a href="@nextPageUrl" class="inline-flex items-center rounded-md border border-brand-600 px-3 py-1 text-sm font-medium text-brand-700 hover:bg-brand-50 dark:text-brand-400">Next Page</a>
                 }
 
             </div>
-            <hr />
         </div>
 
-        <div class="col-md-4 pl-4">
-            <div class="sticky-top">
-                <h5 class="font-weight-bold spanborder"><span>Popular in @_category?.Name</span></h5>
+        <div class="lg:col-span-4 lg:pl-6">
+            <div class="sticky top-24">
+                <h5 class="mb-4 text-base font-semibold tracking-wide text-slate-700 dark:text-slate-300">Popular in @_category?.Name</h5>
                 <PopularBlogPostList Posts="_popular" />
             </div>
         </div>
     </div>
 </div>
 
-<div class="container pt-4 pb-4">
+<div class="mx-auto max-w-7xl px-4 pb-10 sm:px-6 lg:px-8">
     <SubscribeBox />
 </div>

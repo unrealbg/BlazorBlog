@@ -4,47 +4,38 @@
 
 @if (_blogPost.Id > 0)
 {
-    <div class="container">
-        <div class="jumbotron jumbotron-fluid mb-3 pl-0 pt-0 pb-0 bg-white position-relative">
-            <div class="h-100 tofront">
-                <div class="row justify-content-between">
-                    <div class="col-md-6 pt-6 pb-6 pr-6 align-self-center">
-                        <p class="text-uppercase font-weight-bold">
-                            <a class="text-danger" href="@_categorySlug-posts">@_categoryName</a>
-                        </p>
-                        <h1 class="display-4 secondfont mb-3 font-weight-bold">@_blogPost.Title</h1>
-                        <p class="mb-3">
-                            @_blogPost.Introduction
-                        </p>
-                        <div class="d-flex align-items-center">
-                            <img class="rounded-circle" src="https://ui-avatars.com/api/?background=0D8ABC&color=fff&name=@_authorName" width="70">
-                            <small class="ml-2">
-                                @_authorName <span class="text-muted d-block">@_publishedAt</span>
-                            </small>
-                        </div>
-                    </div>
-                    <div class="col-md-6 pr-0">
-                        <img src="@_blogPost.Image">
+    <div class="mx-auto max-w-7xl px-4 pt-6 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 gap-8 lg:grid-cols-12">
+            <div class="lg:col-span-6 flex flex-col justify-center">
+                <p class="text-xs font-semibold uppercase tracking-wider text-accent-600"><a href="@_categorySlug-posts">@_categoryName</a></p>
+                <h1 class="mt-2 text-3xl font-bold leading-tight text-slate-900 dark:text-slate-100">@_blogPost.Title</h1>
+                <p class="mt-3 text-slate-600 dark:text-slate-300">@_blogPost.Introduction</p>
+                <div class="mt-4 flex items-center gap-3">
+                    <img class="h-12 w-12 rounded-full" src="https://ui-avatars.com/api/?background=0D8ABC&color=fff&name=@_authorName" width="48" height="48" alt="@_authorName" />
+                    <div class="text-sm text-slate-600 dark:text-slate-300">
+                        <div class="font-medium">@_authorName</div>
+                        <div class="text-slate-500 dark:text-slate-400">@_publishedAt</div>
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
-
-
-    <div class="container pt-4 pb-4">
-        <div class="row justify-content-center">
-            <div class="col-md-12">
-                <article class="article-post">
-                   @((MarkupString)_blogPost.Content)
-                </article>
-                <SubscribeBox />
+            <div class="lg:col-span-6">
+                <img class="w-full rounded-xl object-cover" src="@_blogPost.Image" alt="@_blogPost.Title" />
             </div>
         </div>
     </div>
 
-    <div class="container pt-4 pb-4">
-        <h5 class="font-weight-bold spanborder"><span>Read next</span></h5>
+
+    <div class="mx-auto max-w-3xl px-4 py-10 sm:px-6 lg:px-8">
+        <article class="prose prose-slate max-w-none dark:prose-invert">
+            @((MarkupString)_blogPost.Content)
+        </article>
+        <div class="mt-10">
+            <SubscribeBox />
+        </div>
+    </div>
+
+    <div class="mx-auto max-w-7xl px-4 pb-10 sm:px-6 lg:px-8">
+        <h5 class="mb-4 text-base font-semibold tracking-wide text-slate-700 dark:text-slate-300">Read next</h5>
         <FeaturedBlogPosts  Posts="_relatedPosts"/>
     </div>
 }
