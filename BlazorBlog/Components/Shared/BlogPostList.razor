@@ -3,15 +3,22 @@
     <div class="mb-3 d-flex justify-content-between">
         <div class="pr-3">
             <h2 class="mb-1 h4 font-weight-bold">
-                <a class="text-dark" href="posts/@post.Slug">@post.Title</a>
+                @if (!string.IsNullOrWhiteSpace(post.Slug))
+                {
+                    <a class="text-dark" href="/posts/@post.Slug">@post.Title</a>
+                }
+                else
+                {
+                    <span class="text-dark">@post.Title</span>
+                }
             </h2>
             <p>
                 @post.Introduction
             </p>
             <div class="card-text text-muted small">
-                @post.User.Name in <a href="@post.Category.Slug-posts" title="@post.Category.Name Posts">@post.Category.Name</a>
+                @post.AuthorName in <a href="/@post.CategorySlug-posts" title="@post.CategoryName Posts">@post.CategoryName</a>
             </div>
-            <small class="text-muted">@post.PublishedAt.ToDisplayDate()</small>
+            <small class="text-muted">@post.PublishedAtDisplay</small>
         </div>
         <img height="120" width="120" src="@post.Image">
     </div>
@@ -19,5 +26,5 @@
 
 @code {
     [Parameter, EditorRequired]
-    public BlogPost[] Posts { get; set; } = [];
+    public BlogPostVm[] Posts { get; set; } = [];
 }
