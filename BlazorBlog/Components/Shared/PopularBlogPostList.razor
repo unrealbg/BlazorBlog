@@ -4,10 +4,17 @@
         <li>
             <span>
                 <h6 class="font-weight-bold">
-                    <a href="posts/@post.Slug" class="text-dark">@post.Title</a>
+                    @if (!string.IsNullOrWhiteSpace(post.Slug))
+                    {
+                        <a href="/posts/@post.Slug" class="text-dark">@post.Title</a>
+                    }
+                    else
+                    {
+                        <span class="text-dark">@post.Title</span>
+                    }
                 </h6>
                 <p class="text-muted">
-                    @post.User.Name in <a href="/@post.Category.Slug-posts" title="@post.Category.Name Posts">@post.Category.Name</a>
+                    @post.AuthorName in <a href="/@post.CategorySlug-posts" title="@post.CategoryName Posts">@post.CategoryName</a>
                 </p>
             </span>
         </li>
@@ -17,5 +24,5 @@
 
 @code {
     [Parameter, EditorRequired]
-    public BlogPost[] Posts { get; set; } = [];
+    public BlogPostVm[] Posts { get; set; } = [];
 }

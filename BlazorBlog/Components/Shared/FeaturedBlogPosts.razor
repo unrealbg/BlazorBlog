@@ -6,14 +6,21 @@
 			<div style="background-image: url(@_first.Image); height: 150px;    background-size: cover;    background-repeat: no-repeat;"></div>
 			<div class="card-body px-0 pb-0 d-flex flex-column align-items-start">
 				<h2 class="h4 font-weight-bold">
-					<a class="text-dark" href="posts/@_first.Slug">@_first.Title</a>
+					@if (!string.IsNullOrWhiteSpace(_first.Slug))
+                    {
+                        <a class="text-dark" href="/posts/@_first.Slug">@_first.Title</a>
+                    }
+                    else
+                    {
+                        <span class="text-dark">@_first.Title</span>
+                    }
 				</h2>
 				<p class="card-text">
 					@_first.Introduction
 				</p>
 				<div>
-					<small class="d-block">@_first.User.Name</small>
-					<small class="text-muted">@_first.PublishedAt.ToDisplayDate()</small>
+					<small class="d-block">@_first.AuthorName</small>
+					<small class="text-muted">@_first.PublishedAtDisplay</small>
 				</div>
 			</div>
 		</div>
@@ -26,12 +33,19 @@
                         <img height="80" width="80" src="@post.Image">
                         <div class="pl-3">
                             <h2 class="mb-2 h6 font-weight-bold">
-                                <a class="text-dark" href="posts/@post.Slug">@post.Title</a>
+                                @if (!string.IsNullOrWhiteSpace(post.Slug))
+                                {
+                                    <a class="text-dark" href="/posts/@post.Slug">@post.Title</a>
+                                }
+                                else
+                                {
+                                    <span class="text-dark">@post.Title</span>
+                                }
                             </h2>
                             <div class="card-text text-muted small">
-                                @post.User.Name in <a href="/@post.Category.Slug-posts" title="@post.Category.Name Posts">@post.Category.Name</a>
+                                @post.AuthorName in <a href="/@post.CategorySlug-posts" title="@post.CategoryName Posts">@post.CategoryName</a>
                             </div>
-                            <small class="text-muted">@post.PublishedAt.ToDisplayDate()</small>
+                            <small class="text-muted">@post.PublishedAtDisplay</small>
                         </div>
                     </div>
 				}
@@ -41,10 +55,10 @@
 }
 
 @code {
-	private BlogPost _first = default!;
+	private BlogPostVm _first = default!;
 
 	[Parameter, EditorRequired]
-	public BlogPost[] Posts { get; set; } = [];
+	public BlogPostVm[] Posts { get; set; } = [];
 
 	protected override void OnParametersSet()
 	{
