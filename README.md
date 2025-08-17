@@ -20,47 +20,47 @@ Welcome to the Blazor Blog Project! This repository hosts a modern, responsive b
 
 ## Screenshots
 
-Below are some screenshots showcasing the different aspects and features of the Blazor Blog Project.
+Updated screenshots showcasing the current UI.
 
-### Main View
+### 1) Home – Hero
+![Home – Hero](https://www.unrealbg.com/blazorblog/01-home-hero.png "Home – Hero")
+_The landing page hero with tag badges and primary CTAs._
 
-![Main View of Blazor Blog](https://github.com/unrealbg/BlazorBlog/assets/3398536/1f060f1d-0d88-4188-90dd-1dc6c9e99c28 "Main View")
-_The main landing page of the Blazor Blog, showing an overview of the blog's layout and design._
+### 2) Home – Latest Posts
+![Home – Latest Posts](https://www.unrealbg.com/blazorblog/02-home-latest-posts.png "Home – Latest Posts")
+_The Latest Posts section on the homepage and the footer navigation._
 
-### Recent Posts
+### 3) All Posts
+![All Posts](https://www.unrealbg.com/blazorblog/03-all-posts.png "All Posts")
+_A full list of articles with sidebar: Subscribe, Popular Posts, and Categories._
 
-![Recent Posts on Blazor Blog](https://github.com/unrealbg/BlazorBlog/assets/3398536/3c27efce-669f-43a9-a4d6-659fd62266d0 "Recent Posts")
-_Continuation of the main view, displaying the latest blog posts._
+### 4) Post Details
+![Post Details](https://www.unrealbg.com/blazorblog/04-post-details.png "Post Details")
+_Single post view with title, metadata, author, and cover image._
 
-### Dashboard
+### 5) Post – Footer & Subscribe
+![Post – Footer & Subscribe](https://www.unrealbg.com/blazorblog/05-post-footer-subscribe.png "Post – Footer & Subscribe")
+_Post footer with share actions and newsletter subscribe form._
 
-![Dashboard on Blazor Blog](https://github.com/unrealbg/BlazorBlog/assets/3398536/82b167f4-f1f0-4b58-9efb-511bae2869a7 "Dashboard")
-_The dashboard interface for managing the blog._
+### 6) Category – Featured Card
+![Category – Featured Card](https://www.unrealbg.com/blazorblog/06-category-featured-large.png "Category – Featured Card")
+_Category page highlighting a featured article with a large card preview._
 
-### Manage Categories
+### 7) Tag Page – Latest & Subscribe
+![Tag Page – Latest & Subscribe](https://www.unrealbg.com/blazorblog/07-tag-page-latest-subscribe.png "Tag Page – Latest & Subscribe")
+_Tag page (e.g., #javascript) with latest posts and a subscribe form._
 
-![Manage Categories on Blazor Blog](https://github.com/unrealbg/BlazorBlog/assets/3398536/5d25c658-2622-48f1-8dea-dc20875da0a3 "Manage Categories")
-_The section for managing blog categories._
+### 8) Login
+![Login](https://www.unrealbg.com/blazorblog/08-login.png "Login")
+_Login screen with email, password, “Remember me,” and “Forgot password?” link._
 
-### Manage Blog Posts
+### 9) Admin – Dashboard
+![Admin – Dashboard](https://www.unrealbg.com/blazorblog/09-admin-dashboard.png "Admin – Dashboard")
+_Admin console overview with quick actions for categories, posts, and subscribers._
 
-![Manage Blog Posts on Blazor Blog](https://github.com/unrealbg/BlazorBlog/assets/3398536/5229d02b-1f18-4ae7-9258-a005418f11f3 "Manage Blog Posts")
-_Interface for managing individual blog posts._
-
-### Manage Subscribers
-
-![Manage Subscribers on Blazor Blog](https://github.com/unrealbg/BlazorBlog/assets/3398536/d0de2709-93fd-4dc0-9b6b-76f76d75e6dc "Manage Subscribers")
-_The section dedicated to managing blog subscribers._
-
-### Create a New Blog Post
-
-![Create New Blog Post on Blazor Blog](https://github.com/unrealbg/BlazorBlog/assets/3398536/5f95e8da-1ace-4bc3-b155-20dfdfa1c3d4 "Create New Blog Post")
-_The interface for creating a new blog post._
-
-### Create a New Category
-
-![Create New Category on Blazor Blog](https://github.com/unrealbg/BlazorBlog/assets/3398536/cb22bc8d-5564-4bcd-9d0f-08b5ee342f18 "Create New Category")
-_The interface for adding a new category to the blog._
+### 10) Admin – Manage Categories
+![Admin – Manage Categories](https://www.unrealbg.com/blazorblog/10-admin-manage-categories.png "Admin – Manage Categories")
+_Category management table with name, slug, navbar visibility, and Edit/Delete actions._
 
 ## Architecture
 
