@@ -8,38 +8,40 @@
     {
         private const int MaxFileLenght = 10 * 1024 * 1024;
 
-        private bool _isLoading;
-        private string? _loadingText;
+        private bool _isLoading = false;
+        private string? _loadingText = null;
         private BlogPostVm _blogPostVm = new BlogPostVm();
         private EditContext _editContext = default!;
         private ValidationMessageStore? _messageStore;
         private BlazoredTextEditor? _quillHtml;
         private Category[] _categories = [];
         private string? _content = default!;
-    private string? _errorMessage = null;
+        private string? _errorMessage = null;
         private IBrowserFile? _fileToUpload;
         private string? _imageUrl;
         private string PageTitle => Id is > 0 ? "Edit Blog Post" : "New Blog Post";
-    private bool _isSaving;
-    public bool IsSaving => _isSaving;
-    public string TagsCsv { get; set; } = string.Empty;
+        private bool _isSaving;
+        public bool IsSaving => _isSaving;
+        public string TagsCsv { get; set; } = string.Empty;
 
         private readonly CancellationTokenSource _cts = new();
 
-    [Inject] AuthenticationStateProvider AuthenticationStateProvider { get; set; } = default!;
-    [Inject] IWebHostEnvironment WebHostEnvironment { get; set; } = default!;
-    [Inject] IBlogPostAdminService BlogPostService { get; set; } = default!;
-    [Inject] ICategoryService CategoryService { get; set; } = default!;
-    [Inject] NavigationManager NavigationManager { get; set; } = default!;
-    [Inject] IToastService ToastService { get; set; } = default!;
-    [Inject] IHtmlSanitizer HtmlSanitizer { get; set; } = default!;
-    [Inject] IValidator<BlogPostVm> Validator { get; set; } = default!;
-    [Inject] ITagService TagService { get; set; } = default!;
+        [Inject] AuthenticationStateProvider AuthenticationStateProvider { get; set; } = default!;
+        [Inject] IWebHostEnvironment WebHostEnvironment { get; set; } = default!;
+        [Inject] IBlogPostAdminService BlogPostService { get; set; } = default!;
+        [Inject] ICategoryService CategoryService { get; set; } = default!;
+        [Inject] NavigationManager NavigationManager { get; set; } = default!;
+        [Inject] IToastService ToastService { get; set; } = default!;
+        [Inject] IHtmlSanitizer HtmlSanitizer { get; set; } = default!;
+        [Inject] IValidator<BlogPostVm> Validator { get; set; } = default!;
+        [Inject] ITagService TagService { get; set; } = default!;
 
         [Parameter] public int? Id { get; set; }
 
         protected override async Task OnInitializedAsync()
         {
+            _isLoading = true;
+            _loadingText = "Loading blog post...";
             _editContext = new EditContext(_blogPostVm);
             _messageStore = new ValidationMessageStore(_editContext);
 
@@ -67,6 +69,8 @@
                 }
                 catch { /* optional */ }
             }
+            _isLoading = false;
+            _loadingText = null;
         }
 
         private async Task PreviewImageAsync(IBrowserFile file)
@@ -130,6 +134,8 @@
             }
 
             _isSaving = true;
+            _isLoading = true;
+            _loadingText = "Saving blog post...";
             StateHasChanged();
             await SaveBlogPostAsync();
         }
@@ -189,6 +195,11 @@
             {
                 ToastService.ShowToast(ToastLevel.Error, "Something went wrong while saving the blog post.", heading: "Error");
                 _isSaving = false;
+            }
+            finally
+            {
+                _isLoading = false;
+                _loadingText = null;
             }
         }
 
