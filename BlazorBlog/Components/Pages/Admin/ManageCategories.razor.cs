@@ -120,7 +120,7 @@
                 }
                 catch (InvalidOperationException ex)
                 {
-                    var nameField = new FieldIdentifier(_operatingCategory, nameof(Category.Name));
+                    var nameField = new FieldIdentifier(_operatingCategory!, nameof(Category.Name));
                     _messageStore.Add(nameField, ex.Message);
                     _editContext.NotifyValidationStateChanged();
 
