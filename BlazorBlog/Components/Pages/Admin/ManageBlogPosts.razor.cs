@@ -6,6 +6,7 @@
     {
         private bool _isLoading;
         private string? _loadingText;
+    private bool _showLoader;
 
     private BlogPost _selectedBlogPost = new();
         private bool _showConfirmationModal = false;
@@ -48,12 +49,21 @@
             {
                 _isLoading = true;
                 _loadingText = "Fetching blog posts";
-                StateHasChanged();
+        _ = Task.Run(async () =>
+                {
+                    await Task.Delay(250, _cts.Token);
+                    if (_isLoading)
+                    {
+                        _showLoader = true;
+            await InvokeAsync(StateHasChanged);
+                    }
+                });
 
                 var pagedBlogs = await BlogPostService.GetBlogPostsAsync(request.StartIndex, request.Count ?? PageSize, _cts.Token);
                 _currentBlogPosts = pagedBlogs.Records.ToList();
 
                 _isLoading = false;
+                _showLoader = false;
                 StateHasChanged();
 
                 return GridItemsProviderResult.From(_currentBlogPosts, pagedBlogs.TotalCount);
@@ -87,6 +97,7 @@
         {
             _loadingText = "Saving changes";
             _isLoading = true;
+            _showLoader = true;
 
             var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
             var userId = authState.User.GetUserId();
@@ -103,6 +114,7 @@
             }
 
             _isLoading = false;
+            _showLoader = false;
             StateHasChanged();
         }
 
@@ -110,6 +122,7 @@
         {
             _loadingText = "Deleting blog post";
             _isLoading = true;
+            _showLoader = true;
 
             var isDeleted = await BlogPostService.DeleteBlogPostAsync(blogPost.Id, _cts.Token);
 
@@ -121,6 +134,7 @@
             }
 
             _isLoading = false;
+            _showLoader = false;
             StateHasChanged();
         }
 

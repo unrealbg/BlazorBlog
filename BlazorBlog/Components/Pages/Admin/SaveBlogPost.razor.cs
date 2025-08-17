@@ -20,6 +20,8 @@
         private IBrowserFile? _fileToUpload;
         private string? _imageUrl;
         private string PageTitle => Id is > 0 ? "Edit Blog Post" : "New Blog Post";
+    private bool _isSaving;
+    public bool IsSaving => _isSaving;
 
         private readonly CancellationTokenSource _cts = new();
 
@@ -119,6 +121,8 @@
                 return;
             }
 
+            _isSaving = true;
+            StateHasChanged();
             await SaveBlogPostAsync();
         }
 
@@ -126,8 +130,6 @@
         {
             try
             {
-                _loadingText = "Saving blog post";
-                _isLoading = true;
 
                 string? imageUrlToDelete = null;
 
@@ -152,8 +154,8 @@
 
                 if (result is null)
                 {
-                    ToastService.ShowToast(BlazorBlog.Application.UI.ToastLevel.Error, "Something went wrong while saving the blog post.", heading: "Error");
-                    _isLoading = false;
+                    ToastService.ShowToast(ToastLevel.Error, "Something went wrong while saving the blog post.", heading: "Error");
+                    _isSaving = false;
                     return;
                 }
 
@@ -164,8 +166,8 @@
             }
             catch
             {
-                ToastService.ShowToast(BlazorBlog.Application.UI.ToastLevel.Error, "Something went wrong while saving the blog post.", heading: "Error");
-                _isLoading = false;
+                ToastService.ShowToast(ToastLevel.Error, "Something went wrong while saving the blog post.", heading: "Error");
+                _isSaving = false;
             }
         }
 
@@ -188,7 +190,7 @@
             }
             catch
             {
-                ToastService.ShowToast(BlazorBlog.Application.UI.ToastLevel.Error, "Something went wrong while saving the file.", heading: "Error");
+                ToastService.ShowToast(ToastLevel.Error, "Something went wrong while saving the file.", heading: "Error");
                 fs.Close();
                 return null;
             }
