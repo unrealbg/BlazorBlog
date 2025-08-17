@@ -45,6 +45,12 @@ module.exports = {
     "duration-300",
     "group-hover:scale-105",
     "overflow-hidden",
+    // Flexbox layout classes for consistent card heights
+    "flex",
+    "h-full",
+    "flex-col",
+    "flex-1",
+    "mt-auto",
   ],
   darkMode: "class",
   theme: {
