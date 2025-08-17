@@ -1,11 +1,27 @@
-﻿@if (IsVisible)
+﻿@using Microsoft.AspNetCore.Components.Web
+
+@if (IsVisible)
 {
-    <div class="modal-backdrop">
-        <div class="modal-content">
-            <h3>@Title</h3>
-            <p>@Message</p>
-            <button class="btn btn-danger mb-1" @onclick="Confirm">Yes</button>
-            <button class="btn btn-success" @onclick="Cancel">No</button>
+    <div class="fixed inset-0 z-50 flex items-center justify-center p-4" @onclick="Cancel">
+        <!-- Backdrop -->
+        <div class="absolute inset-0 bg-slate-900/50 backdrop-blur-sm"></div>
+
+        <!-- Dialog -->
+        <div class="relative w-full max-w-md transform overflow-hidden rounded-xl bg-white p-6 shadow-xl ring-1 ring-black/5 transition-all dark:bg-slate-800 dark:ring-white/10"
+             role="dialog" aria-modal="true" aria-labelledby="modal-title" aria-describedby="modal-description"
+             tabindex="0" @onkeydown="OnKeyDown" @onclick:stopPropagation @ref="_dialogRef">
+            <h3 id="modal-title" class="text-base font-semibold text-slate-900 dark:text-slate-100">@Title</h3>
+            <p id="modal-description" class="mt-2 text-sm text-slate-600 dark:text-slate-300">@Message</p>
+
+            <div class="mt-6 flex items-center justify-end gap-3">
+                <button type="button"
+                        class="inline-flex items-center rounded-md bg-slate-200 px-4 py-2 text-sm font-medium text-slate-800 hover:bg-slate-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-400 dark:bg-slate-700 dark:text-slate-100 dark:hover:bg-slate-600"
+                        @onclick="Cancel">No</button>
+
+                <button type="button"
+                        class="inline-flex items-center rounded-md bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+                        @onclick="Confirm">Yes</button>
+            </div>
         </div>
     </div>
 }
@@ -19,6 +35,24 @@
 
     [Parameter] public bool IsVisible { get; set; }
 
+    private ElementReference _dialogRef;
+    private bool _needsFocus;
+
+    protected override void OnParametersSet()
+    {
+        // When the modal becomes visible, request focus so keyboard users can interact (Esc to close).
+        _needsFocus = IsVisible;
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (_needsFocus && IsVisible)
+        {
+            _needsFocus = false;
+            await _dialogRef.FocusAsync();
+        }
+    }
+
     private void Confirm()
     {
         ConfirmationChanged.InvokeAsync(true);
@@ -27,6 +61,15 @@
     private void Cancel()
     {
         ConfirmationChanged.InvokeAsync(false);
+    }
+
+    private Task OnKeyDown(KeyboardEventArgs e)
+    {
+        if (e.Key == "Escape")
+        {
+            Cancel();
+        }
+        return Task.CompletedTask;
     }
 }
 
