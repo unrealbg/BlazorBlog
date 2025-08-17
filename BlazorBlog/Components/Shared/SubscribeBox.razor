@@ -6,22 +6,22 @@
 
 @if (Simple)
 {
-    <div class="rounded-2xl bg-slate-800 p-6">
-        <h3 class="text-lg font-semibold text-white mb-2">Subscribe</h3>
-        <p class="text-sm text-slate-300 mb-4">Get new articles delivered right to your inbox.</p>
+    <div class="rounded-2xl bg-white border border-slate-200 p-6 shadow-soft dark:bg-slate-800 dark:border-slate-700">
+        <h3 class="text-lg font-semibold text-slate-900 dark:text-white mb-2">Subscribe</h3>
+        <p class="text-sm text-slate-600 dark:text-slate-300 mb-4">Get new articles delivered right to your inbox.</p>
         <EditForm EditContext="_editContext" method="post" OnSubmit="SubscribeAsync" FormName="subscribe-form" Enhance>
             <DataAnnotationsValidator />
             <div class="flex gap-2">
                 <InputText type="email" 
-                          class="flex-1 rounded-xl border border-slate-600 bg-slate-700 px-4 py-2 text-sm text-white placeholder-slate-400 outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500" 
+                          class="flex-1 rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm text-slate-900 placeholder-slate-400 outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 dark:border-slate-600 dark:bg-slate-700 dark:text-white dark:placeholder-slate-400 dark:focus:border-brand-500" 
                           placeholder="you@example.com" 
                           @bind-Value="@Subscriber.Email" />
                 <button type="submit" class="rounded-xl bg-brand-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-700">OK</button>
             </div>
-            <ValidationMessage For="() => Subscriber.Email" class="text-xs text-red-400 mt-1" />
+            <ValidationMessage For="() => Subscriber.Email" class="text-xs text-red-600 dark:text-red-400 mt-1" />
             @if (!string.IsNullOrEmpty(_message))
             {
-                <p class="mt-2 text-sm text-slate-300">@_message</p>
+                <p class="mt-2 text-sm text-slate-600 dark:text-slate-300">@_message</p>
             }
         </EditForm>
     </div>
