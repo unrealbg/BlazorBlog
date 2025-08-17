@@ -14,6 +14,9 @@ Welcome to the Blazor Blog Project! This repository hosts a modern, responsive b
 - Auto-apply EF Core migrations and data seeding on startup
 - Serilog logging (console + rolling files)
 - Health endpoint: GET /health
+- In-memory caching for public lists (2 min TTL) with automatic cache bust on admin changes
+- HTML sanitization for user content (Ganss.Xss)
+- Server-side validation with FluentValidation
 
 ## Screenshots
 
@@ -71,6 +74,7 @@ This solution follows Clean Architecture:
 Data and Identity live under `BlazorBlog.Infrastructure.Persistence` (single `ApplicationDbContext` and `ApplicationUser`). UI helpers use Application abstractions (e.g., `IToastService`) implemented in Infrastructure.
 
 ### Projects (solution structure)
+
 - BlazorBlog (UI)
 - BlazorBlog.Infrastructure (EF Core, Identity, seeding, data services)
 - BlazorBlog.Application (view models, validators, contracts)
@@ -84,6 +88,7 @@ Data and Identity live under `BlazorBlog.Infrastructure.Persistence` (single `Ap
 - .NET 9 SDK
 - Recommended: Visual Studio 2022 (latest) with ASP.NET workload
 - SQL Server (default is `(localdb)\\MSSQLLocalDB`). Change the connection string if needed
+- Node.js 18+ (LTS) if you plan to run the Tailwind CSS watcher during development or rely on the publish-time CSS build
 
 ### Configuration
 
@@ -112,7 +117,33 @@ From the repository root:
 dotnet run --project BlazorBlog/BlazorBlog.csproj
 ```
 
+### CSS development (Tailwind)
+
+- One-time setup (inside `BlazorBlog/`):
+
+```bash
+npm ci
+```
+
+- Watch and rebuild CSS during development (run in a separate terminal from `BlazorBlog/`):
+
+```bash
+npm run dev:css
+```
+
+- Build CSS once (e.g., CI/local without watcher):
+
+```bash
+npm run build:css
+```
+
+Notes:
+
+- On publish, CSS is built automatically by an MSBuild target that runs `npx tailwindcss` (requires Node.js installed on the machine).
+- The generated stylesheet is `BlazorBlog/wwwroot/app.css`.
+
 ### First run behavior
+
 - Pending EF Core migrations are applied automatically on startup
 - Initial data is seeded via `ISeedService` (Admin role/user + default categories)
 
@@ -126,22 +157,34 @@ dotnet run --project BlazorBlog/BlazorBlog.csproj
   - Email: `admin@bblog.com`
   - Password: `Admin@123`
 
+## Admin area
+
+Admin-only pages (require the `Admin` role):
+
+- `/admin/dashboard`
+- `/admin/manage-blog-posts` (+ create/edit pages)
+- `/admin/manage-categories`
+- `/admin/manage-subscribers`
+
 ## Forgot/Reset password
 
 - Pages:
   - `/Account/ForgotPassword`
   - `/Account/ResetPassword?email=...&code=...`
 - Email sending uses `IEmailSender<ApplicationUser>`. The default is a no-op sender for local development
-- Development helper: In Development the Forgot Password page displays a “Development only” section with the generated reset link and token for easy local testing
+- Development helper: In Development the Forgot Password page displays a 'Development only' section with the generated reset link and token for easy local testing
 
 ## Health endpoint
+
 - `GET /health` returns `{ status, timeUtc }`
 
 ## Logging
+
 - Serilog configured via `appsettings.json`
 - Console + rolling file logs in `Logs/log-*.txt`
 
 ## Tests
+
 - Run tests from the repo root:
 
 ```bash
@@ -160,7 +203,7 @@ Contributions are what make the open-source community such an amazing place to l
 
 ## License
 
-Distributed under the MIT License. See `LICENSE` for more information.
+Distributed under the MIT License. See `LICENSE.txt` for more information.
 
 ### Contact
 
