@@ -90,7 +90,7 @@
         </div>
         <div class="lg:col-span-6">
             <div class="mb-4">
-                <label class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-200">Content</label>
+                <label class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-200">Content <span class="text-red-600">*</span></label>
                 <BlazoredTextEditor ToolbarCSSClass="form-control" EditorCssClass="form-control" @ref="@_quillHtml" Placeholder="Enter your blog post content here...">
                     <ToolbarContent>
                         <select class="ql-header">
@@ -123,6 +123,7 @@
                         @((MarkupString)(_content ?? string.Empty))
                     </EditorContent>
                 </BlazoredTextEditor>
+                <ValidationMessage For="() => _blogPostVm.Content" class="mt-1 block text-sm text-red-600" />
             </div>
         </div>
     </div>
