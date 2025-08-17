@@ -46,20 +46,40 @@
         @GetCategoryName(context.CategoryId)
     </TemplateColumn>
     <TemplateColumn Title="Featured" Align="Align.Center">
-        <label class="inline-flex cursor-pointer items-center">
-            <input type="checkbox" @bind="context.IsFeatured" @bind:after="(() => HandleFeaturedChanged(context))" class="peer sr-only" />
-            <span class="relative h-5 w-9 rounded-full bg-slate-300 transition-colors peer-checked:bg-emerald-600">
-                <span class="absolute left-0.5 top-0.5 h-4 w-4 rounded-full bg-white shadow transition-transform peer-checked:translate-x-4"></span>
+        <div class="inline-flex items-center gap-2">
+            <label class="relative inline-flex h-5 w-9 cursor-pointer items-center">
+                <input type="checkbox" role="switch" aria-checked="@context.IsFeatured" aria-busy="@_savingToggles.Contains(context.Id)" disabled="@_savingToggles.Contains(context.Id)" @bind="context.IsFeatured" @bind:after="(() => HandleFeaturedChanged(context))" class="peer sr-only" />
+                <span class="pointer-events-none absolute inset-0 rounded-full bg-slate-300 transition-colors duration-200 ease-in-out peer-checked:bg-emerald-600"></span>
+                <span class="pointer-events-none absolute left-0.5 top-0.5 h-4 w-4 rounded-full bg-white shadow transition-transform duration-200 ease-in-out peer-checked:translate-x-4"></span>
+            </label>
+            <span class="inline-block h-4 w-4">
+                @if (_savingToggles.Contains(context.Id))
+                {
+                    <svg class="h-4 w-4 animate-spin text-slate-500" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
+                    </svg>
+                }
             </span>
-        </label>
+        </div>
     </TemplateColumn>
     <TemplateColumn Title="Published" Align="Align.Center">
-        <label class="inline-flex cursor-pointer items-center">
-            <input type="checkbox" @bind="context.IsPublished" @bind:after="(() => HandlePublishedChanged(context))" class="peer sr-only" />
-            <span class="relative h-5 w-9 rounded-full bg-slate-300 transition-colors peer-checked:bg-emerald-600">
-                <span class="absolute left-0.5 top-0.5 h-4 w-4 rounded-full bg-white shadow transition-transform peer-checked:translate-x-4"></span>
+        <div class="inline-flex items-center gap-2">
+            <label class="relative inline-flex h-5 w-9 cursor-pointer items-center">
+                <input type="checkbox" role="switch" aria-checked="@context.IsPublished" aria-busy="@_savingToggles.Contains(context.Id)" disabled="@_savingToggles.Contains(context.Id)" @bind="context.IsPublished" @bind:after="(() => HandlePublishedChanged(context))" class="peer sr-only" />
+                <span class="pointer-events-none absolute inset-0 rounded-full bg-slate-300 transition-colors duration-200 ease-in-out peer-checked:bg-emerald-600"></span>
+                <span class="pointer-events-none absolute left-0.5 top-0.5 h-4 w-4 rounded-full bg-white shadow transition-transform duration-200 ease-in-out peer-checked:translate-x-4"></span>
+            </label>
+            <span class="inline-block h-4 w-4">
+                @if (_savingToggles.Contains(context.Id))
+                {
+                    <svg class="h-4 w-4 animate-spin text-slate-500" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
+                    </svg>
+                }
             </span>
-        </label>
+        </div>
     </TemplateColumn>
     <TemplateColumn Title="Actions" Align="Align.Center">
         <a href="admin/manage-blog-posts/edit/@context.Id" data-enhance-nav="false" class="mr-2 inline-flex items-center rounded-md bg-brand-600 px-3 py-1 text-xs font-medium text-white hover:bg-brand-700" style="width: 80px;">Edit</a>

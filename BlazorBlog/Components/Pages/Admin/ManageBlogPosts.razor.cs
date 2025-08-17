@@ -26,6 +26,7 @@
         private readonly CancellationTokenSource _cts = new();
 
         private Dictionary<int, string> _categoryNames = new();
+    private HashSet<int> _savingToggles = new();
 
     [Inject]
     private IBlogPostAdminService BlogPostService { get; set; } = default!;
@@ -75,14 +76,48 @@
 
         private async Task HandleFeaturedChanged(BlogPost blogPost)
         {
-            await SaveChangesAsync(blogPost);
-            await RefreshGridAsync();
+            var id = blogPost.Id;
+            var prev = !blogPost.IsFeatured; // because bind already flipped it
+            _savingToggles.Add(id);
+            await InvokeAsync(StateHasChanged);
+
+            bool success = false;
+            try
+            {
+                success = await SaveChangesAsync(blogPost);
+                if (!success)
+                {
+                    blogPost.IsFeatured = prev;
+                }
+            }
+            finally
+            {
+                _savingToggles.Remove(id);
+                await InvokeAsync(StateHasChanged);
+            }
         }
 
         private async Task HandlePublishedChanged(BlogPost blogPost)
         {
-            await SaveChangesAsync(blogPost);
-            await RefreshGridAsync();
+            var id = blogPost.Id;
+            var prev = !blogPost.IsPublished; // because bind already flipped it
+            _savingToggles.Add(id);
+            await InvokeAsync(StateHasChanged);
+
+            bool success = false;
+            try
+            {
+                success = await SaveChangesAsync(blogPost);
+                if (!success)
+                {
+                    blogPost.IsPublished = prev;
+                }
+            }
+            finally
+            {
+                _savingToggles.Remove(id);
+                await InvokeAsync(StateHasChanged);
+            }
         }
 
         private async Task RefreshGridAsync()
@@ -93,16 +128,22 @@
             }
         }
 
-        private async Task SaveChangesAsync(BlogPost blogPost)
+        private async Task<bool> SaveChangesAsync(BlogPost blogPost)
         {
-            _loadingText = "Saving changes";
-            _isLoading = true;
-            _showLoader = true;
+            // Avoid full-screen loader for quick toggle; keep UI responsive
 
             var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
             var userId = authState.User.GetUserId();
 
-            var updatedBlogPost = await BlogPostService.SaveBlogPostAsync(blogPost, userId, _cts.Token);
+            BlazorBlog.Domain.Entities.BlogPost? updatedBlogPost = null;
+            try
+            {
+                updatedBlogPost = await BlogPostService.SaveBlogPostAsync(blogPost, userId, _cts.Token);
+            }
+            catch
+            {
+                updatedBlogPost = null;
+            }
 
             if (updatedBlogPost != null)
             {
@@ -111,11 +152,11 @@
                 {
                     _currentBlogPosts[index] = updatedBlogPost;
                 }
+                return true;
             }
 
-            _isLoading = false;
-            _showLoader = false;
-            StateHasChanged();
+            ToastService.ShowToast(ToastLevel.Error, "Failed to save changes.", heading: "Error");
+            return false;
         }
 
         private async Task HandleDeleteBlogPost(BlogPost blogPost)
