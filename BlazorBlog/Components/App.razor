@@ -6,7 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <base href="/" />
 
-    <!-- TailwindCSS (compiled) -->
+    <!-- Load component styles first -->
+    <link rel="stylesheet" href="BlazorBlog.styles.css" />
+    <!-- TailwindCSS (compiled) - loaded last so it can override defaults (e.g., #blazor-error-ui) -->
     <link rel="stylesheet" href="app.css" />
 
         <!-- Inter font -->
@@ -30,15 +32,16 @@
             })();
         </script>
 
-    <link rel="stylesheet" href="BlazorBlog.styles.css" />
     <link rel="icon" type="image/png" href="favicon.png" />
 
     <HeadOutlet />
 </head>
 
-<body class="bg-white text-slate-800 dark:bg-slate-950 dark:text-slate-100 selection:bg-brand-500/20">
+<body class="min-h-screen flex flex-col bg-white text-slate-800 dark:bg-slate-950 dark:text-slate-100 selection:bg-brand-500/20">
     <CascadingAuthenticationState>
-        <Routes />
+        <div class="flex-1 flex flex-col min-h-0">
+            <Routes />
+        </div>
     </CascadingAuthenticationState>
     <!-- Theme helpers (menu/theme toggles) -->
     <script src="assets/js/functions.js" type="text/javascript"></script>
