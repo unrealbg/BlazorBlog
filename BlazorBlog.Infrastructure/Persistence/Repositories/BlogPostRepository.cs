@@ -2,6 +2,7 @@ namespace BlazorBlog.Infrastructure.Persistence.Repositories
 {
     using BlazorBlog.Application.Models;
     using BlazorBlog.Application.Contracts;
+    using BlazorBlog.Application.Utilities;
     using Microsoft.EntityFrameworkCore;
     using System;
     using System.Threading;
@@ -18,23 +19,30 @@ namespace BlazorBlog.Infrastructure.Persistence.Repositories
             _contextFactory = contextFactory;
         }
 
-        private static BlogPostVm Map(BlogPostEntity p) => new()
+        private static BlogPostVm Map(BlogPostEntity p)
         {
-            Id = p.Id,
-            Title = p.Title,
-            Slug = p.Slug,
-            Image = p.Image,
-            Introduction = p.Introduction,
-            Content = p.Content,
-            CategoryId = p.CategoryId,
-            IsFeatured = p.IsFeatured,
-            IsPublished = p.IsPublished,
-            PublishedAt = p.PublishedAt,
-            PublishedAtDisplay = p.PublishedAt.HasValue ? p.PublishedAt.Value.ToString("dd-MMM-yyyy") : string.Empty,
-            CategoryName = p.Category?.Name,
-            CategorySlug = p.Category?.Slug,
-            AuthorName = p.User?.Name
-        };
+            var (readingTime, wordCount) = ReadingTimeCalculator.Calculate(p.Content);
+            
+            return new()
+            {
+                Id = p.Id,
+                Title = p.Title,
+                Slug = p.Slug,
+                Image = p.Image,
+                Introduction = p.Introduction,
+                Content = p.Content,
+                CategoryId = p.CategoryId,
+                IsFeatured = p.IsFeatured,
+                IsPublished = p.IsPublished,
+                PublishedAt = p.PublishedAt,
+                PublishedAtDisplay = p.PublishedAt.HasValue ? p.PublishedAt.Value.ToString("dd-MMM-yyyy") : string.Empty,
+                CategoryName = p.Category?.Name,
+                CategorySlug = p.Category?.Slug,
+                AuthorName = p.User?.Name,
+                WordCount = wordCount,
+                ReadingTime = readingTime
+            };
+        }
 
         private static DomainBlogPost MapToDomain(BlogPostEntity e) => new()
         {

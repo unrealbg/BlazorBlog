@@ -1,6 +1,6 @@
 ﻿namespace BlazorBlog.Components.Pages
 {
-    using System.Text.RegularExpressions;
+    using BlazorBlog.Application.Utilities;
 
     public partial class BlogPostDetail
     {
@@ -38,15 +38,22 @@
             _blogPost = result.BlogPost;
             _relatedPosts = result.RelatedPosts;
 
-            // Pull enriched fields from VM once Service populates them
             _categorySlug = _blogPost.CategorySlug ?? string.Empty;
             _categoryName = _blogPost.CategoryName ?? string.Empty;
             _authorName = _blogPost.AuthorName ?? string.Empty;
             _publishedAt = _blogPost.PublishedAtDisplay ?? string.Empty;
 
-            var (readTime, wordCount) = ComputeReadTimeAndCount(_blogPost.Content);
-            _readTime = readTime;
-            _wordCount = wordCount;
+            if (!string.IsNullOrWhiteSpace(_blogPost.ReadingTime))
+            {
+                _readTime = _blogPost.ReadingTime;
+                _wordCount = _blogPost.WordCount;
+            }
+            else
+            {
+                var (readTime, wordCount) = ReadingTimeCalculator.Calculate(_blogPost.Content);
+                _readTime = readTime;
+                _wordCount = wordCount;
+            }
 
             await LoadPopularInCategoryAsync();
         }
@@ -58,16 +65,6 @@
             {
                 _popularInCategory = await BlogPostService.GetPopularBlogPostsAsync(4, categoryId, _cts.Token);
             }
-        }
-
-        private static (string readTime, int wordCount) ComputeReadTimeAndCount(string html)
-        {
-            if (string.IsNullOrWhiteSpace(html)) return (string.Empty, 0);
-            var text = Regex.Replace(html, "<[^>]+>", " ");
-            var words = Regex.Matches(text, @"\b[\p{L}\p{M}\w']+\b", RegexOptions.Multiline).Count;
-            if (words == 0) return (string.Empty, 0);
-            var minutes = Math.Max(1, (int)Math.Ceiling(words / 200.0)); // ~200 wpm
-            return ($"{minutes} min read", words);
         }
 
         public void Dispose()

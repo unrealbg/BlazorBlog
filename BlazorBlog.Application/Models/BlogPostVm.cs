@@ -23,7 +23,6 @@ namespace BlazorBlog.Application.Models
 
         public string Image { get; set; } = string.Empty;
 
-        // Flattened extras for UI
         public string? CategoryName { get; set; }
 
         public string? CategorySlug { get; set; }
@@ -35,5 +34,9 @@ namespace BlazorBlog.Application.Models
         public DateTime? PublishedAt { get; set; }
 
         public string Slug { get; set; } = string.Empty;
+
+        public int WordCount { get; set; }
+
+        public string ReadingTime { get; set; } = string.Empty;
     }
 }

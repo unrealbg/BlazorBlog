@@ -57,7 +57,9 @@
                                 Read more
                             </a>
                         }
-                        <span class="text-xs text-slate-500 dark:text-slate-400">6 min read</span>
+                        <span class="text-xs text-slate-500 dark:text-slate-400">
+                            @(!string.IsNullOrWhiteSpace(post.ReadingTime) ? post.ReadingTime : "0 min read")
+                        </span>
                     </div>
                 </div>
             </article>
