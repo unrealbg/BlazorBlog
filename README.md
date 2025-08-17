@@ -1,5 +1,20 @@
 # Blazor Blog Project
 
+<!-- CI Status Badges -->
+
+[![CI (main)](https://github.com/unrealbg/BlazorBlog/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/unrealbg/BlazorBlog/actions/workflows/ci.yml?query=branch%3Amain)
+[![CI (dev)](https://github.com/unrealbg/BlazorBlog/actions/workflows/ci.yml/badge.svg?branch=dev)](https://github.com/unrealbg/BlazorBlog/actions/workflows/ci.yml?query=branch%3Adev)
+
+[![License](https://img.shields.io/github/license/unrealbg/BlazorBlog.svg)](LICENSE.txt)
+[![Last commit](https://img.shields.io/github/last-commit/unrealbg/BlazorBlog.svg)](https://github.com/unrealbg/BlazorBlog/commits)
+[![Open issues](https://img.shields.io/github/issues/unrealbg/BlazorBlog.svg)](https://github.com/unrealbg/BlazorBlog/issues)
+[![Open PRs](https://img.shields.io/github/issues-pr/unrealbg/BlazorBlog.svg)](https://github.com/unrealbg/BlazorBlog/pulls)
+[![.NET](https://img.shields.io/badge/.NET-9.0-512BD4?logo=dotnet&logoColor=white)](https://dotnet.microsoft.com/)
+[![Release](https://img.shields.io/github/v/release/unrealbg/BlazorBlog?include_prereleases&label=release)](https://github.com/unrealbg/BlazorBlog/releases)
+
+[![Coverage (main)](https://codecov.io/gh/unrealbg/BlazorBlog/branch/main/graph/badge.svg)](https://app.codecov.io/gh/unrealbg/BlazorBlog/branch/main)
+[![Coverage (dev)](https://codecov.io/gh/unrealbg/BlazorBlog/branch/dev/graph/badge.svg)](https://app.codecov.io/gh/unrealbg/BlazorBlog/branch/dev)
+
 ## Overview
 
 Welcome to the Blazor Blog Project! This repository hosts a modern, responsive blog application, built using the latest [Blazor Web App](https://dotnet.microsoft.com/apps/aspnet/web-apps/blazor) template. Our goal is to leverage Blazor's capabilities to deliver fast and interactive user interfaces, ensuring an engaging and seamless experience for our users.
