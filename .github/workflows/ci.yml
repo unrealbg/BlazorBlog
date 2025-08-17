@@ -2,9 +2,13 @@ name: CI
 
 on:
   push:
-    branches: [main, dev]
+    branches:
+      - main
+      - dev
   pull_request:
-    branches: [main, dev]
+    branches:
+      - main
+      - dev
   workflow_dispatch:
 
 permissions:
@@ -41,11 +45,7 @@ jobs:
         run: dotnet build BlazorBlog.sln -c Release --no-restore
 
       - name: Test (with coverage)
-        run: |
-          dotnet test BlazorBlog.sln -c Release --no-build \
-            --logger "trx;LogFileName=test_results.trx" \
-            --results-directory "TestResults" \
-            --collect "XPlat Code Coverage"
+        run: dotnet test BlazorBlog.sln -c Release --no-build --logger "trx;LogFileName=test_results.trx" --results-directory "TestResults" --collect "XPlat Code Coverage"
 
       - name: Upload test results
         if: always()
@@ -54,19 +54,9 @@ jobs:
           name: test-results
           path: TestResults/**/*.trx
 
-    - name: Upload coverage report
+      - name: Upload coverage report
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: coverage
-      path: TestResults/**/coverage.cobertura.xml
-
-    - name: Upload to Codecov
-        if: ${{ !cancelled() }}
-        uses: codecov/codecov-action@v4
-        with:
-      files: TestResults/**/coverage.cobertura.xml
-          flags: unittests
-          fail_ci_if_error: false
-        env:
-          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+          path: TestResults/**/coverage.cobertura.xml
