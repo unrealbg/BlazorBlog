@@ -8,8 +8,8 @@
 
         private BlogPostVm _firstFeatured = default!;
 
-    [Inject] 
-    IBlogPostService BlogPostService { get; set; } = default!;
+        [Inject]
+        IBlogPostService BlogPostService { get; set; } = default!;
 
         private readonly CancellationTokenSource _cts = new();
 
