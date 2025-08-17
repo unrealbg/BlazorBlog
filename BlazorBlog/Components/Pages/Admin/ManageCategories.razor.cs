@@ -42,9 +42,20 @@
         {
             _loadingText = "Saving changes";
             _isLoading = true;
-            await CategoryService.SaveCategoryAsync(category, _cts.Token);
-            _isLoading = false;
-            NavigationManager.Refresh();
+            try
+            {
+                await CategoryService.SaveCategoryAsync(category, _cts.Token);
+            }
+            catch (Exception ex)
+            {
+                ToastService.ShowToast(ToastLevel.Error, ex.Message, heading: "Error", durationMs: 8000);
+            }
+            finally
+            {
+                _isLoading = false;
+            }
+
+            this.NavigationManager.Refresh();
         }
 
         private void StartAddCategory()
@@ -91,16 +102,35 @@
 
                 var isCategoryExisting = _operatingCategory.Id > 0;
 
-                var saved = await CategoryService.SaveCategoryAsync(_operatingCategory, _cts.Token);
-                _operatingCategory = saved;
+                try
+                {
+                    var saved = await CategoryService.SaveCategoryAsync(_operatingCategory, _cts.Token);
+                    _operatingCategory = saved;
 
-                var operation = isCategoryExisting ? "updated" : "added";
-                ToastService.ShowToast(ToastLevel.Success, $"Category {operation} successfully.", heading: "Success");
+                    var operation = isCategoryExisting ? "updated" : "added";
+                    ToastService.ShowToast(ToastLevel.Success, $"Category {operation} successfully.", heading: "Success", durationMs: 5000);
 
-                _operatingCategory = null;
-                _isLoading = false;
+                    _operatingCategory = null;
 
-                await LoadCategoriesAsync();
+                    await LoadCategoriesAsync();
+                }
+                catch (InvalidOperationException ex)
+                {
+                    var nameField = new FieldIdentifier(_operatingCategory, nameof(Category.Name));
+                    _messageStore.Add(nameField, ex.Message);
+                    _editContext.NotifyValidationStateChanged();
+
+                    ToastService.ShowToast(ToastLevel.Warning, ex.Message, heading: "Validation", durationMs: 8000);
+                }
+                catch (Exception ex)
+                {
+                    ToastService.ShowToast(ToastLevel.Error, "Failed to save category. Please try again.", heading: "Error", durationMs: 10000);
+                    Console.Error.WriteLine(ex);
+                }
+                finally
+                {
+                    _isLoading = false;
+                }
             }
         }
 
