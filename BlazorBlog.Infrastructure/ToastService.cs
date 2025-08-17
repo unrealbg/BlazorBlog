@@ -4,17 +4,17 @@
 
     public class ToastService : IToastService
     {
-        public event Action<ToastLevel, string, string>? OnShow;
+        public event Action<ToastLevel, string, string, int?>? OnShow;
 
-        public void ShowToast(ToastLevel level, string message, string heading = "")
+        public void ShowToast(ToastLevel level, string message, string heading = "", int? durationMs = null)
         {
-            OnShow?.Invoke(level, message, heading);
+            OnShow?.Invoke(level, message, heading, durationMs);
         }
 
         public void RemoveAll()
         {
             // Use empty strings to avoid nulls
-            OnShow?.Invoke(default, string.Empty, string.Empty);
+            OnShow?.Invoke(default, string.Empty, string.Empty, null);
         }
     }
 }
