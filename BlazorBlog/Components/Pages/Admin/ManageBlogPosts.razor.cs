@@ -6,6 +6,7 @@
     {
         private bool _isLoading;
         private string? _loadingText;
+    private bool _showLoader;
 
     private BlogPost _selectedBlogPost = new();
         private bool _showConfirmationModal = false;
@@ -25,6 +26,7 @@
         private readonly CancellationTokenSource _cts = new();
 
         private Dictionary<int, string> _categoryNames = new();
+    private HashSet<int> _savingToggles = new();
 
     [Inject]
     private IBlogPostAdminService BlogPostService { get; set; } = default!;
@@ -48,12 +50,21 @@
             {
                 _isLoading = true;
                 _loadingText = "Fetching blog posts";
-                StateHasChanged();
+        _ = Task.Run(async () =>
+                {
+                    await Task.Delay(250, _cts.Token);
+                    if (_isLoading)
+                    {
+                        _showLoader = true;
+            await InvokeAsync(StateHasChanged);
+                    }
+                });
 
                 var pagedBlogs = await BlogPostService.GetBlogPostsAsync(request.StartIndex, request.Count ?? PageSize, _cts.Token);
                 _currentBlogPosts = pagedBlogs.Records.ToList();
 
                 _isLoading = false;
+                _showLoader = false;
                 StateHasChanged();
 
                 return GridItemsProviderResult.From(_currentBlogPosts, pagedBlogs.TotalCount);
@@ -65,14 +76,48 @@
 
         private async Task HandleFeaturedChanged(BlogPost blogPost)
         {
-            await SaveChangesAsync(blogPost);
-            await RefreshGridAsync();
+            var id = blogPost.Id;
+            var prev = !blogPost.IsFeatured; // because bind already flipped it
+            _savingToggles.Add(id);
+            await InvokeAsync(StateHasChanged);
+
+            bool success = false;
+            try
+            {
+                success = await SaveChangesAsync(blogPost);
+                if (!success)
+                {
+                    blogPost.IsFeatured = prev;
+                }
+            }
+            finally
+            {
+                _savingToggles.Remove(id);
+                await InvokeAsync(StateHasChanged);
+            }
         }
 
         private async Task HandlePublishedChanged(BlogPost blogPost)
         {
-            await SaveChangesAsync(blogPost);
-            await RefreshGridAsync();
+            var id = blogPost.Id;
+            var prev = !blogPost.IsPublished; // because bind already flipped it
+            _savingToggles.Add(id);
+            await InvokeAsync(StateHasChanged);
+
+            bool success = false;
+            try
+            {
+                success = await SaveChangesAsync(blogPost);
+                if (!success)
+                {
+                    blogPost.IsPublished = prev;
+                }
+            }
+            finally
+            {
+                _savingToggles.Remove(id);
+                await InvokeAsync(StateHasChanged);
+            }
         }
 
         private async Task RefreshGridAsync()
@@ -83,15 +128,22 @@
             }
         }
 
-        private async Task SaveChangesAsync(BlogPost blogPost)
+        private async Task<bool> SaveChangesAsync(BlogPost blogPost)
         {
-            _loadingText = "Saving changes";
-            _isLoading = true;
+            // Avoid full-screen loader for quick toggle; keep UI responsive
 
             var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
             var userId = authState.User.GetUserId();
 
-            var updatedBlogPost = await BlogPostService.SaveBlogPostAsync(blogPost, userId, _cts.Token);
+            BlazorBlog.Domain.Entities.BlogPost? updatedBlogPost = null;
+            try
+            {
+                updatedBlogPost = await BlogPostService.SaveBlogPostAsync(blogPost, userId, _cts.Token);
+            }
+            catch
+            {
+                updatedBlogPost = null;
+            }
 
             if (updatedBlogPost != null)
             {
@@ -100,16 +152,18 @@
                 {
                     _currentBlogPosts[index] = updatedBlogPost;
                 }
+                return true;
             }
 
-            _isLoading = false;
-            StateHasChanged();
+            ToastService.ShowToast(ToastLevel.Error, "Failed to save changes.", heading: "Error");
+            return false;
         }
 
         private async Task HandleDeleteBlogPost(BlogPost blogPost)
         {
             _loadingText = "Deleting blog post";
             _isLoading = true;
+            _showLoader = true;
 
             var isDeleted = await BlogPostService.DeleteBlogPostAsync(blogPost.Id, _cts.Token);
 
@@ -121,6 +175,7 @@
             }
 
             _isLoading = false;
+            _showLoader = false;
             StateHasChanged();
         }
 

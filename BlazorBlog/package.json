@@ -1,0 +1,15 @@
+{
+  "name": "blazorblog",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev:css": "tailwindcss -c tailwind.config.js -i ./Styles/tailwind.css -o ./wwwroot/app.css --watch",
+    "build:css": "tailwindcss -c tailwind.config.js -i ./Styles/tailwind.css -o ./wwwroot/app.css --minify"
+  },
+  "devDependencies": {
+    "@tailwindcss/typography": "^0.5.16",
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.4.41",
+    "tailwindcss": "^3.4.10"
+  }
+}

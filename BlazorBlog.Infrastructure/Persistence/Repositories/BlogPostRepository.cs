@@ -2,6 +2,7 @@ namespace BlazorBlog.Infrastructure.Persistence.Repositories
 {
     using BlazorBlog.Application.Models;
     using BlazorBlog.Application.Contracts;
+    using BlazorBlog.Application.Utilities;
     using Microsoft.EntityFrameworkCore;
     using System;
     using System.Threading;
@@ -18,23 +19,30 @@ namespace BlazorBlog.Infrastructure.Persistence.Repositories
             _contextFactory = contextFactory;
         }
 
-        private static BlogPostVm Map(BlogPostEntity p) => new()
+        private static BlogPostVm Map(BlogPostEntity p)
         {
-            Id = p.Id,
-            Title = p.Title,
-            Slug = p.Slug,
-            Image = p.Image,
-            Introduction = p.Introduction,
-            Content = p.Content,
-            CategoryId = p.CategoryId,
-            IsFeatured = p.IsFeatured,
-            IsPublished = p.IsPublished,
-            PublishedAt = p.PublishedAt,
-            PublishedAtDisplay = p.PublishedAt.HasValue ? p.PublishedAt.Value.ToString("dd-MMM-yyyy") : string.Empty,
-            CategoryName = p.Category?.Name,
-            CategorySlug = p.Category?.Slug,
-            AuthorName = p.User?.Name
-        };
+            var (readingTime, wordCount) = ReadingTimeCalculator.Calculate(p.Content);
+            
+            return new()
+            {
+                Id = p.Id,
+                Title = p.Title,
+                Slug = p.Slug,
+                Image = p.Image,
+                Introduction = p.Introduction,
+                Content = p.Content,
+                CategoryId = p.CategoryId,
+                IsFeatured = p.IsFeatured,
+                IsPublished = p.IsPublished,
+                PublishedAt = p.PublishedAt,
+                PublishedAtDisplay = p.PublishedAt.HasValue ? p.PublishedAt.Value.ToString("dd-MMM-yyyy") : string.Empty,
+                CategoryName = p.Category?.Name,
+                CategorySlug = p.Category?.Slug,
+                AuthorName = p.User?.Name,
+                WordCount = wordCount,
+                ReadingTime = readingTime
+            };
+        }
 
         private static DomainBlogPost MapToDomain(BlogPostEntity e) => new()
         {
@@ -278,6 +286,70 @@ namespace BlazorBlog.Infrastructure.Persistence.Repositories
                 query = query.Where(b => b.Id != excludeId.Value);
             }
             return await query.AnyAsync(cancellationToken);
+        }
+
+        public async Task<BlogPostVm[]> GetRecentBlogPostsByTagAsync(string tagSlug, int count, CancellationToken cancellationToken = default)
+        {
+            await using var context = _contextFactory.CreateDbContext();
+            var postIdsQuery = context.BlogPostTags
+                .AsNoTracking()
+                .Where(bpt => bpt.Tag.Slug == tagSlug && bpt.BlogPost.IsPublished)
+                .Select(bpt => bpt.BlogPost.Id)
+                .Distinct();
+
+            var posts = await context.BlogPosts
+                .AsNoTracking()
+                .Include(p => p.Category)
+                .Include(p => p.User)
+                .Where(p => postIdsQuery.Contains(p.Id))
+                .OrderByDescending(p => p.PublishedAt)
+                .Take(count)
+                .ToArrayAsync(cancellationToken);
+
+            return posts.Select(Map).ToArray();
+        }
+
+        public async Task<BlogPostVm[]> GetPopularBlogPostsByTagAsync(string tagSlug, int count, CancellationToken cancellationToken = default)
+        {
+            await using var context = _contextFactory.CreateDbContext();
+            var postIdsQuery = context.BlogPostTags
+                .AsNoTracking()
+                .Where(bpt => bpt.Tag.Slug == tagSlug && bpt.BlogPost.IsPublished)
+                .Select(bpt => bpt.BlogPost.Id)
+                .Distinct();
+
+            var posts = await context.BlogPosts
+                .AsNoTracking()
+                .Include(p => p.Category)
+                .Include(p => p.User)
+                .Where(p => postIdsQuery.Contains(p.Id))
+                .OrderByDescending(p => p.ViewCount)
+                .Take(count)
+                .ToArrayAsync(cancellationToken);
+
+            return posts.Select(Map).ToArray();
+        }
+
+        public async Task<BlogPostVm[]> GetBlogPostsByTagAsync(string tagSlug, int pageIndex, int pageSize, CancellationToken cancellationToken = default)
+        {
+            await using var context = _contextFactory.CreateDbContext();
+            var postIdsQuery = context.BlogPostTags
+                .AsNoTracking()
+                .Where(bpt => bpt.Tag.Slug == tagSlug && bpt.BlogPost.IsPublished)
+                .Select(bpt => bpt.BlogPost.Id)
+                .Distinct();
+
+            var posts = await context.BlogPosts
+                .AsNoTracking()
+                .Include(p => p.Category)
+                .Include(p => p.User)
+                .Where(p => postIdsQuery.Contains(p.Id))
+                .OrderByDescending(p => p.PublishedAt)
+                .Skip(pageIndex * pageSize)
+                .Take(pageSize)
+                .ToArrayAsync(cancellationToken);
+
+            return posts.Select(Map).ToArray();
         }
     }
 }

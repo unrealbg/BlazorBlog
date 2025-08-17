@@ -20,7 +20,7 @@
 
 <AdminHeader Title="@PageTitle">
     <ActionButtons>
-        <NavLink href="/admin/manage-blog-posts" class="btn btn-primary btn-sm">Go Back</NavLink>
+    <NavLink href="/admin/manage-blog-posts" class="inline-flex items-center rounded-md bg-slate-700 px-3 py-1.5 text-sm font-medium text-white hover:bg-slate-800">Go Back</NavLink>
     </ActionButtons>
     </AdminHeader>
 
@@ -32,50 +32,62 @@
 <EditForm EditContext="_editContext" OnSubmit="SubmitAsync">
     <DataAnnotationsValidator />
     <ValidationSummary />
-    <div class="row">
-        <div class="col-sm-6">
-            <div class="mb-3">
-                <label class="form-label">Title</label>
-                <InputText @bind-Value="_blogPostVm.Title" class="form-control form-control-sm" placeholder="Blog post title" />
-                <ValidationMessage For="() => _blogPostVm.Title" class="text-danger" />
+    <div class="grid grid-cols-1 gap-6 lg:grid-cols-12">
+        <div class="lg:col-span-6">
+            <div class="mb-4">
+                <label class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-200">Title</label>
+                <InputText @bind-Value="_blogPostVm.Title" class="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100" placeholder="Blog post title" />
+                <ValidationMessage For="() => _blogPostVm.Title" class="text-red-600" />
             </div>
-            <div class="mb-3">
-                <label class="form-label">Category</label>
-                <InputSelect @bind-Value="_blogPostVm.CategoryId" class="form-control form-control-sm">
+            <div class="mb-4">
+                <label class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-200">Category</label>
+                <InputSelect @bind-Value="_blogPostVm.CategoryId" class="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100">
                     <option value="0">Select Category</option>
                     @foreach (var category in _categories)
                     {
                         <option value="@category.Id">@category.Name</option>
                     }
                 </InputSelect>
-                <ValidationMessage For="() => _blogPostVm.CategoryId" class="text-danger" />
+                <ValidationMessage For="() => _blogPostVm.CategoryId" class="text-red-600" />
             </div>
-            <div class="mb-3">
-                <label class="form-label">Introduction</label>
-                <InputText @bind-Value="_blogPostVm.Introduction" class="form-control form-control-sm" placeholder="Blog post introduction" />
-                <ValidationMessage For="() => _blogPostVm.Introduction" class="text-danger" />
+            <div class="mb-4">
+                <label class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-200">Introduction</label>
+                <InputText @bind-Value="_blogPostVm.Introduction" class="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100" placeholder="Blog post introduction" />
+                <ValidationMessage For="() => _blogPostVm.Introduction" class="text-red-600" />
+            </div>
+            <div class="mb-4">
+                <label class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-200">Tags</label>
+                <InputText @bind-Value="TagsCsv" class="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100" placeholder="e.g. blazor, .net, csharp" />
+                <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">Comma-separated list. Example: blazor, .net, csharp</p>
             </div>
             @if (!string.IsNullOrWhiteSpace(_imageUrl))
             {
-                <div class="mb-3">
-                    <img src="@_imageUrl" style="height: 200px" />
+                <div class="mb-4">
+                    <img src="@_imageUrl" class="max-h-64 rounded-lg" />
                 </div>
             }
-            <div class="mb-3">
-                <label class="form-label">Upload Image</label>
-                <br />
+            <div class="mb-4">
+                <label class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-200">Upload Image</label>
                 <InputFile OnChange="HandleFileUploadAsync" />
             </div>
-            <div class="mb-3">
-                <label class="form-label ml-4">
-                    <InputCheckbox @bind-Value="_blogPostVm.IsFeatured" class="form-check-input" />
-                    Featured?
+            <div class="mb-4">
+                <label class="inline-flex items-center gap-3">
+                    <span class="relative inline-flex h-5 w-9 items-center">
+                        <InputCheckbox @bind-Value="_blogPostVm.IsFeatured" class="peer sr-only" />
+                        <span class="pointer-events-none absolute inset-0 rounded-full bg-slate-300 transition-colors duration-200 ease-in-out peer-checked:bg-emerald-600 peer-focus-visible:ring-2 peer-focus-visible:ring-brand-500 peer-focus-visible:ring-offset-2 peer-focus-visible:ring-offset-white dark:peer-focus-visible:ring-offset-slate-950"></span>
+                        <span class="pointer-events-none absolute left-0.5 top-0.5 h-4 w-4 rounded-full bg-white shadow transition-transform duration-200 ease-in-out peer-checked:translate-x-4"></span>
+                    </span>
+                    <span class="text-sm text-slate-700 dark:text-slate-300">Featured?</span>
                 </label>
             </div>
-            <div class="mb-3">
-                <label class="form-label ml-4">
-                    <InputCheckbox @bind-Value="_blogPostVm.IsPublished" class="form-check-input" />
-                    Published?
+            <div class="mb-4">
+                <label class="inline-flex items-center gap-3">
+                    <span class="relative inline-flex h-5 w-9 items-center">
+                        <InputCheckbox @bind-Value="_blogPostVm.IsPublished" class="peer sr-only" />
+                        <span class="pointer-events-none absolute inset-0 rounded-full bg-slate-300 transition-colors duration-200 ease-in-out peer-checked:bg-emerald-600 peer-focus-visible:ring-2 peer-focus-visible:ring-brand-500 peer-focus-visible:ring-offset-2 peer-focus-visible:ring-offset-white dark:peer-focus-visible:ring-offset-slate-950"></span>
+                        <span class="pointer-events-none absolute left-0.5 top-0.5 h-4 w-4 rounded-full bg-white shadow transition-transform duration-200 ease-in-out peer-checked:translate-x-4"></span>
+                    </span>
+                    <span class="text-sm text-slate-700 dark:text-slate-300">Published?</span>
                 </label>
             </div>
             @if (!string.IsNullOrWhiteSpace(_errorMessage))
@@ -83,9 +95,9 @@
                 ToastService.ShowToast(BlazorBlog.Application.UI.ToastLevel.Error, _errorMessage, "Error");
             }
         </div>
-        <div class="col-sm-6 d-flex">
-            <div class="mb-3 flex-grow-1">
-                <label class="form-label">Content</label>
+        <div class="lg:col-span-6">
+            <div class="mb-4">
+                <label class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-200">Content <span class="text-red-600">*</span></label>
                 <BlazoredTextEditor ToolbarCSSClass="form-control" EditorCssClass="form-control" @ref="@_quillHtml" Placeholder="Enter your blog post content here...">
                     <ToolbarContent>
                         <select class="ql-header">
@@ -118,10 +130,24 @@
                         @((MarkupString)(_content ?? string.Empty))
                     </EditorContent>
                 </BlazoredTextEditor>
+                <ValidationMessage For="() => _blogPostVm.Content" class="mt-1 block text-sm text-red-600" />
             </div>
         </div>
     </div>
-    <div class="mb-3">
-        <button type="submit" class="btn btn-success">Save</button>
+    <div class="mt-2">
+        <button type="submit" disabled="@IsSaving" class="inline-flex items-center rounded-md bg-emerald-600 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-700 disabled:opacity-60 disabled:cursor-not-allowed">
+            @if (IsSaving)
+            {
+                <svg class="-ml-0.5 mr-2 h-4 w-4 animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" aria-hidden="true">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+                </svg>
+        <span>Saving…</span>
+            }
+            else
+            {
+        <span>Save</span>
+            }
+        </button>
     </div>
 </EditForm>

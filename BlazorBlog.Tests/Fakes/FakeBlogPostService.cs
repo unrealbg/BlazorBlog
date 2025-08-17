@@ -19,5 +19,14 @@ namespace BlazorBlog.Tests.Fakes
 
         public Task<DetailPageModel> GetBlogPostBySlugAsync(string slug, CancellationToken cancellationToken = default)
             => Task.FromResult(new DetailPageModel(new BlogPostVm(), Array.Empty<BlogPostVm>()));
+
+        public Task<BlogPostVm[]> GetRecentBlogPostsByTagAsync(string tagSlug, int count, CancellationToken cancellationToken = default)
+            => Task.FromResult(Array.Empty<BlogPostVm>());
+
+        public Task<BlogPostVm[]> GetPopularBlogPostsByTagAsync(string tagSlug, int count, CancellationToken cancellationToken = default)
+            => Task.FromResult(Array.Empty<BlogPostVm>());
+
+        public Task<BlogPostVm[]> GetBlogPostsByTagAsync(string tagSlug, int pageIndex, int pageSize, CancellationToken cancellationToken = default)
+            => Task.FromResult(Array.Empty<BlogPostVm>());
     }
 }

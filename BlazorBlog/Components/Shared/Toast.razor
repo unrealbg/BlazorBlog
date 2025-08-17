@@ -3,144 +3,55 @@
 @rendermode InteractiveServer
 
 <style>
-    /* Container */
-    .toast-container {
-        position: fixed;
-        top: 1rem;
-        right: 1rem;
-        z-index: 1100;
-        display: flex;
-        flex-direction: column;
-        gap: 0.75rem;
-        pointer-events: none; /* allow clicks to pass through gaps */
-    }
-
-    /* Card */
-    .toast-card {
-        --toast-bg: var(--white, #ffffff);
-        --toast-fg: var(--dark, #212529);
-        --toast-border: var(--gray, #e5e7eb);
-        --toast-accent: var(--primary, #03a87c);
-        --toast-shadow: var(--box-shadow-lg, 0 10px 25px rgba(0,0,0,.08));
-        background: var(--toast-bg);
-        color: var(--toast-fg);
-        border: 1px solid var(--toast-border);
-    border-radius: 10px;
-        box-shadow: var(--toast-shadow);
-        display: grid;
-        grid-template-columns: auto 1fr auto;
-        align-items: start;
-        gap: .75rem .75rem;
-        min-width: 280px;
-        max-width: min(92vw, 420px);
-        padding: .75rem .75rem .5rem .75rem;
-        pointer-events: auto; /* clickable */
-        animation: toast-slide-in .24s ease-out;
-        overflow: hidden;
-    }
-
-    .toast-icon {
-        height: 28px;
-        width: 28px;
-        border-radius: 8px;
-        display: grid;
-        place-items: center;
-        margin-top: .1rem;
-    background: var(--toast-accent);
-    color: white;
-    box-shadow: inset 0 0 0 1px rgba(255,255,255,.35);
-    }
-
-    .toast-content { line-height: 1.15; }
-    .toast-heading { font-weight: 650; font-size: .95rem; margin: 0; }
-    .toast-body { font-size: .9rem; opacity: .95; margin-top: .15rem; }
-
-    .toast-close {
-        appearance: none;
-        border: 0;
-        background: transparent;
-        color: var(--toast-fg);
-        opacity: .8;
-        cursor: pointer;
-        padding: .25rem;
-        border-radius: 8px;
-        transition: opacity .12s ease, background-color .12s ease;
-    }
-    .toast-close:hover { opacity: 1; background: rgba(255,255,255,.06); }
-
-    /* Progress bar */
-    .toast-progress {
-        grid-column: 1 / -1;
-    height: 2px;
-        width: 100%;
-    background: rgba(0,0,0,.06);
-        border-radius: 999px;
-        overflow: hidden;
-        position: relative;
-        margin-top: .35rem;
-    }
-    .toast-progress > i {
-        content: "";
-        display: block;
-        height: 100%;
-        width: 100%;
-    background: var(--toast-accent);
-        transform-origin: left center;
-        animation: toast-progress 10s linear forwards;
-    }
-
-    /* Levels */
-    .toast-card.Info    { --toast-accent: var(--info, #09ebaf); }
-    .toast-card.Success { --toast-accent: var(--success, #03a87c); }
-    .toast-card.Warning { --toast-accent: var(--warning, #ffde03); }
-    .toast-card.Error   { --toast-accent: var(--danger, #ea2f65); }
-
-    /* Animations */
-    @@keyframes toast-slide-in {
-        from { transform: translate3d(16px, -8px, 0); opacity: 0; }
-        to   { transform: translate3d(0, 0, 0); opacity: 1; }
-    }
-    @@keyframes toast-progress {
-        from { transform: scaleX(1); }
-        to   { transform: scaleX(0); }
-    }
-
-    /* Responsive tweaks */
-    @@media (max-width: 520px) {
-        .toast-container { right: .75rem; left: .75rem; }
-        .toast-card { max-width: 100%; }
-    }
+    /* Minimal animations for entry + progress */
+    @@keyframes toast-slide-in { from { transform: translate3d(16px,-8px,0); opacity:0 } to { transform: translate3d(0,0,0); opacity:1 } }
+    @@keyframes toast-progress { from { transform: scaleX(1) } to { transform: scaleX(0) } }
 </style>
 
 @if (_toasts.Count > 0)
 {
-    <div class="toast-container" role="region" aria-live="polite" aria-atomic="true">
+    var containerPosClass = Position == BlazorBlog.Components.Shared.ToastAnchor.BottomRight
+        ? "fixed bottom-4 right-4"
+        : "fixed top-4 right-4";
+
+    <div class="pointer-events-none @containerPosClass z-[9999]" role="region" aria-live="polite" aria-atomic="true">
+        <div class="flex max-w-[92vw] flex-col items-end gap-2">
         @foreach (var toast in _toasts)
         {
-            <div class="toast-card @toast.ToastLevel" role="status">
-                <div class="toast-icon" aria-hidden="true">
-                    @GetIcon(toast.ToastLevel)
+            <div class="pointer-events-auto w-[360px] max-w-[92vw] rounded-md border border-slate-200/70 bg-white/95 p-0 text-slate-800 shadow-lg backdrop-blur transition dark:border-slate-800 dark:bg-slate-900/95 dark:text-slate-100" role="status" style="animation: toast-slide-in .22s ease-out">
+                <div class="flex items-start gap-3 p-3">
+                    <div class="mt-0.5 inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-white shadow @GetAccentBgClass(toast.ToastLevel)" aria-hidden="true">
+                        @GetIcon(toast.ToastLevel)
+                    </div>
+                    <div class="min-w-0 flex-1">
+                        <div class="flex items-start justify-between gap-3">
+                            <p class="m-0 truncate text-sm font-semibold">@toast.Heading</p>
+                            <button class="-m-1 inline-flex h-7 w-7 items-center justify-center rounded-md text-slate-400 transition hover:text-slate-600 focus:outline-none focus:ring-2 focus:ring-brand-500 dark:text-slate-400 dark:hover:text-slate-200" title="Dismiss" aria-label="Dismiss notification" @onclick="() => RemoveToast(toast)">✕</button>
+                        </div>
+                        <div class="mt-1 text-sm text-slate-600 dark:text-slate-300">@((MarkupString)(toast.Message ?? string.Empty))</div>
+                    </div>
                 </div>
-                <div class="toast-content">
-                    <p class="toast-heading">@toast.Heading</p>
-                    <div class="toast-body">@((MarkupString)(toast.Message ?? string.Empty))</div>
+                <div class="h-0.5 w-full overflow-hidden bg-slate-200 dark:bg-slate-800">
+                    <i class="block h-full w-full origin-left @GetAccentBgClass(toast.ToastLevel)" style=@($"animation: toast-progress {toast.DurationMs}ms linear forwards")></i>
                 </div>
-                <button class="toast-close" title="Dismiss" aria-label="Dismiss notification" @onclick="() => RemoveToast(toast)">✕</button>
-                <div class="toast-progress"><i></i></div>
             </div>
         }
+        </div>
     </div>
 }
 
 @code {
     private List<ToastModel> _toasts = new();
 
+    [Parameter]
+    public BlazorBlog.Components.Shared.ToastAnchor Position { get; set; } = BlazorBlog.Components.Shared.ToastAnchor.TopRight;
+
     protected override void OnInitialized()
     {
         ToastService.OnShow += ShowToast;
     }
 
-    private async void ShowToast(BlazorBlog.Application.UI.ToastLevel level, string message, string heading)
+    private async void ShowToast(BlazorBlog.Application.UI.ToastLevel level, string message, string heading, int? durationMs)
     {
         if (string.IsNullOrWhiteSpace(message) && string.IsNullOrWhiteSpace(heading))
         {
@@ -156,9 +67,14 @@
             return;
         }
 
-        if (string.IsNullOrWhiteSpace(message) || string.IsNullOrWhiteSpace(heading))
+        // Allow message-only or heading-only toasts; fallback heading to level
+        if (string.IsNullOrWhiteSpace(message) && !string.IsNullOrWhiteSpace(heading))
         {
-            return;
+            message = heading;
+        }
+        if (string.IsNullOrWhiteSpace(heading))
+        {
+            heading = level.ToString();
         }
 
         var existingToast = _toasts.FirstOrDefault(t => t.Heading == heading && t.Message == message);
@@ -166,12 +82,14 @@
         {
             existingToast.CancellationTokenSource.Cancel();
             existingToast.CancellationTokenSource = new CancellationTokenSource();
+            existingToast.DurationMs = durationMs ?? existingToast.DurationMs;
             await DelayToastDismissal(existingToast);
         }
         else
         {
-            var newToast = new ToastModel { Heading = heading, Message = message, ToastLevel = level.ToString() };
-            _toasts.Add(newToast);
+            var newToast = new ToastModel { Heading = heading, Message = message, ToastLevel = level.ToString(), DurationMs = durationMs ?? GetDefaultDurationMs(level) };
+            // Newest on top
+            _toasts.Insert(0, newToast);
             StateHasChanged();
             await DelayToastDismissal(newToast);
         }
@@ -181,7 +99,7 @@
     {
         try
         {
-            await Task.Delay(10000, toast.CancellationTokenSource.Token);
+            await Task.Delay(toast.DurationMs, toast.CancellationTokenSource.Token);
         }
         catch (TaskCanceledException)
         {
@@ -209,12 +127,20 @@
     {
         var svg = level switch
         {
-            nameof(BlazorBlog.Application.UI.ToastLevel.Success) => "<svg viewBox='0 0 24 24' width='18' height='18' fill='currentColor' aria-hidden='true'><path d='M9 16.2 4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4z'/></svg>",
-            nameof(BlazorBlog.Application.UI.ToastLevel.Warning) => "<svg viewBox='0 0 24 24' width='18' height='18' fill='currentColor' aria-hidden='true'><path d='M1 21h22L12 2 1 21zm12-3h-2v2h2v-2zm0-8h-2v6h2V10z'/></svg>",
-            nameof(BlazorBlog.Application.UI.ToastLevel.Error)   => "<svg viewBox='0 0 24 24' width='18' height='18' fill='currentColor' aria-hidden='true'><path d='M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm5 13.6L15.6 17 12 13.4 8.4 17 7 15.6 10.6 12 7 8.4 8.4 7 12 10.6 15.6 7 17 8.4 13.4 12 17 15.6z'/></svg>",
-            _ => "<svg viewBox='0 0 24 24' width='18' height='18' fill='currentColor' aria-hidden='true'><path d='M11 7h2v6h-2zm0 8h2v2h-2z'/><path d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z'/></svg>"
+            nameof(BlazorBlog.Application.UI.ToastLevel.Success) => "<svg viewBox='0 0 24 24' width='14' height='14' fill='currentColor' aria-hidden='true'><path d='M9 16.2 4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4z'/></svg>",
+            nameof(BlazorBlog.Application.UI.ToastLevel.Warning) => "<svg viewBox='0 0 24 24' width='14' height='14' fill='currentColor' aria-hidden='true'><path d='M1 21h22L12 2 1 21zm12-3h-2v2h2v-2zm0-8h-2v6h2V10z'/></svg>",
+            nameof(BlazorBlog.Application.UI.ToastLevel.Error)   => "<svg viewBox='0 0 24 24' width='14' height='14' fill='currentColor' aria-hidden='true'><path d='M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm5 13.6L15.6 17 12 13.4 8.4 17 7 15.6 10.6 12 7 8.4 8.4 7 12 10.6 15.6 7 17 8.4 13.4 12 17 15.6z'/></svg>",
+            _ => "<svg viewBox='0 0 24 24' width='14' height='14' fill='currentColor' aria-hidden='true'><path d='M11 7h2v6h-2zm0 8h2v2h-2z'/><path d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z'/></svg>"
         };
         builder.AddMarkupContent(0, svg);
+    };
+
+    private string GetAccentBgClass(string level) => level switch
+    {
+        nameof(BlazorBlog.Application.UI.ToastLevel.Success) => "bg-emerald-600",
+        nameof(BlazorBlog.Application.UI.ToastLevel.Warning) => "bg-amber-500",
+        nameof(BlazorBlog.Application.UI.ToastLevel.Error)   => "bg-rose-600",
+        _ => "bg-brand-600"
     };
 
     public void Dispose()
@@ -227,6 +153,16 @@
         }
     }
 
+    const int DefaultDurationMs = 10000;
+
+    private static int GetDefaultDurationMs(BlazorBlog.Application.UI.ToastLevel level) => level switch
+    {
+        BlazorBlog.Application.UI.ToastLevel.Success => 5000,
+        BlazorBlog.Application.UI.ToastLevel.Warning => 10000,
+        BlazorBlog.Application.UI.ToastLevel.Error   => 15000,
+        _ => DefaultDurationMs
+    };
+
     class ToastModel
     {
         public string Heading { get; set; } = string.Empty;
@@ -234,6 +170,8 @@
         public string Message { get; set; } = string.Empty;
 
         public string ToastLevel { get; set; } = string.Empty;
+
+        public int DurationMs { get; set; } = DefaultDurationMs;
 
         public CancellationTokenSource CancellationTokenSource { get; set; } = new CancellationTokenSource();
     }

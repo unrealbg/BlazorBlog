@@ -172,6 +172,21 @@ namespace BlazorBlog.Infrastructure.Migrations
                     b.ToTable("BlogPosts");
                 });
 
+            modelBuilder.Entity("BlazorBlog.Infrastructure.Persistence.Entities.BlogPostTag", b =>
+                {
+                    b.Property<int>("BlogPostId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TagId")
+                        .HasColumnType("int");
+
+                    b.HasKey("BlogPostId", "TagId");
+
+                    b.HasIndex("TagId");
+
+                    b.ToTable("BlogPostTags");
+                });
+
             modelBuilder.Entity("BlazorBlog.Infrastructure.Persistence.Entities.Category", b =>
                 {
                     b.Property<int>("Id")
@@ -228,6 +243,35 @@ namespace BlazorBlog.Infrastructure.Migrations
                         .IsUnique();
 
                     b.ToTable("Subscribers");
+                });
+
+            modelBuilder.Entity("BlazorBlog.Infrastructure.Persistence.Entities.Tag", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("nvarchar(40)");
+
+                    b.Property<string>("Slug")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.HasIndex("Slug")
+                        .IsUnique();
+
+                    b.ToTable("Tags");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -382,6 +426,25 @@ namespace BlazorBlog.Infrastructure.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("BlazorBlog.Infrastructure.Persistence.Entities.BlogPostTag", b =>
+                {
+                    b.HasOne("BlazorBlog.Infrastructure.Persistence.Entities.BlogPost", "BlogPost")
+                        .WithMany()
+                        .HasForeignKey("BlogPostId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("BlazorBlog.Infrastructure.Persistence.Entities.Tag", "Tag")
+                        .WithMany("BlogPostTags")
+                        .HasForeignKey("TagId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("BlogPost");
+
+                    b.Navigation("Tag");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -431,6 +494,11 @@ namespace BlazorBlog.Infrastructure.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("BlazorBlog.Infrastructure.Persistence.Entities.Tag", b =>
+                {
+                    b.Navigation("BlogPostTags");
                 });
 #pragma warning restore 612, 618
         }

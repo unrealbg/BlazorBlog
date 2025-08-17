@@ -4,44 +4,71 @@
 
 @attribute [StreamRendering ]
 
-<div class="border p-5 bg-lightblue">
-    <div class="row justify-content-between">
-        <div class="col-md-6">
-            <h5 class="font-weight-bold secondfont">Become a member</h5>
-            Get the latest news right in your inbox. It's free and you can unsubscribe at any time. We hate spam as much as we do, so we never spam!
-        </div>
-        <div class="col-md-6">
-            <EditForm EditContext="_editContext" method="post" OnSubmit="SubscribeAsync" FormName="subscribe-form" Enhance>
-                <DataAnnotationsValidator />
-                <div class="row">
-                    <div class="col-md-6">
-                        <InputText class="form-control" placeholder="Name" @bind-Value="@Subscriber.Name" />
-                        <ValidationMessage For="() => Subscriber.Name" class="text-danger" />
-                    </div>
-                    <div class="col-md-6">
-                        <InputText type="email" class="form-control" placeholder="Email" @bind-Value="@Subscriber.Email" />
-                        <ValidationMessage For="() => Subscriber.Email" class="text-danger" />
-                    </div>
-                    @if (!string.IsNullOrEmpty(_message))
-                    {
-                        <div class="col-md-12">
-                           <p class="m-0 p-0">@_message</p>
+@if (Simple)
+{
+    <div class="rounded-2xl bg-white border border-slate-200 p-6 shadow-soft dark:bg-slate-800 dark:border-slate-700">
+        <h3 class="text-lg font-semibold text-slate-900 dark:text-white mb-2">Subscribe</h3>
+        <p class="text-sm text-slate-600 dark:text-slate-300 mb-4">Get new articles delivered right to your inbox.</p>
+        <EditForm EditContext="_editContext" method="post" OnSubmit="SubscribeAsync" FormName="subscribe-form" Enhance>
+            <DataAnnotationsValidator />
+            <div class="flex gap-2">
+                <InputText type="email" 
+                          class="flex-1 rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm text-slate-900 placeholder-slate-400 outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 dark:border-slate-600 dark:bg-slate-700 dark:text-white dark:placeholder-slate-400 dark:focus:border-brand-500" 
+                          placeholder="you@example.com" 
+                          @bind-Value="@Subscriber.Email" />
+                <button type="submit" class="rounded-xl bg-brand-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-700">OK</button>
+            </div>
+            <ValidationMessage For="() => Subscriber.Email" class="text-xs text-red-600 dark:text-red-400 mt-1" />
+            @if (!string.IsNullOrEmpty(_message))
+            {
+                <p class="mt-2 text-sm text-slate-600 dark:text-slate-300">@_message</p>
+            }
+        </EditForm>
+    </div>
+}
+else
+{
+    <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white p-5 dark:border-slate-800 dark:bg-slate-900">
+        <div class="grid gap-6 md:grid-cols-2">
+            <div>
+                <h3 class="text-base font-semibold">Become a member</h3>
+                <p class="mt-1 text-sm text-slate-600 dark:text-slate-300">Get the latest news right in your inbox. It's free and you can unsubscribe at any time. We hate spam as much as we do, so we never spam!</p>
+            </div>
+            <div>
+                <EditForm EditContext="_editContext" method="post" OnSubmit="SubscribeAsync" FormName="subscribe-form" Enhance>
+                    <DataAnnotationsValidator />
+                    <div class="grid gap-3 sm:grid-cols-2">
+                        <div>
+                            <InputText class="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm outline-none focus:border-brand-500 dark:border-slate-800 dark:bg-slate-900" placeholder="Name" @bind-Value="@Subscriber.Name" />
+                            <ValidationMessage For="() => Subscriber.Name" class="text-xs text-red-600" />
                         </div>
-                    }
-
-                    <div class="col-md-12 mt-3">
-                        <button type="submit" class="btn btn-success btn-block">Subscribe</button>
+                        <div>
+                            <InputText type="email" class="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm outline-none focus:border-brand-500 dark:border-slate-800 dark:bg-slate-900" placeholder="Email" @bind-Value="@Subscriber.Email" />
+                            <ValidationMessage For="() => Subscriber.Email" class="text-xs text-red-600" />
+                        </div>
+                        @if (!string.IsNullOrEmpty(_message))
+                        {
+                            <div class="sm:col-span-2">
+                                <p class="m-0 p-0 text-sm">@_message</p>
+                            </div>
+                        }
+                        <div class="sm:col-span-2">
+                            <button type="submit" class="w-full rounded-xl bg-brand-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-700">Subscribe</button>
+                        </div>
                     </div>
-                </div>
-            </EditForm>
+                </EditForm>
+            </div>
         </div>
     </div>
-</div>
+}
 
 
 @code {
     [SupplyParameterFromForm]
     private Subscriber Subscriber { get; set; } = new Subscriber();
+
+    [Parameter]
+    public bool Simple { get; set; }
 
     private string? _message;
 
@@ -58,6 +85,11 @@
     {
         _message = null;
         _messageStore!.Clear();
+
+        if (Simple && string.IsNullOrWhiteSpace(Subscriber.Name))
+        {
+            Subscriber.Name = "Friend";
+        }
 
         var validationResult = await Validator.ValidateAsync(Subscriber);
         if (!validationResult.IsValid)

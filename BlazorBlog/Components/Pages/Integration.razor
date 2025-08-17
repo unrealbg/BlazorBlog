@@ -1,0 +1,167 @@
+﻿@page "/integration"
+
+<PageTitle>@Utils.GetPageTitle("Integration Guide")</PageTitle>
+
+<div class="mx-auto max-w-4xl px-4 py-12 sm:px-6 lg:px-8">
+    <div class="mx-auto max-w-3xl">
+        <!-- Header -->
+        <div class="mb-12 text-center">
+            <h1 class="text-4xl font-bold tracking-tight text-slate-900 dark:text-white sm:text-5xl">
+                Integration Guide
+            </h1>
+            <p class="mt-4 text-lg text-slate-600 dark:text-slate-300">
+                Learn how to integrate and customize the BlazorBlog platform for your needs.
+            </p>
+        </div>
+
+        <!-- Content -->
+        <div class="prose prose-slate max-w-none dark:prose-invert prose-lg">
+            <h2>Getting Started</h2>
+
+            <p>
+                BlazorBlog is a modern, full-featured blog platform built with .NET 9 and Blazor Server.
+                This guide will help you understand how to integrate and customize the platform.
+            </p>
+
+            <h3>Prerequisites</h3>
+
+            <ul>
+                <li>.NET 9 SDK</li>
+                <li>SQL Server (or SQL Server LocalDB)</li>
+                <li>Node.js (for Tailwind CSS compilation)</li>
+                <li>Visual Studio 2022 or VS Code</li>
+            </ul>
+
+            <h3>Installation Steps</h3>
+
+            <ol>
+                <li>
+                    <strong>Clone the Repository</strong>
+                    <pre><code>git clone https://github.com/unrealbg/BlazorBlog.git
+cd BlazorBlog</code></pre>
+                </li>
+
+                <li>
+                    <strong>Install Dependencies</strong>
+                    <pre><code>dotnet restore
+npm install</code></pre>
+                </li>
+
+                <li>
+                    <strong>Configure Database</strong>
+                    <p>Update the connection string in <code>appsettings.json</code>:</p>
+                    <pre><code>{
+  "ConnectionStrings": {
+    "DefaultConnection": "Server=(localdb)\\mssqllocaldb;Database=BlazorBlogDb;Trusted_Connection=true;MultipleActiveResultSets=true"
+  }
+}</code></pre>
+                </li>
+
+                <li>
+                    <strong>Run Database Migrations</strong>
+                    <pre><code>dotnet ef database update</code></pre>
+                </li>
+
+                <li>
+                    <strong>Build Tailwind CSS</strong>
+                    <pre><code>npm run build:css</code></pre>
+                </li>
+
+                <li>
+                    <strong>Run the Application</strong>
+                    <pre><code>dotnet run</code></pre>
+                </li>
+            </ol>
+
+            <h2>Architecture Overview</h2>
+
+            <p>
+                BlazorBlog follows Clean Architecture principles with clear separation of concerns:
+            </p>
+
+            <ul>
+                <li><strong>BlazorBlog.Domain</strong> - Core business entities and domain logic</li>
+                <li><strong>BlazorBlog.Application</strong> - Application services and business logic</li>
+                <li><strong>BlazorBlog.Infrastructure</strong> - Data access, external services</li>
+                <li><strong>BlazorBlog</strong> - Web UI layer with Blazor components</li>
+            </ul>
+
+            <h2>Key Features</h2>
+
+            <ul>
+                <li>🔐 <strong>Authentication & Authorization</strong> - Built-in user management</li>
+                <li>📝 <strong>Rich Text Editor</strong> - Quill.js integration for content creation</li>
+                <li>🎨 <strong>Modern UI</strong> - Tailwind CSS with dark mode support</li>
+                <li>📱 <strong>Responsive Design</strong> - Mobile-first approach</li>
+                <li>🔍 <strong>SEO Optimized</strong> - Clean URLs and metadata</li>
+                <li>⚡ <strong>High Performance</strong> - Entity Framework Core with caching</li>
+            </ul>
+
+            <h2>Customization</h2>
+
+            <h3>Styling</h3>
+
+            <p>
+                The platform uses Tailwind CSS for styling. To customize the appearance:
+            </p>
+
+            <ol>
+                <li>Modify <code>tailwind.config.js</code> to change colors, fonts, or spacing</li>
+                <li>Update components in <code>Components/</code> directory</li>
+                <li>Run <code>npm run build:css</code> to rebuild the CSS</li>
+            </ol>
+
+            <h3>Adding New Features</h3>
+
+            <p>
+                To add new functionality:
+            </p>
+
+            <ol>
+                <li>Create domain entities in <code>BlazorBlog.Domain</code></li>
+                <li>Add application services in <code>BlazorBlog.Application</code></li>
+                <li>Implement data access in <code>BlazorBlog.Infrastructure</code></li>
+                <li>Create Blazor components in the main project</li>
+            </ol>
+
+            <h2>Development Workflow</h2>
+
+            <h3>Working with Tailwind CSS</h3>
+
+            <p>During development, you can watch for CSS changes:</p>
+
+            <pre><code>npm run dev:css</code></pre>
+
+            <h3>Database Changes</h3>
+
+            <p>When modifying entities, create and apply migrations:</p>
+
+            <pre><code>dotnet ef migrations add YourMigrationName
+dotnet ef database update</code></pre>
+
+            <h2>Deployment</h2>
+
+            <p>
+                The application can be deployed to various hosting platforms:
+            </p>
+
+            <ul>
+                <li><strong>Azure App Service</strong> - Recommended for production</li>
+                <li><strong>IIS</strong> - For on-premises hosting</li>
+                <li><strong>Docker</strong> - Containerized deployment</li>
+            </ul>
+
+            <h2>Support</h2>
+
+            <p>
+                For questions, issues, or contributions:
+            </p>
+
+            <ul>
+                <li>📋 <a href="https://github.com/unrealbg/BlazorBlog/issues" target="_blank">GitHub Issues</a></li>
+                <li>📧 <a href="https://github.com/unrealbg/BlazorBlog" target="_blank">GitHub Repository</a></li>
+                <li>💬 <a href="https://github.com/unrealbg/BlazorBlog/discussions" target="_blank">GitHub Discussions</a></li>
+            </ul>
+        </div>
+    </div>
+</div>

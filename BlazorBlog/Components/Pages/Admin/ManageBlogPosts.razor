@@ -8,7 +8,7 @@
 
 <AdminHeader Title="Manage Blog Posts">
     <ActionButtons>
-        <a href="admin/manage-blog-posts/new" class="btn btn-primary btn-sm" data-enhance-nav="false">+ Add new Blog Post</a>
+    <a href="admin/manage-blog-posts/new" class="inline-flex items-center rounded-md bg-brand-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-brand-700" data-enhance-nav="false">+ Add new Blog Post</a>
     </ActionButtons>
 </AdminHeader>
 
@@ -18,25 +18,26 @@
                    ConfirmationChanged="OnModalConfirm" />
 
 
-@if (_isLoading)
+@if (_showLoader)
 {
     <Loader LoaderText="@_loadingText" />
 }
 
-<QuickGrid @ref="_grid" ItemsProvider="_blogPostProvider" TItem="BlazorBlog.Domain.Entities.BlogPost" Pagination="_paginationState" class="table table-bordered table-striped table-hover">
+<div class="overflow-hidden rounded-xl border border-slate-200/60 bg-white shadow-soft dark:border-slate-800 dark:bg-slate-900">
+<QuickGrid @ref="_grid" ItemsProvider="_blogPostProvider" TItem="BlazorBlog.Domain.Entities.BlogPost" Pagination="_paginationState" class="w-full text-left text-sm divide-y divide-slate-200 dark:divide-slate-800 [&_thead_th]:bg-slate-50 dark:[&_thead_th]:bg-slate-800 [&_thead_th]:text-slate-700 dark:[&_thead_th]:text-slate-200 [&_th]:px-3 [&_td]:px-3 [&_th]:py-2 [&_td]:py-2 [&_tbody_tr:nth-child(odd)]:bg-slate-50 dark:[&_tbody_tr:nth-child(odd)]:bg-slate-800/40">
     <PropertyColumn Property="@(b => b.Id)" Align="Align.Center" />
     <TemplateColumn Title="Blog post" Align="Align.Center">
-        <div class="py-2" style="display: grid; grid-template-columns: 60px auto; grid-column-gap: 10px;">
-            <img src="@context.Image" style="height: 60px; width: 60px; object-fit: cover" />
-            <div>
-                <label class="mb-0 d-block">@context.Title</label>
+        <div class="grid grid-cols-[64px_auto] items-center gap-3 py-2">
+            <img src="@context.Image" class="h-16 w-16 rounded object-cover" alt="@context.Title" />
+            <div class="min-w-0">
+                <div class="truncate text-slate-800 dark:text-slate-100 font-medium">@context.Title</div>
                 @if (context.IsPublished && !string.IsNullOrWhiteSpace(context.Slug))
                 {
-                    <a href="/posts/@context.Slug" target="_blank">@context.Slug</a>
+                    <a href="/posts/@context.Slug" target="_blank" class="text-xs text-brand-600 hover:underline">@context.Slug</a>
                 }
                 else
                 {
-                    <label>@context.Slug</label>
+                    <div class="text-xs text-slate-400">@context.Slug</div>
                 }
             </div>
         </div>
@@ -45,20 +46,56 @@
         @GetCategoryName(context.CategoryId)
     </TemplateColumn>
     <TemplateColumn Title="Featured" Align="Align.Center">
-        <label class="switch">
-            <input type="checkbox" @bind="context.IsFeatured" @bind:after="(() => HandleFeaturedChanged(context))" />
-            <span class="switch-slider"></span>
-        </label>
+        <div class="inline-flex items-center gap-2">
+            <label class="relative inline-flex h-5 w-9 cursor-pointer items-center">
+                <input type="checkbox" role="switch" aria-checked="@context.IsFeatured" aria-busy="@_savingToggles.Contains(context.Id)" disabled="@_savingToggles.Contains(context.Id)" @bind="context.IsFeatured" @bind:after="(() => HandleFeaturedChanged(context))" class="peer sr-only" />
+                <span class="pointer-events-none absolute inset-0 rounded-full bg-slate-300 transition-colors duration-200 ease-in-out peer-checked:bg-emerald-600"></span>
+                <span class="pointer-events-none absolute left-0.5 top-0.5 h-4 w-4 rounded-full bg-white shadow transition-transform duration-200 ease-in-out peer-checked:translate-x-4"></span>
+            </label>
+            <span class="inline-block h-4 w-4">
+                @if (_savingToggles.Contains(context.Id))
+                {
+                    <svg class="h-4 w-4 animate-spin text-slate-500" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
+                    </svg>
+                }
+            </span>
+        </div>
     </TemplateColumn>
     <TemplateColumn Title="Published" Align="Align.Center">
-        <label class="switch">
-            <input type="checkbox" @bind="context.IsPublished" @bind:after="(() => HandlePublishedChanged(context))" />
-            <span class="switch-slider"></span>
-        </label>
+        <div class="inline-flex items-center gap-2">
+            <label class="relative inline-flex h-5 w-9 cursor-pointer items-center">
+                <input type="checkbox" role="switch" aria-checked="@context.IsPublished" aria-busy="@_savingToggles.Contains(context.Id)" disabled="@_savingToggles.Contains(context.Id)" @bind="context.IsPublished" @bind:after="(() => HandlePublishedChanged(context))" class="peer sr-only" />
+                <span class="pointer-events-none absolute inset-0 rounded-full bg-slate-300 transition-colors duration-200 ease-in-out peer-checked:bg-emerald-600"></span>
+                <span class="pointer-events-none absolute left-0.5 top-0.5 h-4 w-4 rounded-full bg-white shadow transition-transform duration-200 ease-in-out peer-checked:translate-x-4"></span>
+            </label>
+            <span class="inline-block h-4 w-4">
+                @if (_savingToggles.Contains(context.Id))
+                {
+                    <svg class="h-4 w-4 animate-spin text-slate-500" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
+                    </svg>
+                }
+            </span>
+        </div>
     </TemplateColumn>
     <TemplateColumn Title="Actions" Align="Align.Center">
-        <a href="admin/manage-blog-posts/edit/@context.Id" data-enhance-nav="false" class="btn btn-primary btn-sm admin-button mr-1" style="width: 80px;">Edit</a>
-        <button class="btn btn-danger btn-sm admin-button" style="width: 80px;" @onclick="() => ConfirmDeleteBlogPost(context)">Delete</button>
+        <div class="flex items-center justify-center gap-2">
+            <a href="admin/manage-blog-posts/edit/@context.Id" 
+               data-enhance-nav="false" 
+               class="inline-flex items-center justify-center rounded-md bg-brand-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-brand-700 transition-colors min-w-[64px]">
+                Edit
+            </a>
+            <button class="inline-flex items-center justify-center rounded-md bg-red-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-red-700 transition-colors min-w-[64px]" 
+                    @onclick="() => ConfirmDeleteBlogPost(context)">
+                Delete
+            </button>
+        </div>
     </TemplateColumn>
 </QuickGrid>
-<Paginator State="_paginationState" />
+</div>
+<div class="mt-4">
+    <Paginator State="_paginationState" />
+</div>

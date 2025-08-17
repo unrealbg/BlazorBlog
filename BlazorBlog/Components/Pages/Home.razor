@@ -2,47 +2,153 @@
 
 <PageTitle>@Utils.GetPageTitle("Home")</PageTitle>
 
-@if (_firstFeatured is not null)
-{
-    <div class="container">
-        <div class="jumbotron jumbotron-fluid mb-3 pt-0 pb-0 bg-lightblue position-relative">
-            <div class="pl-4 pr-0 h-100 tofront">
-                <div class="row justify-content-between">
-                    <div class="col-md-6 pt-6 pb-6 align-self-center">
-                        <h1 class="secondfont mb-3 font-weight-bold">@_firstFeatured.Title</h1>
-                        <p class="mb-3">
-                            @_firstFeatured.Introduction
-                        </p>
-                        @if (!string.IsNullOrWhiteSpace(_firstFeatured.Slug))
-                        {
-                            <a href="/posts/@_firstFeatured.Slug" class="btn btn-dark">Read More</a>
-                        }
-                        else
-                        {
-                            <button class="btn btn-dark" disabled title="This post has no slug yet">Read More</button>
-                        }
-                    </div>
-                    <div class="col-md-6 d-none d-md-block pr-0 shano-div-class" style="background-image: url(@_firstFeatured.Image);"> </div>
-
-                </div>
+<section class="relative overflow-hidden bg-gradient-to-tr from-brand-700 via-brand-600 to-accent-600 text-white">
+    <div class="relative mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8 lg:py-14">
+        <div class="max-w-4xl">
+            <div class="mb-4 flex flex-wrap gap-2 text-xs font-semibold">
+                <span class="rounded-full bg-white/20 px-3 py-1 backdrop-blur-sm">BLAZOR</span>
+                <span class="rounded-full bg-white/20 px-3 py-1 backdrop-blur-sm">.NET 9</span>
+                <span class="rounded-full bg-white/20 px-3 py-1 backdrop-blur-sm">CLEAN ARCHITECTURE</span>
+            </div>
+            <h1 class="mb-4 text-3xl font-extrabold leading-tight sm:text-4xl lg:text-5xl">
+                Modern Blazor Blog Platform
+                <span class="block">with Clean Architecture</span>
+            </h1>
+            <p class="mb-6 text-base text-white/90 sm:text-lg">
+                Professional blog project built with .NET 9, Blazor Server, Entity Framework Core and Tailwind CSS. 
+                Demonstrates modern development techniques and Clean Architecture principles.
+            </p>
+            <div class="flex flex-wrap gap-3">
+                <a href="/posts" class="inline-flex items-center rounded-full bg-white px-6 py-2.5 text-sm font-semibold text-brand-700 shadow-lg transition hover:shadow-xl hover:bg-white/95">
+                    Browse Posts
+                </a>
+                <a href="https://github.com/unrealbg/BlazorBlog" target="_blank" class="inline-flex items-center rounded-full border border-white/30 px-6 py-2.5 text-sm font-medium text-white/90 hover:bg-white/10 hover:border-white/50 transition">
+                    <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 0C4.477 0 0 4.484 0 10.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0110 4.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.203 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.942.359.31.678.921.678 1.856 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0020 10.017C20 4.484 15.522 0 10 0z" clip-rule="evenodd"></path>
+                    </svg>
+                    GitHub Repository
+                </a>
             </div>
         </div>
     </div>
-}
+</section>
 
-<div class="container pt-4 pb-4">
-    <FeaturedBlogPosts Posts="_featured" />
-</div>
+<div class="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+    <div class="grid gap-8 lg:grid-cols-12">
+        <div class="lg:col-span-8">
+            <div class="mb-8 flex items-center justify-between">
+                <h2 class="text-2xl font-bold text-slate-900 dark:text-white">Latest Posts</h2>
+                <a href="/posts" class="text-sm text-brand-600 hover:text-brand-700 dark:text-brand-400 dark:hover:text-brand-300 transition">View all →</a>
+            </div>
+            
+            @if (_recent.Length > 0)
+            {
+                <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                    @foreach (var post in _recent.Take(3))
+                    {
+                        <article class="group flex h-full flex-col overflow-hidden rounded-2xl bg-white border border-slate-200 shadow-soft transition hover:shadow-lg dark:bg-slate-800 dark:border-slate-700 dark:hover:bg-slate-700">
+                            <div class="aspect-video w-full overflow-hidden bg-gradient-to-br from-slate-200 to-slate-300 dark:from-slate-700 dark:to-slate-800">
+                                @if (!string.IsNullOrEmpty(post.Image))
+                                {
+                                    <img src="@post.Image" 
+                                         alt="@post.Title" 
+                                         class="h-full w-full object-cover object-center transition-transform duration-300 group-hover:scale-105" />
+                                }
+                                else
+                                {
+                                    <div class="flex h-full w-full items-center justify-center">
+                                        <svg class="h-12 w-12 text-slate-400 dark:text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                        </svg>
+                                    </div>
+                                }
+                            </div>
+                            
+                            <div class="flex flex-1 flex-col p-6">
+                                <div class="mb-3 flex items-center gap-2 text-sm">
+                                    @if (!string.IsNullOrWhiteSpace(post.CategoryName))
+                                    {
+                                        <a href="/@post.CategorySlug-posts" class="rounded-full bg-brand-600/10 px-3 py-1 text-xs font-semibold text-brand-600 hover:bg-brand-600/20 dark:bg-brand-600/20 dark:text-brand-400 dark:hover:bg-brand-600/30 transition">
+                                            @post.CategoryName
+                                        </a>
+                                        <span class="text-slate-400 dark:text-slate-500">•</span>
+                                    }
+                                    <span class="text-slate-500 dark:text-slate-400 text-xs">@post.PublishedAtDisplay</span>
+                                </div>
+                                
+                                <h3 class="mb-3 text-lg font-semibold leading-snug text-slate-900 group-hover:text-brand-600 dark:text-white dark:group-hover:text-brand-300 transition">
+                                    @if (!string.IsNullOrWhiteSpace(post.Slug))
+                                    {
+                                        <a href="/posts/@post.Slug">@post.Title</a>
+                                    }
+                                    else
+                                    {
+                                        @post.Title
+                                    }
+                                </h3>
+                                
+                                <p class="mb-4 flex-1 line-clamp-3 text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+                                    @post.Introduction
+                                </p>
+                                
+                                <div class="mt-auto flex items-center justify-between">
+                                    @if (!string.IsNullOrWhiteSpace(post.Slug))
+                                    {
+                                        <a href="/posts/@post.Slug" class="text-sm font-medium text-brand-600 hover:text-brand-700 dark:text-brand-400 dark:hover:text-brand-300 transition">
+                                            Read more
+                                        </a>
+                                    }
+                                    <span class="text-xs text-slate-500 dark:text-slate-400">
+                                        @(!string.IsNullOrWhiteSpace(post.ReadingTime) ? post.ReadingTime : "0 min read")
+                                    </span>
+                                </div>
+                            </div>
+                        </article>
+                    }
+                </div>
+            }
+            else
+            {
+                <div class="text-center py-12">
+                    <p class="text-slate-500 dark:text-slate-400">No posts available yet.</p>
+                </div>
+            }
+        </div>
 
-<div class="container">
-    <div class="row justify-content-between">
-        <div class="col-md-8">
-            <h5 class="font-weight-bold spanborder"><span>Latest Posts</span></h5>
-            <BlogPostList Posts="_recent" />
-        </div>
-        <div class="col-md-4 pl-4">
-            <h5 class="font-weight-bold spanborder"><span>Popular</span></h5>
-            <PopularBlogPostList Posts="_popular" />
-        </div>
+        <aside class="lg:col-span-4">
+            <div class="lg:sticky lg:top-8 space-y-6">
+                <!-- Subscribe Box -->
+                <SubscribeBox Simple="true" />
+
+                <div class="rounded-2xl bg-white border border-slate-200 p-6 shadow-soft dark:bg-slate-800 dark:border-slate-700">
+                    <h3 class="text-lg font-semibold text-slate-900 dark:text-white mb-4">Tags</h3>
+                    <div class="flex flex-wrap gap-2">
+                        @foreach (var tag in _tags)
+                        {
+                            <a href="/tag/@tag.Slug" class="rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-700 hover:bg-slate-200 dark:bg-slate-700 dark:text-slate-300 dark:hover:bg-slate-600 transition">
+                                @tag.Name
+                            </a>
+                        }
+                    </div>
+                </div>
+
+                <div class="rounded-2xl bg-white border border-slate-200 p-6 shadow-soft dark:bg-slate-800 dark:border-slate-700">
+                    <h3 class="text-lg font-semibold text-slate-900 dark:text-white mb-2">About This Project</h3>
+                    <p class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+                        Modern blog platform built with .NET 9 and Blazor Server. Demonstrates best practices in software development, 
+                        Clean Architecture and modern technologies.
+                    </p>
+                    <a href="https://github.com/unrealbg/BlazorBlog" target="_blank" class="mt-4 inline-flex items-center text-sm font-medium text-brand-600 hover:text-brand-700 dark:text-brand-400 dark:hover:text-brand-300 transition">
+                        <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 0C4.477 0 0 4.484 0 10.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0110 4.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.203 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.942.359.31.678.921.678 1.856 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0020 10.017C20 4.484 15.522 0 10 0z" clip-rule="evenodd"></path>
+                        </svg>
+                        View on GitHub →
+                    </a>
+                </div>
+            </div>
+        </aside>
     </div>
 </div>
+
+<section id="getting-started" class="mx-auto max-w-7xl px-4 pb-10 sm:px-6 lg:px-8">
+</section>

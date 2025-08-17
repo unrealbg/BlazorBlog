@@ -5,6 +5,7 @@
     public partial class ManageSubscribers
     {
         private bool _isLoading;
+    private bool _showLoader;
         private GridItemsProvider<Subscriber>? _subscribersProvider;
 
         private const int PageSize = 5;
@@ -21,7 +22,15 @@
             _subscribersProvider = request =>
             {
                 _isLoading = true;
-                StateHasChanged();
+                _ = Task.Run(async () =>
+                {
+                    await Task.Delay(250);
+                    if (_isLoading)
+                    {
+                        _showLoader = true;
+                        await InvokeAsync(StateHasChanged);
+                    }
+                });
                 return LoadSubscribersAsync(request);
             };
         }
@@ -31,6 +40,7 @@
             var result = await SubscriberService.GetSubscribersAsync(request.StartIndex, request.Count ?? PageSize, CancellationToken.None);
 
             _isLoading = false;
+            _showLoader = false;
             StateHasChanged();
 
             return GridItemsProviderResult.From(result.Records, result.TotalCount);

@@ -1,14 +1,46 @@
 ﻿@inherits LayoutComponentBase
 
-<Toast/>
-<TopNavBar/>
+<!-- Self-contained sticky footer layout using CSS Grid over viewport height -->
+<div class="min-h-screen min-h-[100dvh] grid grid-rows-[auto_1fr_auto]">
+    <!-- Header / Nav -->
+    <TopNavBar />
 
-@Body
+    <!-- Toast anchor (fixed positioning, independent of grid flow) -->
+    <Toast Position="BlazorBlog.Components.Shared.ToastAnchor.TopRight" />
 
-<Footer></Footer>
+    <!-- Main content grows to fill available space between header and footer -->
+    <main class="min-w-0">
+        @Body
+    </main>
 
+    <!-- Footer always at the bottom row -->
+    <Footer />
+</div>
+@* 
 <div id="blazor-error-ui">
     An unhandled error has occurred.
     <a href="" class="reload">Reload</a>
     <a class="dismiss">🗙</a>
+</div>
+ *@
+
+<!-- Global error UI: styled as an app-styled card. Blazor toggles visibility of this element. -->
+<div id="blazor-error-ui" class="pointer-events-none fixed inset-x-0 bottom-0 z-50 hidden" role="alert" aria-live="assertive" aria-atomic="true">
+    <div class="mx-auto max-w-7xl px-4 py-3 sm:px-6 lg:px-8">
+        <div class="pointer-events-auto sm:ml-auto sm:max-w-md rounded-md border border-slate-200 bg-white/95 p-3 text-slate-800 shadow-xl ring-1 ring-black/5 backdrop-blur transition dark:border-slate-800 dark:bg-slate-900/95 dark:text-slate-100">
+            <div class="flex items-start gap-3">
+                <div class="mt-0.5 inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-rose-600 text-white shadow" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm1 14h-2v2h2v-2zm0-8h-2v6h2V8z"/></svg>
+                </div>
+                <div class="min-w-0 flex-1">
+                    <p class="m-0 text-sm font-semibold">Something went wrong... But don't worry!</p>
+                    <p class="mt-1 text-sm text-slate-600 dark:text-slate-300">A technical error occurred. Please reload the page or contact me if the problem persists.</p>
+                    <div class="mt-3 flex items-center gap-3">
+                        <a href="." class="reload inline-flex items-center rounded-md bg-brand-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-brand-700">Reload Page</a>
+                        <a class="dismiss inline-flex h-8 w-8 items-center justify-center rounded-md text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800" href="#" aria-label="Dismiss">✕</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>

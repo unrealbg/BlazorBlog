@@ -1,22 +1,22 @@
-﻿<ol class="list-featured">
+﻿<ol class="space-y-4">
     @foreach (var post in Posts)
     {
-        <li>
-            <span>
-                <h6 class="font-weight-bold">
+        <li class="group">
+            <div>
+                <h6 class="text-sm font-semibold leading-snug">
                     @if (!string.IsNullOrWhiteSpace(post.Slug))
                     {
-                        <a href="/posts/@post.Slug" class="text-dark">@post.Title</a>
+                        <a href="/posts/@post.Slug" class="text-slate-900 hover:text-brand-600 dark:text-slate-100">@post.Title</a>
                     }
                     else
                     {
-                        <span class="text-dark">@post.Title</span>
+                        <span class="text-slate-900 dark:text-slate-100">@post.Title</span>
                     }
                 </h6>
-                <p class="text-muted">
-                    @post.AuthorName in <a href="/@post.CategorySlug-posts" title="@post.CategoryName Posts">@post.CategoryName</a>
+                <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">
+                    @post.AuthorName in <a class="hover:text-brand-600" href="/@post.CategorySlug-posts" title="@post.CategoryName Posts">@post.CategoryName</a>
                 </p>
-            </span>
+            </div>
         </li>
     }
 </ol>

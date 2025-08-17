@@ -49,5 +49,14 @@
 
         public Task<DetailPageModel> GetBlogPostBySlugAsync(string slug, CancellationToken cancellationToken = default)
             => _blogPostRepository.GetBlogPostBySlugAsync(slug, cancellationToken);
+
+        public Task<BlogPostVm[]> GetRecentBlogPostsByTagAsync(string tagSlug, int count, CancellationToken cancellationToken = default)
+            => CacheGetOrCreateAsync($"recent:tag:{tagSlug}:{count}:{_signal.Version}", () => _blogPostRepository.GetRecentBlogPostsByTagAsync(tagSlug, count, cancellationToken));
+
+        public Task<BlogPostVm[]> GetPopularBlogPostsByTagAsync(string tagSlug, int count, CancellationToken cancellationToken = default)
+            => CacheGetOrCreateAsync($"popular:tag:{tagSlug}:{count}:{_signal.Version}", () => _blogPostRepository.GetPopularBlogPostsByTagAsync(tagSlug, count, cancellationToken));
+
+        public Task<BlogPostVm[]> GetBlogPostsByTagAsync(string tagSlug, int pageIndex, int pageSize, CancellationToken cancellationToken = default)
+            => _blogPostRepository.GetBlogPostsByTagAsync(tagSlug, pageIndex, pageSize, cancellationToken);
     }
 }

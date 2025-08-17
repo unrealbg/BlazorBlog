@@ -1,0 +1,43 @@
+@page "/tag/{tagSlug}"
+
+<PageTitle>@Utils.GetPageTitle($"#@_tagName posts")</PageTitle>
+
+<div class="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
+    <div class="grid grid-cols-1 gap-8 lg:grid-cols-12">
+        <div class="lg:col-span-8">
+            @if (HasPosts)
+            {
+                <h5 class="mb-4 text-base font-semibold tracking-wide text-slate-700 dark:text-slate-300">Featured in #@_tagName</h5>
+                <div class="mb-8 overflow-hidden rounded-xl border border-slate-200/60 bg-white shadow-soft dark:border-slate-800 dark:bg-slate-900" hidden>@* optional featured *@</div>
+                <h5 class="mb-4 text-base font-semibold tracking-wide text-slate-700 dark:text-slate-300">Latest</h5>
+                <BlogPostList Posts="_recent" />
+
+                <div class="my-6 flex justify-end">
+                    <a href="/tag/@TagSlug/all" class="inline-flex items-center rounded-md border border-brand-600 px-3 py-1 text-sm font-medium text-brand-700 hover:bg-brand-50 dark:text-brand-400">All #@_tagName Posts</a>
+                </div>
+            }
+            else
+            {
+                <h5 class="mb-4 text-base font-semibold tracking-wide text-slate-700 dark:text-slate-300">#@_tagName Posts</h5>
+                <div class="m-5 rounded-xl border border-slate-200/60 bg-white p-8 text-center text-xl font-semibold text-slate-700 shadow-soft dark:border-slate-800 dark:bg-slate-900 dark:text-slate-200">
+                    There are no posts with this tag yet.
+                </div>
+            }
+        </div>
+
+        @if (HasPosts)
+        {
+            <div class="lg:col-span-4 lg:pl-6">
+                <div class="sticky top-24">
+                    <h5 class="mb-4 text-base font-semibold tracking-wide text-slate-700 dark:text-slate-300">Popular in #@_tagName</h5>
+                    <PopularBlogPostList Posts="_popular" />
+                </div>
+            </div>
+        }
+
+    </div>
+</div>
+
+<div class="mx-auto max-w-7xl px-4 pb-10 sm:px-6 lg:px-8">
+    <SubscribeBox />
+</div>

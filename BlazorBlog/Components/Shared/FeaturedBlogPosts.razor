@@ -1,57 +1,57 @@
-﻿@if(Posts.Length > 0)
+﻿@if (Posts.Length > 0)
 {
-	<div class="row">
-	<div class="col-lg-6">
-		<div class="card border-0 mb-4 box-shadow h-xl-300">
-			<div style="background-image: url(@_first.Image); height: 150px;    background-size: cover;    background-repeat: no-repeat;"></div>
-			<div class="card-body px-0 pb-0 d-flex flex-column align-items-start">
-				<h2 class="h4 font-weight-bold">
+	<div class="grid grid-cols-1 gap-8 lg:grid-cols-2">
+		<!-- Left: Featured card -->
+		<div class="rounded-xl border border-slate-200/60 bg-white shadow-soft dark:border-slate-800 dark:bg-slate-900">
+			<div class="w-full bg-cover bg-center rounded-t-xl" style="background-image: url(@_first.Image); height: 12rem;"></div>
+			<div class="p-5">
+				<h2 class="text-xl font-semibold leading-snug">
 					@if (!string.IsNullOrWhiteSpace(_first.Slug))
-                    {
-                        <a class="text-dark" href="/posts/@_first.Slug">@_first.Title</a>
-                    }
-                    else
-                    {
-                        <span class="text-dark">@_first.Title</span>
-                    }
+					{
+						<a class="text-slate-900 hover:text-brand-600 dark:text-slate-100" href="/posts/@_first.Slug">@_first.Title</a>
+					}
+					else
+					{
+						<span class="text-slate-900 dark:text-slate-100">@_first.Title</span>
+					}
 				</h2>
-				<p class="card-text">
+				<p class="mt-3 text-slate-600 dark:text-slate-300">
 					@_first.Introduction
 				</p>
-				<div>
-					<small class="d-block">@_first.AuthorName</small>
-					<small class="text-muted">@_first.PublishedAtDisplay</small>
+				<div class="mt-4 flex items-center gap-3 text-sm text-slate-500 dark:text-slate-400">
+					<small class="font-medium">@_first.AuthorName</small>
+					<span aria-hidden="true">•</span>
+					<small>@_first.PublishedAtDisplay</small>
 				</div>
 			</div>
 		</div>
-	</div>
-	<div class="col-lg-6">
-		<div class="flex-md-row mb-4 box-shadow h-xl-300">
-				@foreach (var post in Posts.Skip(1))
-				{
-                    <div class="mb-3 d-flex align-items-center">
-                        <img height="80" width="80" src="@post.Image">
-                        <div class="pl-3">
-                            <h2 class="mb-2 h6 font-weight-bold">
-                                @if (!string.IsNullOrWhiteSpace(post.Slug))
-                                {
-                                    <a class="text-dark" href="/posts/@post.Slug">@post.Title</a>
-                                }
-                                else
-                                {
-                                    <span class="text-dark">@post.Title</span>
-                                }
-                            </h2>
-                            <div class="card-text text-muted small">
-                                @post.AuthorName in <a href="/@post.CategorySlug-posts" title="@post.CategoryName Posts">@post.CategoryName</a>
-                            </div>
-                            <small class="text-muted">@post.PublishedAtDisplay</small>
-                        </div>
-                    </div>
-				}
+
+		<!-- Right: List of other posts -->
+		<div class="space-y-0 divide-y divide-slate-200/60 dark:divide-slate-800">
+			@foreach (var post in Posts.Skip(1))
+			{
+				<div class="flex items-center gap-4 py-4">
+					<img class="h-20 w-20 rounded-md object-cover" height="80" width="80" src="@post.Image" alt="@post.Title" />
+					<div class="min-w-0">
+						<h3 class="text-sm font-semibold leading-tight">
+							@if (!string.IsNullOrWhiteSpace(post.Slug))
+							{
+								<a class="truncate text-slate-900 hover:text-brand-600 dark:text-slate-100" href="/posts/@post.Slug">@post.Title</a>
+							}
+							else
+							{
+								<span class="truncate text-slate-900 dark:text-slate-100">@post.Title</span>
+							}
+						</h3>
+						<div class="mt-1 text-xs text-slate-500 dark:text-slate-400">
+							@post.AuthorName in <a class="hover:text-brand-600" href="/@post.CategorySlug-posts" title="@post.CategoryName Posts">@post.CategoryName</a>
+						</div>
+						<small class="mt-1 block text-xs text-slate-400 dark:text-slate-500">@post.PublishedAtDisplay</small>
+					</div>
+				</div>
+			}
 		</div>
 	</div>
-</div>
 }
 
 @code {

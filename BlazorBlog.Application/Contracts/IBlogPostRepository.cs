@@ -16,5 +16,11 @@ namespace BlazorBlog.Application.Contracts
         Task<BlogPostVm[]> GetBlogPostsAsync(int pageIndex, int pageSize, int categoryId, CancellationToken cancellationToken = default);
 
         Task<DetailPageModel> GetBlogPostBySlugAsync(string slug, CancellationToken cancellationToken = default);
+
+        Task<BlogPostVm[]> GetRecentBlogPostsByTagAsync(string tagSlug, int count, CancellationToken cancellationToken = default);
+
+        Task<BlogPostVm[]> GetPopularBlogPostsByTagAsync(string tagSlug, int count, CancellationToken cancellationToken = default);
+
+        Task<BlogPostVm[]> GetBlogPostsByTagAsync(string tagSlug, int pageIndex, int pageSize, CancellationToken cancellationToken = default);
     }
 }

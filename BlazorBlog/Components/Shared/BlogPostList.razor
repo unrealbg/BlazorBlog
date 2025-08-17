@@ -1,26 +1,26 @@
 ﻿@foreach (var post in Posts)
 {
-    <div class="mb-3 d-flex justify-content-between">
-        <div class="pr-3">
-            <h2 class="mb-1 h4 font-weight-bold">
+    <div class="flex items-start justify-between gap-4 py-4">
+        <div class="min-w-0">
+            <h2 class="text-lg font-semibold leading-snug">
                 @if (!string.IsNullOrWhiteSpace(post.Slug))
                 {
-                    <a class="text-dark" href="/posts/@post.Slug">@post.Title</a>
+                    <a class="text-slate-900 hover:text-brand-600 dark:text-slate-100" href="/posts/@post.Slug">@post.Title</a>
                 }
                 else
                 {
-                    <span class="text-dark">@post.Title</span>
+                    <span class="text-slate-900 dark:text-slate-100">@post.Title</span>
                 }
             </h2>
-            <p>
+            <p class="mt-2 text-slate-600 dark:text-slate-300">
                 @post.Introduction
             </p>
-            <div class="card-text text-muted small">
-                @post.AuthorName in <a href="/@post.CategorySlug-posts" title="@post.CategoryName Posts">@post.CategoryName</a>
+            <div class="mt-2 text-sm text-slate-500 dark:text-slate-400">
+                @post.AuthorName in <a class="hover:text-brand-600" href="/@post.CategorySlug-posts" title="@post.CategoryName Posts">@post.CategoryName</a>
             </div>
-            <small class="text-muted">@post.PublishedAtDisplay</small>
+            <small class="mt-1 block text-xs text-slate-400 dark:text-slate-500">@post.PublishedAtDisplay</small>
         </div>
-        <img height="120" width="120" src="@post.Image">
+        <img class="h-28 w-28 flex-none rounded-md object-cover" height="120" width="120" src="@post.Image" alt="@post.Title" />
     </div>
 }
 

@@ -1,0 +1,217 @@
+﻿@page "/terms"
+
+<PageTitle>@Utils.GetPageTitle("Terms of Service")</PageTitle>
+
+<div class="mx-auto max-w-4xl px-4 py-12 sm:px-6 lg:px-8">
+    <div class="mx-auto max-w-3xl">
+        <!-- Header -->
+        <div class="mb-12 text-center">
+            <h1 class="text-4xl font-bold tracking-tight text-slate-900 dark:text-white sm:text-5xl">
+                Terms of Service
+            </h1>
+            <p class="mt-4 text-lg text-slate-600 dark:text-slate-300">
+                Last updated: @DateTime.Today.ToString("MMMM dd, yyyy")
+            </p>
+        </div>
+
+        <!-- Content -->
+        <div class="prose prose-slate max-w-none dark:prose-invert prose-lg">
+            <h2>Agreement to Terms</h2>
+
+            <p>
+                By accessing and using BlazorBlog (the "Service"), you accept and agree to be bound by the terms and provision of this agreement.
+                If you do not agree to abide by the above, please do not use this service.
+            </p>
+
+            <h2>Description of Service</h2>
+
+            <p>
+                BlazorBlog is a modern blog platform built with .NET 9 and Blazor Server that allows users to create, publish, and manage blog content.
+                The Service includes but is not limited to:
+            </p>
+
+            <ul>
+                <li>Blog post creation and management</li>
+                <li>User account management</li>
+                <li>Content categorization and tagging</li>
+                <li>Newsletter subscription functionality</li>
+                <li>Administrative tools and dashboard</li>
+            </ul>
+
+            <h2>User Accounts</h2>
+
+            <h3>Registration</h3>
+
+            <p>
+                To access certain features of the Service, you may be required to create an account. You agree to:
+            </p>
+
+            <ul>
+                <li>Provide accurate, current, and complete information during registration</li>
+                <li>Maintain and promptly update your account information</li>
+                <li>Maintain the security and confidentiality of your login credentials</li>
+                <li>Notify us immediately of any unauthorized use of your account</li>
+            </ul>
+
+            <h3>Account Responsibilities</h3>
+
+            <p>
+                You are responsible for all activities that occur under your account. We reserve the right to terminate accounts that violate these terms.
+            </p>
+
+            <h2>Content and Conduct</h2>
+
+            <h3>User-Generated Content</h3>
+
+            <p>
+                You retain ownership of content you create and publish through the Service. However, by posting content, you grant us a license to use, display, and distribute your content as necessary to provide the Service.
+            </p>
+
+            <h3>Prohibited Content</h3>
+
+            <p>You agree not to post content that:</p>
+
+            <ul>
+                <li>Is illegal, harmful, threatening, abusive, or discriminatory</li>
+                <li>Violates intellectual property rights</li>
+                <li>Contains malware, viruses, or malicious code</li>
+                <li>Is spam, unsolicited advertising, or promotional material</li>
+                <li>Impersonates others or provides false information</li>
+                <li>Violates privacy rights or contains private information without consent</li>
+            </ul>
+
+            <h3>Content Moderation</h3>
+
+            <p>
+                We reserve the right to review, modify, or remove content that violates these terms or is otherwise objectionable.
+                We are not obligated to monitor content but may do so at our discretion.
+            </p>
+
+            <h2>Intellectual Property</h2>
+
+            <h3>Platform Rights</h3>
+
+            <p>
+                The BlazorBlog platform, including its design, code, features, and functionality, is owned by us and protected by intellectual property laws.
+                The source code is available under the terms specified in the project's license.
+            </p>
+
+            <h3>User Content Rights</h3>
+
+            <p>
+                You retain ownership of your original content. By posting content, you represent that you have the right to use and share such content
+                and that it does not infringe on the rights of others.
+            </p>
+
+            <h2>Privacy and Data Protection</h2>
+
+            <p>
+                Your privacy is important to us. Please review our <a href="/privacy">Privacy Policy</a> to understand how we collect, use, and protect your information.
+            </p>
+
+            <h2>Service Availability</h2>
+
+            <p>
+                We strive to maintain the availability of our Service, but we do not guarantee uninterrupted access.
+                The Service may be temporarily unavailable due to:
+            </p>
+
+            <ul>
+                <li>Maintenance and updates</li>
+                <li>Technical issues or server problems</li>
+                <li>External factors beyond our control</li>
+                <li>Security incidents or necessary protective measures</li>
+            </ul>
+
+            <h2>Limitation of Liability</h2>
+
+            <p>
+                The Service is provided "as is" without warranties of any kind. We shall not be liable for any damages arising from:
+            </p>
+
+            <ul>
+                <li>Use or inability to use the Service</li>
+                <li>Loss of data or content</li>
+                <li>Service interruptions or errors</li>
+                <li>Actions of other users</li>
+                <li>Third-party content or services</li>
+            </ul>
+
+            <h2>Indemnification</h2>
+
+            <p>
+                You agree to indemnify and hold us harmless from any claims, damages, or expenses arising from your use of the Service,
+                violation of these terms, or infringement of rights of others.
+            </p>
+
+            <h2>Termination</h2>
+
+            <h3>By You</h3>
+
+            <p>
+                You may terminate your account at any time by contacting us or using account deletion features if available.
+            </p>
+
+            <h3>By Us</h3>
+
+            <p>
+                We may terminate or suspend your account immediately if you violate these terms or engage in harmful activities.
+                We may also terminate the Service entirely with reasonable notice.
+            </p>
+
+            <h3>Effect of Termination</h3>
+
+            <p>
+                Upon termination, your right to use the Service ceases immediately. We may retain certain information as required by law or for legitimate business purposes.
+            </p>
+
+            <h2>Modifications to Terms</h2>
+
+            <p>
+                We reserve the right to modify these terms at any time. We will notify users of significant changes through the Service or via email.
+                Continued use of the Service after changes constitutes acceptance of the new terms.
+            </p>
+
+            <h2>Governing Law</h2>
+
+            <p>
+                These terms shall be governed by and construed in accordance with applicable laws.
+                Any disputes shall be resolved through appropriate legal channels.
+            </p>
+
+            <h2>Open Source Notice</h2>
+
+            <p>
+                BlazorBlog is an open-source project. The source code is available on GitHub and is subject to the license terms specified in the repository.
+                You are free to use, modify, and distribute the code according to those license terms.
+            </p>
+
+            <h2>Contact Information</h2>
+
+            <p>
+                If you have questions about these Terms of Service, please contact us:
+            </p>
+
+            <ul>
+                <li>📧 Email: <a href="mailto:legal@blazorblog.com">legal@blazorblog.com</a></li>
+                <li>🌐 GitHub: <a href="https://github.com/unrealbg/BlazorBlog" target="_blank">BlazorBlog Repository</a></li>
+                <li>📋 Issues: <a href="https://github.com/unrealbg/BlazorBlog/issues" target="_blank">GitHub Issues</a></li>
+            </ul>
+
+            <h2>Severability</h2>
+
+            <p>
+                If any provision of these terms is found to be invalid or unenforceable, the remaining provisions shall remain in full force and effect.
+            </p>
+
+            <div class="mt-12 rounded-lg border border-slate-200 bg-slate-50 p-6 dark:border-slate-700 dark:bg-slate-800">
+                <h3 class="text-lg font-semibold text-slate-900 dark:text-white">Important Note</h3>
+                <p class="mt-2 text-sm text-slate-600 dark:text-slate-300">
+                    These Terms of Service are provided as a template for the BlazorBlog platform.
+                    Please customize them according to your specific use case and consult with legal professionals
+                    to ensure compliance with applicable laws and regulations in your jurisdiction.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
