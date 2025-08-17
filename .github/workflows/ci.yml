@@ -2,9 +2,13 @@ name: CI
 
 on:
   push:
-    branches: [main, dev]
+    branches:
+      - main
+      - dev
   pull_request:
-    branches: [main, dev]
+    branches:
+      - main
+      - dev
   workflow_dispatch:
 
 permissions:
@@ -41,11 +45,7 @@ jobs:
         run: dotnet build BlazorBlog.sln -c Release --no-restore
 
       - name: Test (with coverage)
-        run: |
-          dotnet test BlazorBlog.sln -c Release --no-build \
-            --logger "trx;LogFileName=test_results.trx" \
-            --results-directory "TestResults" \
-            --collect "XPlat Code Coverage"
+        run: dotnet test BlazorBlog.sln -c Release --no-build --logger "trx;LogFileName=test_results.trx" --results-directory "TestResults" --collect "XPlat Code Coverage"
 
       - name: Upload test results
         if: always()
