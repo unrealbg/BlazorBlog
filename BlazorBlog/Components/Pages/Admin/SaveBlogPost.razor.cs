@@ -22,6 +22,7 @@
         private string PageTitle => Id is > 0 ? "Edit Blog Post" : "New Blog Post";
     private bool _isSaving;
     public bool IsSaving => _isSaving;
+    public string TagsCsv { get; set; } = string.Empty;
 
         private readonly CancellationTokenSource _cts = new();
 
@@ -30,9 +31,10 @@
     [Inject] IBlogPostAdminService BlogPostService { get; set; } = default!;
     [Inject] ICategoryService CategoryService { get; set; } = default!;
     [Inject] NavigationManager NavigationManager { get; set; } = default!;
-    [Inject] BlazorBlog.Application.UI.IToastService ToastService { get; set; } = default!;
+    [Inject] IToastService ToastService { get; set; } = default!;
     [Inject] IHtmlSanitizer HtmlSanitizer { get; set; } = default!;
     [Inject] IValidator<BlogPostVm> Validator { get; set; } = default!;
+    [Inject] ITagService TagService { get; set; } = default!;
 
         [Parameter] public int? Id { get; set; }
 
@@ -57,6 +59,13 @@
                 _messageStore = new ValidationMessageStore(_editContext);
                 _imageUrl = blogPost.Image;
                 _content = blogPost.Content;
+
+                try
+                {
+                    var tags = await TagService.GetTagsForPostAsync(blogPost.Id, _cts.Token);
+                    TagsCsv = string.Join(", ", tags);
+                }
+                catch { /* optional */ }
             }
         }
 
@@ -72,7 +81,7 @@
             }
             catch
             {
-                ToastService.ShowToast(BlazorBlog.Application.UI.ToastLevel.Warning, "The selected file is not a valid image.", heading: "Warning");
+                ToastService.ShowToast(ToastLevel.Warning, "The selected file is not a valid image.", heading: "Warning");
             }
         }
 
@@ -80,7 +89,7 @@
         {
             if (string.IsNullOrWhiteSpace(e.File.ContentType) || !e.File.ContentType.StartsWith("image/", StringComparison.OrdinalIgnoreCase))
             {
-                ToastService.ShowToast(BlazorBlog.Application.UI.ToastLevel.Warning, "Only image files are allowed.", heading: "Warning");
+                ToastService.ShowToast(ToastLevel.Warning, "Only image files are allowed.", heading: "Warning");
                 return;
             }
 
@@ -93,7 +102,6 @@
         {
             _messageStore!.Clear();
 
-            // Capture content from the editor BEFORE validation
             if (_quillHtml is not null)
             {
                 var plain = (await _quillHtml.GetText())?.Trim();
@@ -161,6 +169,19 @@
 
                 _fileToUpload = null;
                 if (imageUrlToDelete is not null) DeleteExistingImage(imageUrlToDelete);
+
+                try
+                {
+                    var tags = TagsCsv
+                        .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+                        .Select(t => t)
+                        .ToArray();
+                    await TagService.SetTagsForPostAsync(result.Id, tags, _cts.Token);
+                }
+                catch
+                {
+                    ToastService.ShowToast(ToastLevel.Warning, "Saved post, but failed to save tags.", heading: "Warning");
+                }
 
                 NavigationManager.NavigateTo("/admin/manage-blog-posts");
             }

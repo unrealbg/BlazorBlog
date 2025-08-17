@@ -20,6 +20,8 @@ namespace BlazorBlog.Tests.Services
             var svc = new CategoryService(repo.Object, slug);
 
             var category = new Category { Name = "C# & .NET" };
+            repo.Setup(r => r.GetCategoryBySlugAsync("c-net", It.IsAny<CancellationToken>()))
+                .ReturnsAsync((Category?)null);
             repo.Setup(r => r.SaveCategoryAsync(It.Is<Category>(c => c.Slug == "c-net"), It.IsAny<CancellationToken>()))
                 .ReturnsAsync((Category c, CancellationToken _) => c);
 

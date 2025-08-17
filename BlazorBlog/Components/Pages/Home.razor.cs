@@ -5,12 +5,14 @@
         private BlogPostVm[] _featured = [];
         private BlogPostVm[] _popular = [];
         private BlogPostVm[] _recent = [];
-        private string[] _tags = ["blazor", ".net", "iot", "csharp", "tutorial"]; // simple placeholder tags for layout
+        private TagVm[] _tags = Array.Empty<BlazorBlog.Application.Models.TagVm>();
 
         private BlogPostVm _firstFeatured = default!;
 
         [Inject]
         IBlogPostService BlogPostService { get; set; } = default!;
+        [Inject]
+        BlazorBlog.Infrastructure.Contracts.ITagService TagService { get; set; } = default!;
 
         private readonly CancellationTokenSource _cts = new();
 
@@ -33,6 +35,15 @@
 
             _firstFeatured = _featured[0];
             _featured = _featured.Skip(1).ToArray();
+
+            try
+            {
+                _tags = await TagService.GetTopTagsAsync(20, _cts.Token);
+            }
+            catch
+            {
+                // ignored
+            }
         }
 
         public void Dispose()

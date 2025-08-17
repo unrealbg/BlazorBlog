@@ -1,0 +1,48 @@
+@page "/tag/{tagSlug}/all"
+@page "/tag/{tagSlug}/all/page-{uriPageNumber:int}"
+
+<PageTitle>@Utils.GetPageTitle(PageTitle)</PageTitle>
+
+<div class="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
+    <div class="grid grid-cols-1 gap-8 lg:grid-cols-12">
+        <div class="lg:col-span-8">
+
+            <h5 class="mb-4 text-base font-semibold tracking-wide text-slate-700 dark:text-slate-300">@PageTitle</h5>
+            <BlogPostList Posts="_posts" />
+            <div class="my-6 flex items-center justify-between">
+                @if (_pageNumber > 1)
+                {
+                    var prevPageUrl = $"/tag/{TagSlug}/all";
+                    if (_pageNumber > 2)
+                    {
+                        prevPageUrl += $"/page-{_pageNumber - 1}";
+                    }
+
+                    <a href="@prevPageUrl" class="inline-flex items-center rounded-md border border-brand-600 px-3 py-1 text-sm font-medium text-brand-700 hover:bg-brand-50 dark:text-brand-400">Previous Page</a>
+                }
+                else
+                {
+                    <span></span>
+                }
+
+                @if(_posts.Length == PageSize)
+                {
+                    var nextPageUrl = $"/tag/{TagSlug}/all/page-{_pageNumber + 1}";
+                    <a href="@nextPageUrl" class="inline-flex items-center rounded-md border border-brand-600 px-3 py-1 text-sm font-medium text-brand-700 hover:bg-brand-50 dark:text-brand-400">Next Page</a>
+                }
+
+            </div>
+        </div>
+
+        <div class="lg:col-span-4 lg:pl-6">
+            <div class="sticky top-24">
+                <h5 class="mb-4 text-base font-semibold tracking-wide text-slate-700 dark:text-slate-300">Popular in #@_tagName</h5>
+                <PopularBlogPostList Posts="_popular" />
+            </div>
+        </div>
+    </div>
+    </div>
+
+<div class="mx-auto max-w-7xl px-4 pb-10 sm:px-6 lg:px-8">
+    <SubscribeBox />
+</div>

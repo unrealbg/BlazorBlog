@@ -287,5 +287,69 @@ namespace BlazorBlog.Infrastructure.Persistence.Repositories
             }
             return await query.AnyAsync(cancellationToken);
         }
+
+        public async Task<BlogPostVm[]> GetRecentBlogPostsByTagAsync(string tagSlug, int count, CancellationToken cancellationToken = default)
+        {
+            await using var context = _contextFactory.CreateDbContext();
+            var postIdsQuery = context.BlogPostTags
+                .AsNoTracking()
+                .Where(bpt => bpt.Tag.Slug == tagSlug && bpt.BlogPost.IsPublished)
+                .Select(bpt => bpt.BlogPost.Id)
+                .Distinct();
+
+            var posts = await context.BlogPosts
+                .AsNoTracking()
+                .Include(p => p.Category)
+                .Include(p => p.User)
+                .Where(p => postIdsQuery.Contains(p.Id))
+                .OrderByDescending(p => p.PublishedAt)
+                .Take(count)
+                .ToArrayAsync(cancellationToken);
+
+            return posts.Select(Map).ToArray();
+        }
+
+        public async Task<BlogPostVm[]> GetPopularBlogPostsByTagAsync(string tagSlug, int count, CancellationToken cancellationToken = default)
+        {
+            await using var context = _contextFactory.CreateDbContext();
+            var postIdsQuery = context.BlogPostTags
+                .AsNoTracking()
+                .Where(bpt => bpt.Tag.Slug == tagSlug && bpt.BlogPost.IsPublished)
+                .Select(bpt => bpt.BlogPost.Id)
+                .Distinct();
+
+            var posts = await context.BlogPosts
+                .AsNoTracking()
+                .Include(p => p.Category)
+                .Include(p => p.User)
+                .Where(p => postIdsQuery.Contains(p.Id))
+                .OrderByDescending(p => p.ViewCount)
+                .Take(count)
+                .ToArrayAsync(cancellationToken);
+
+            return posts.Select(Map).ToArray();
+        }
+
+        public async Task<BlogPostVm[]> GetBlogPostsByTagAsync(string tagSlug, int pageIndex, int pageSize, CancellationToken cancellationToken = default)
+        {
+            await using var context = _contextFactory.CreateDbContext();
+            var postIdsQuery = context.BlogPostTags
+                .AsNoTracking()
+                .Where(bpt => bpt.Tag.Slug == tagSlug && bpt.BlogPost.IsPublished)
+                .Select(bpt => bpt.BlogPost.Id)
+                .Distinct();
+
+            var posts = await context.BlogPosts
+                .AsNoTracking()
+                .Include(p => p.Category)
+                .Include(p => p.User)
+                .Where(p => postIdsQuery.Contains(p.Id))
+                .OrderByDescending(p => p.PublishedAt)
+                .Skip(pageIndex * pageSize)
+                .Take(pageSize)
+                .ToArrayAsync(cancellationToken);
+
+            return posts.Select(Map).ToArray();
+        }
     }
 }

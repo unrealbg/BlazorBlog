@@ -38,5 +38,7 @@ namespace BlazorBlog.Application.Models
         public int WordCount { get; set; }
 
         public string ReadingTime { get; set; } = string.Empty;
+
+        public string[] Tags { get; set; } = Array.Empty<string>();
     }
 }

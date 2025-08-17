@@ -26,6 +26,7 @@ namespace BlazorBlog.Infrastructure
             services.AddScoped<IBlogPostAdminService, BlogPostAdminService>();
             services.AddScoped<IBlogPostService, BlogPostService>();
             services.AddScoped<ISubscribeService, SubscribeService>();
+            services.AddScoped<ITagService, TagService>();
             services.AddScoped<ISlugService, SlugService>();
 
             return services;
@@ -60,6 +61,7 @@ namespace BlazorBlog.Infrastructure
             services.AddScoped<IBlogPostRepository, BlogPostRepository>();
             services.AddScoped<ICategoryRepository, CategoryRepository>();
             services.AddScoped<ISubscriberRepository, SubscriberRepository>();
+            services.AddScoped<ITagRepository, TagRepository>();
 
             return services;
         }
