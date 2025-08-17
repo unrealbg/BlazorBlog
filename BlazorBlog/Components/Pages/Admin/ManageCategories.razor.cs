@@ -23,6 +23,7 @@
 
         private EditContext _editContext = default!;
         private ValidationMessageStore? _messageStore;
+    private HashSet<int> _savingToggles = new();
 
     [Inject]
     IValidator<Category> Validator { get; set; } = default!;
@@ -40,22 +41,25 @@
 
         private async Task HandleShowOnNavBarChanged(Category category)
         {
-            _loadingText = "Saving changes";
-            _isLoading = true;
+            var id = category.Id;
+            var prev = !category.ShowOnNavBar; // bind already flipped it
+            _savingToggles.Add(id);
+            await InvokeAsync(StateHasChanged);
+
             try
             {
                 await CategoryService.SaveCategoryAsync(category, _cts.Token);
             }
             catch (Exception ex)
             {
+                category.ShowOnNavBar = prev; // revert on failure
                 ToastService.ShowToast(ToastLevel.Error, ex.Message, heading: "Error", durationMs: 8000);
             }
             finally
             {
-                _isLoading = false;
+                _savingToggles.Remove(id);
+                await InvokeAsync(StateHasChanged);
             }
-
-            this.NavigationManager.Refresh();
         }
 
         private void StartAddCategory()
