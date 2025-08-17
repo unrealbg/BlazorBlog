@@ -82,8 +82,17 @@
         </div>
     </TemplateColumn>
     <TemplateColumn Title="Actions" Align="Align.Center">
-        <a href="admin/manage-blog-posts/edit/@context.Id" data-enhance-nav="false" class="mr-2 inline-flex items-center rounded-md bg-brand-600 px-3 py-1 text-xs font-medium text-white hover:bg-brand-700" style="width: 80px;">Edit</a>
-        <button class="inline-flex items-center rounded-md bg-red-600 px-3 py-1 text-xs font-medium text-white hover:bg-red-700" style="width: 80px;" @onclick="() => ConfirmDeleteBlogPost(context)">Delete</button>
+        <div class="flex items-center justify-center gap-2">
+            <a href="admin/manage-blog-posts/edit/@context.Id" 
+               data-enhance-nav="false" 
+               class="inline-flex items-center justify-center rounded-md bg-brand-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-brand-700 transition-colors min-w-[64px]">
+                Edit
+            </a>
+            <button class="inline-flex items-center justify-center rounded-md bg-red-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-red-700 transition-colors min-w-[64px]" 
+                    @onclick="() => ConfirmDeleteBlogPost(context)">
+                Delete
+            </button>
+        </div>
     </TemplateColumn>
 </QuickGrid>
 </div>
