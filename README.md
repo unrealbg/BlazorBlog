@@ -10,10 +10,6 @@
 [![Open issues](https://img.shields.io/github/issues/unrealbg/BlazorBlog.svg)](https://github.com/unrealbg/BlazorBlog/issues)
 [![Open PRs](https://img.shields.io/github/issues-pr/unrealbg/BlazorBlog.svg)](https://github.com/unrealbg/BlazorBlog/pulls)
 [![.NET](https://img.shields.io/badge/.NET-9.0-512BD4?logo=dotnet&logoColor=white)](https://dotnet.microsoft.com/)
-[![Release](https://img.shields.io/github/v/release/unrealbg/BlazorBlog?include_prereleases&label=release)](https://github.com/unrealbg/BlazorBlog/releases)
-
-[![Coverage (main)](https://codecov.io/gh/unrealbg/BlazorBlog/branch/main/graph/badge.svg)](https://app.codecov.io/gh/unrealbg/BlazorBlog/branch/main)
-[![Coverage (dev)](https://codecov.io/gh/unrealbg/BlazorBlog/branch/dev/graph/badge.svg)](https://app.codecov.io/gh/unrealbg/BlazorBlog/branch/dev)
 
 ## Overview
 
