@@ -30,117 +30,115 @@
     </div>
 </section>
 
-<!-- Main Content with Dark Background -->
-<section class="bg-slate-900 min-h-screen">
-    <div class="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-        <div class="grid gap-8 lg:grid-cols-12">
-            <!-- Latest posts -->
-            <div class="lg:col-span-8">
-                <div class="mb-8 flex items-center justify-between">
-                    <h2 class="text-2xl font-bold text-white">Latest posts</h2>
-                    <a href="/" class="text-sm text-brand-400 hover:text-brand-300 transition">View all →</a>
-                </div>
-                
-                <!-- Posts Grid -->
-                @if (_recent.Length > 0)
-                {
-                    <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                        @foreach (var post in _recent.Take(3))
-                        {
-                            <article class="group overflow-hidden rounded-2xl bg-slate-800 transition hover:bg-slate-700">
-                                <!-- Image -->
-                                <div class="aspect-video w-full bg-gradient-to-br from-slate-700 to-slate-800 bg-cover bg-center" 
-                                     style="background-image: url('@(string.IsNullOrEmpty(post.Image) ? "/api/placeholder/400/200" : post.Image)');">
+<!-- Main Content - Using consistent dark background -->
+<div class="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+    <div class="grid gap-8 lg:grid-cols-12">
+        <!-- Latest posts -->
+        <div class="lg:col-span-8">
+            <div class="mb-8 flex items-center justify-between">
+                <h2 class="text-2xl font-bold text-slate-900 dark:text-white">Latest posts</h2>
+                <a href="/" class="text-sm text-brand-600 hover:text-brand-700 dark:text-brand-400 dark:hover:text-brand-300 transition">View all →</a>
+            </div>
+            
+            <!-- Posts Grid -->
+            @if (_recent.Length > 0)
+            {
+                <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                    @foreach (var post in _recent.Take(3))
+                    {
+                        <article class="group overflow-hidden rounded-2xl bg-white border border-slate-200 shadow-soft transition hover:shadow-lg dark:bg-slate-800 dark:border-slate-700 dark:hover:bg-slate-700">
+                            <!-- Image -->
+                            <div class="aspect-video w-full bg-gradient-to-br from-slate-200 to-slate-300 dark:from-slate-700 dark:to-slate-800 bg-cover bg-center" 
+                                 style="background-image: url('@(string.IsNullOrEmpty(post.Image) ? "/api/placeholder/400/200" : post.Image)');">
+                            </div>
+                            
+                            <!-- Content -->
+                            <div class="p-6">
+                                <!-- Meta -->
+                                <div class="mb-3 flex items-center gap-2 text-sm">
+                                    @if (!string.IsNullOrWhiteSpace(post.CategoryName))
+                                    {
+                                        <a href="/@post.CategorySlug-posts" class="rounded-full bg-brand-600/10 px-3 py-1 text-xs font-semibold text-brand-600 hover:bg-brand-600/20 dark:bg-brand-600/20 dark:text-brand-400 dark:hover:bg-brand-600/30 transition">
+                                            @post.CategoryName
+                                        </a>
+                                        <span class="text-slate-400 dark:text-slate-500">•</span>
+                                    }
+                                    <span class="text-slate-500 dark:text-slate-400 text-xs">@post.PublishedAtDisplay</span>
                                 </div>
                                 
-                                <!-- Content -->
-                                <div class="p-6">
-                                    <!-- Meta -->
-                                    <div class="mb-3 flex items-center gap-2 text-sm">
-                                        @if (!string.IsNullOrWhiteSpace(post.CategoryName))
-                                        {
-                                            <a href="/@post.CategorySlug-posts" class="rounded-full bg-brand-600/20 px-3 py-1 text-xs font-semibold text-brand-400 hover:bg-brand-600/30 transition">
-                                                @post.CategoryName
-                                            </a>
-                                            <span class="text-slate-500">•</span>
-                                        }
-                                        <span class="text-slate-400 text-xs">@post.PublishedAtDisplay</span>
-                                    </div>
-                                    
-                                    <!-- Title -->
-                                    <h3 class="mb-3 text-lg font-semibold leading-snug text-white group-hover:text-brand-300 transition">
-                                        @if (!string.IsNullOrWhiteSpace(post.Slug))
-                                        {
-                                            <a href="/posts/@post.Slug">@post.Title</a>
-                                        }
-                                        else
-                                        {
-                                            @post.Title
-                                        }
-                                    </h3>
-                                    
-                                    <!-- Introduction -->
-                                    <p class="mb-4 line-clamp-3 text-sm text-slate-300 leading-relaxed">
-                                        @post.Introduction
-                                    </p>
-                                    
-                                    <!-- Footer -->
-                                    <div class="flex items-center justify-between">
-                                        @if (!string.IsNullOrWhiteSpace(post.Slug))
-                                        {
-                                            <a href="/posts/@post.Slug" class="text-sm font-medium text-brand-400 hover:text-brand-300 transition">
-                                                Read more
-                                            </a>
-                                        }
-                                        <span class="text-xs text-slate-400">6 min read</span>
-                                    </div>
+                                <!-- Title -->
+                                <h3 class="mb-3 text-lg font-semibold leading-snug text-slate-900 group-hover:text-brand-600 dark:text-white dark:group-hover:text-brand-300 transition">
+                                    @if (!string.IsNullOrWhiteSpace(post.Slug))
+                                    {
+                                        <a href="/posts/@post.Slug">@post.Title</a>
+                                    }
+                                    else
+                                    {
+                                        @post.Title
+                                    }
+                                </h3>
+                                
+                                <!-- Introduction -->
+                                <p class="mb-4 line-clamp-3 text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+                                    @post.Introduction
+                                </p>
+                                
+                                <!-- Footer -->
+                                <div class="flex items-center justify-between">
+                                    @if (!string.IsNullOrWhiteSpace(post.Slug))
+                                    {
+                                        <a href="/posts/@post.Slug" class="text-sm font-medium text-brand-600 hover:text-brand-700 dark:text-brand-400 dark:hover:text-brand-300 transition">
+                                            Read more
+                                        </a>
+                                    }
+                                    <span class="text-xs text-slate-500 dark:text-slate-400">6 min read</span>
                                 </div>
-                            </article>
+                            </div>
+                        </article>
+                    }
+                </div>
+            }
+            else
+            {
+                <div class="text-center py-12">
+                    <p class="text-slate-500 dark:text-slate-400">No posts available yet.</p>
+                </div>
+            }
+        </div>
+
+        <!-- Sidebar -->
+        <aside class="lg:col-span-4">
+            <div class="lg:sticky lg:top-8 space-y-6">
+                <!-- Subscribe Box -->
+                <SubscribeBox Simple="true" />
+
+                <!-- Tags -->
+                <div class="rounded-2xl bg-white border border-slate-200 p-6 shadow-soft dark:bg-slate-800 dark:border-slate-700">
+                    <h3 class="text-lg font-semibold text-slate-900 dark:text-white mb-4">Tags</h3>
+                    <div class="flex flex-wrap gap-2">
+                        @foreach (var tag in _tags)
+                        {
+                            <span class="rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-700 hover:bg-slate-200 dark:bg-slate-700 dark:text-slate-300 dark:hover:bg-slate-600 transition cursor-pointer">
+                                @tag
+                            </span>
                         }
                     </div>
-                }
-                else
-                {
-                    <div class="text-center py-12">
-                        <p class="text-slate-400">No posts available yet.</p>
-                    </div>
-                }
-            </div>
-
-            <!-- Sidebar -->
-            <aside class="lg:col-span-4">
-                <div class="lg:sticky lg:top-8 space-y-6">
-                    <!-- Subscribe Box -->
-                    <SubscribeBox Simple="true" />
-
-                    <!-- Tags -->
-                    <div class="rounded-2xl bg-slate-800 p-6">
-                        <h3 class="text-lg font-semibold text-white mb-4">Tags</h3>
-                        <div class="flex flex-wrap gap-2">
-                            @foreach (var tag in _tags)
-                            {
-                                <span class="rounded-full bg-slate-700 px-3 py-1 text-xs font-medium text-slate-300 hover:bg-slate-600 transition cursor-pointer">
-                                    @tag
-                                </span>
-                            }
-                        </div>
-                    </div>
-
-                    <!-- About -->
-                    <div class="rounded-2xl bg-slate-800 p-6">
-                        <h3 class="text-lg font-semibold text-white mb-2">About BlazorBlog</h3>
-                        <p class="text-sm text-slate-300 leading-relaxed">
-                            A lightweight, modern blog template for Blazor. Easily themed with Tailwind and focused on readability.
-                        </p>
-                        <a href="#" class="mt-4 inline-block text-sm font-medium text-brand-400 hover:text-brand-300 transition">
-                            Integrate with Blazor →
-                        </a>
-                    </div>
                 </div>
-            </aside>
-        </div>
+
+                <!-- About -->
+                <div class="rounded-2xl bg-white border border-slate-200 p-6 shadow-soft dark:bg-slate-800 dark:border-slate-700">
+                    <h3 class="text-lg font-semibold text-slate-900 dark:text-white mb-2">About BlazorBlog</h3>
+                    <p class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+                        A lightweight, modern blog template for Blazor. Easily themed with Tailwind and focused on readability.
+                    </p>
+                    <a href="#" class="mt-4 inline-block text-sm font-medium text-brand-600 hover:text-brand-700 dark:text-brand-400 dark:hover:text-brand-300 transition">
+                        Integrate with Blazor →
+                    </a>
+                </div>
+            </div>
+        </aside>
     </div>
-</section>
+</div>
 
 <!-- Getting started placeholder -->
 <section id="getting-started" class="mx-auto max-w-7xl px-4 pb-10 sm:px-6 lg:px-8">
