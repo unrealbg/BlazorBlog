@@ -38,6 +38,13 @@ module.exports = {
     "bg-gradient-to-br",
     "from-slate-700",
     "to-slate-800",
+    // Image positioning classes
+    "object-cover",
+    "object-center",
+    "transition-transform",
+    "duration-300",
+    "group-hover:scale-105",
+    "overflow-hidden",
   ],
   darkMode: "class",
   theme: {
