@@ -8,6 +8,15 @@ module.exports = {
     "./**/*.html",
     "./wwwroot/assets/js/**/*.js",
   ],
+  // Ensure dynamic classes used from C# strings are not purged
+  safelist: [
+    "fixed",
+    "pointer-events-none",
+    "top-4",
+    "bottom-4",
+    "right-4",
+    "z-[9999]",
+  ],
   darkMode: "class",
   theme: {
     extend: {
