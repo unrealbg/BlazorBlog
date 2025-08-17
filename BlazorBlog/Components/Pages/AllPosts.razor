@@ -1,0 +1,120 @@
+@page "/posts"
+@page "/posts/{pageNumber:int?}"
+
+@rendermode InteractiveServer
+
+<PageTitle>@Utils.GetPageTitle("All Posts")</PageTitle>
+
+<div class="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+    <div class="grid gap-8 lg:grid-cols-12">
+        <div class="lg:col-span-8">
+            <div class="mb-8">
+                <h1 class="text-3xl font-bold text-slate-900 dark:text-white">All Posts</h1>
+                <p class="mt-2 text-slate-600 dark:text-slate-300">Discover all our published articles and insights.</p>
+            </div>
+
+            @if (_isLoading)
+            {
+                <div class="flex items-center justify-center py-12">
+                    <div class="flex items-center gap-3">
+                        <svg class="h-6 w-6 animate-spin text-brand-600" viewBox="0 0 24 24" fill="none">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+                        </svg>
+                        <span class="text-slate-600 dark:text-slate-300">Loading posts...</span>
+                    </div>
+                </div>
+            }
+            else if (_posts.Length > 0)
+            {
+                <div class="space-y-8">
+                    <BlogPostList Posts="_posts" />
+                </div>
+
+                @if (_totalPages > 1)
+                {
+                    <nav class="mt-12 flex items-center justify-between border-t border-slate-200 pt-6 dark:border-slate-700">
+                        <div class="flex w-0 flex-1">
+                            @if (_currentPage > 1)
+                            {
+                                <a href="/posts/@(_currentPage - 1)" class="inline-flex items-center border-t-2 border-transparent pr-1 pt-4 text-sm font-medium text-slate-500 hover:border-slate-300 hover:text-slate-700 dark:text-slate-400 dark:hover:border-slate-600 dark:hover:text-slate-300">
+                                    <svg class="mr-3 h-5 w-5 text-slate-400" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
+                                    </svg>
+                                    Previous
+                                </a>
+                            }
+                        </div>
+                        <div class="hidden md:-mt-px md:flex">
+                            @for (int i = Math.Max(1, _currentPage - 2); i <= Math.Min(_totalPages, _currentPage + 2); i++)
+                            {
+                                @if (i == _currentPage)
+                                {
+                                    <span class="inline-flex items-center border-t-2 border-brand-500 px-4 pt-4 text-sm font-medium text-brand-600">
+                                        @i
+                                    </span>
+                                }
+                                else
+                                {
+                                    <a href="@GetPageUrl(i)" class="inline-flex items-center border-t-2 border-transparent px-4 pt-4 text-sm font-medium text-slate-500 hover:border-slate-300 hover:text-slate-700 dark:text-slate-400 dark:hover:border-slate-600 dark:hover:text-slate-300">
+                                        @i
+                                    </a>
+                                }
+                            }
+                        </div>
+                        <div class="flex w-0 flex-1 justify-end">
+                            @if (_currentPage < _totalPages)
+                            {
+                                <a href="/posts/@(_currentPage + 1)" class="inline-flex items-center border-t-2 border-transparent pl-1 pt-4 text-sm font-medium text-slate-500 hover:border-slate-300 hover:text-slate-700 dark:text-slate-400 dark:hover:border-slate-600 dark:hover:text-slate-300">
+                                    Next
+                                    <svg class="ml-3 h-5 w-5 text-slate-400" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+                                    </svg>
+                                </a>
+                            }
+                        </div>
+                    </nav>
+                }
+            }
+            else
+            {
+                <div class="text-center py-12">
+                    <svg class="mx-auto h-12 w-12 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                    <h3 class="mt-4 text-lg font-medium text-slate-900 dark:text-white">No posts yet</h3>
+                    <p class="mt-2 text-slate-500 dark:text-slate-400">Check back later for new content.</p>
+                </div>
+            }
+        </div>
+
+        <aside class="lg:col-span-4">
+            <div class="lg:sticky lg:top-8 space-y-6">
+                <SubscribeBox Simple="true" />
+
+                @if (_popularPosts.Length > 0)
+                {
+                    <div class="rounded-2xl bg-white border border-slate-200 p-6 shadow-soft dark:bg-slate-800 dark:border-slate-700">
+                        <h3 class="text-lg font-semibold text-slate-900 dark:text-white mb-4">Popular Posts</h3>
+                        <PopularBlogPostList Posts="_popularPosts" />
+                    </div>
+                }
+
+                @if (_categories.Length > 0)
+                {
+                    <div class="rounded-2xl bg-white border border-slate-200 p-6 shadow-soft dark:bg-slate-800 dark:border-slate-700">
+                        <h3 class="text-lg font-semibold text-slate-900 dark:text-white mb-4">Categories</h3>
+                        <div class="space-y-2">
+                            @foreach (var category in _categories)
+                            {
+                                <a href="/@category.Slug-posts" class="block rounded-lg px-3 py-2 text-sm text-slate-700 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-700 transition">
+                                    @category.Name
+                                </a>
+                            }
+                        </div>
+                    </div>
+                }
+            </div>
+        </aside>
+    </div>
+</div>

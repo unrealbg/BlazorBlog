@@ -14,6 +14,7 @@ NAVBAR
 
             <nav class="hidden items-center gap-6 text-sm font-medium sm:flex">
                 <a class="hover:text-brand-600" href="/">Home</a>
+                <a class="hover:text-brand-600" href="/posts">All Posts</a>
                 @foreach (var category in this.categories)
                 {
                         <a class="hover:text-brand-600" href="/@category.Slug-posts" title="@category.Name Posts">@category.Name</a>
@@ -43,6 +44,7 @@ NAVBAR
         <div id="mobileNav" class="hidden border-t border-slate-200 py-3 dark:border-slate-800 sm:hidden">
             <nav class="grid gap-2 text-sm">
                 <a class="rounded-lg px-3 py-2 hover:bg-slate-100 dark:hover:bg-slate-900" href="/">Home</a>
+                <a class="rounded-lg px-3 py-2 hover:bg-slate-100 dark:hover:bg-slate-900" href="/posts">All Posts</a>
                 @foreach (var category in this.categories)
                 {
                         <a class="rounded-lg px-3 py-2 hover:bg-slate-100 dark:hover:bg-slate-900" href="/@category.Slug-posts" title="@category.Name Posts">@category.Name</a>
