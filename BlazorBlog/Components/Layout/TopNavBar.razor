@@ -24,7 +24,10 @@ NAVBAR
             <div class="flex items-center gap-2">
                 <AuthorizeView>
                     <Authorized>
-                        <a href="admin/dashboard" class="inline-flex items-center rounded-md bg-slate-700 px-3 py-1.5 text-sm font-medium text-white hover:bg-slate-800">Dashboard</a>
+                        <a href="admin/dashboard" class="inline-flex items-center rounded-md bg-slate-700 px-3 py-1.5 text-sm font-medium text-white hover:bg-slate-800" aria-label="Dashboard">
+                            <svg class="h-5 w-5 md:hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" xmlns="http://www.w3.org/2000/svg"><path d="M3 3h7v7H3V3zM14 3h7v7h-7V3zM3 14h7v7H3v-7zM14 14h7v7h-7v-7z"/></svg>
+                            <span class="hidden md:inline ml-2">Dashboard</span>
+                        </a>
                         <LogoutForm ButtonClasses="inline-flex items-center rounded-md bg-red-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-red-700" />
                     </Authorized>
                     <NotAuthorized>
@@ -51,7 +54,7 @@ NAVBAR
                 }
                 <AuthorizeView>
                         <Authorized>
-                                <a class="rounded-lg px-3 py-2 hover:bg-slate-100 dark:hover:bg-slate-900" href="admin/dashboard">@context.User.GetUserName()</a>
+                                <div class="rounded-lg px-3 py-2 text-sm font-medium">@context.User.GetUserName()</div>
                                 <div class="px-3"><LogoutForm ButtonClasses="rounded-lg px-3 py-2 hover:bg-slate-100 dark:hover:bg-slate-900" /></div>
                         </Authorized>
             <NotAuthorized>
