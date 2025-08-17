@@ -2,50 +2,146 @@
 
 <PageTitle>@Utils.GetPageTitle("Home")</PageTitle>
 
-@if (_firstFeatured is not null)
-{
-        <section class="relative overflow-hidden border-b border-slate-100 bg-gradient-to-tr from-brand-700 via-brand-600 to-accent-600 text-white dark:border-slate-900">
-            <div class="relative mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-                <div class="grid items-center gap-8 md:grid-cols-2">
-                    <div>
-                        <h1 class="mb-3 text-3xl font-extrabold leading-tight sm:text-4xl md:text-5xl">@_firstFeatured.Title</h1>
-                        <p class="mb-4 text-white/90">@_firstFeatured.Introduction</p>
-                        @if (!string.IsNullOrWhiteSpace(_firstFeatured.Slug))
+<!-- Hero Section - More compact -->
+<section class="relative overflow-hidden bg-gradient-to-tr from-brand-700 via-brand-600 to-accent-600 text-white">
+    <div class="relative mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8 lg:py-14">
+        <div class="max-w-4xl">
+            <div class="mb-4 flex flex-wrap gap-2 text-xs font-semibold">
+                <span class="rounded-full bg-white/20 px-3 py-1 backdrop-blur-sm">BLAZOR</span>
+                <span class="rounded-full bg-white/20 px-3 py-1 backdrop-blur-sm">.NET</span>
+                <span class="rounded-full bg-white/20 px-3 py-1 backdrop-blur-sm">IOT</span>
+            </div>
+            <h1 class="mb-4 text-3xl font-extrabold leading-tight sm:text-4xl lg:text-5xl">
+                Build a fast, beautiful blog with 
+                <span class="block">Blazor & Tailwind</span>
+            </h1>
+            <p class="mb-6 text-base text-white/90 sm:text-lg">
+                This skeleton is optimized for posts, tags, and search. Lightweight, modern, and ready to integrate.
+            </p>
+            <div class="flex flex-wrap gap-3">
+                <a href="/" class="inline-flex items-center rounded-full bg-white px-6 py-2.5 text-sm font-semibold text-brand-700 shadow-lg transition hover:shadow-xl hover:bg-white/95">
+                    Browse posts
+                </a>
+                <a href="#getting-started" class="inline-flex items-center rounded-full border border-white/30 px-6 py-2.5 text-sm font-medium text-white/90 hover:bg-white/10 hover:border-white/50 transition">
+                    Getting started
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Main Content with Dark Background -->
+<section class="bg-slate-900 min-h-screen">
+    <div class="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+        <div class="grid gap-8 lg:grid-cols-12">
+            <!-- Latest posts -->
+            <div class="lg:col-span-8">
+                <div class="mb-8 flex items-center justify-between">
+                    <h2 class="text-2xl font-bold text-white">Latest posts</h2>
+                    <a href="/" class="text-sm text-brand-400 hover:text-brand-300 transition">View all →</a>
+                </div>
+                
+                <!-- Posts Grid -->
+                @if (_recent.Length > 0)
+                {
+                    <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                        @foreach (var post in _recent.Take(3))
                         {
-                            <a href="/posts/@_firstFeatured.Slug" class="inline-flex items-center rounded-xl bg-white px-4 py-2 text-sm font-semibold text-brand-700 shadow-soft transition hover:shadow">Read More</a>
-                        }
-                        else
-                        {
-                            <button class="inline-flex items-center cursor-not-allowed rounded-xl border border-white/40 px-4 py-2 text-sm font-semibold text-white/70" disabled title="This post has no slug yet">Read More</button>
+                            <article class="group overflow-hidden rounded-2xl bg-slate-800 transition hover:bg-slate-700">
+                                <!-- Image -->
+                                <div class="aspect-video w-full bg-gradient-to-br from-slate-700 to-slate-800 bg-cover bg-center" 
+                                     style="background-image: url('@(string.IsNullOrEmpty(post.Image) ? "/api/placeholder/400/200" : post.Image)');">
+                                </div>
+                                
+                                <!-- Content -->
+                                <div class="p-6">
+                                    <!-- Meta -->
+                                    <div class="mb-3 flex items-center gap-2 text-sm">
+                                        @if (!string.IsNullOrWhiteSpace(post.CategoryName))
+                                        {
+                                            <a href="/@post.CategorySlug-posts" class="rounded-full bg-brand-600/20 px-3 py-1 text-xs font-semibold text-brand-400 hover:bg-brand-600/30 transition">
+                                                @post.CategoryName
+                                            </a>
+                                            <span class="text-slate-500">•</span>
+                                        }
+                                        <span class="text-slate-400 text-xs">@post.PublishedAtDisplay</span>
+                                    </div>
+                                    
+                                    <!-- Title -->
+                                    <h3 class="mb-3 text-lg font-semibold leading-snug text-white group-hover:text-brand-300 transition">
+                                        @if (!string.IsNullOrWhiteSpace(post.Slug))
+                                        {
+                                            <a href="/posts/@post.Slug">@post.Title</a>
+                                        }
+                                        else
+                                        {
+                                            @post.Title
+                                        }
+                                    </h3>
+                                    
+                                    <!-- Introduction -->
+                                    <p class="mb-4 line-clamp-3 text-sm text-slate-300 leading-relaxed">
+                                        @post.Introduction
+                                    </p>
+                                    
+                                    <!-- Footer -->
+                                    <div class="flex items-center justify-between">
+                                        @if (!string.IsNullOrWhiteSpace(post.Slug))
+                                        {
+                                            <a href="/posts/@post.Slug" class="text-sm font-medium text-brand-400 hover:text-brand-300 transition">
+                                                Read more
+                                            </a>
+                                        }
+                                        <span class="text-xs text-slate-400">6 min read</span>
+                                    </div>
+                                </div>
+                            </article>
                         }
                     </div>
-                    <div class="hidden md:block">
-                        <div class="aspect-[16/9] w-full rounded-2xl bg-slate-100 bg-cover bg-center shadow-sm dark:bg-slate-800" style="background-image:url('@_firstFeatured.Image')"></div>
+                }
+                else
+                {
+                    <div class="text-center py-12">
+                        <p class="text-slate-400">No posts available yet.</p>
+                    </div>
+                }
+            </div>
+
+            <!-- Sidebar -->
+            <aside class="lg:col-span-4">
+                <div class="lg:sticky lg:top-8 space-y-6">
+                    <!-- Subscribe Box -->
+                    <SubscribeBox Simple="true" />
+
+                    <!-- Tags -->
+                    <div class="rounded-2xl bg-slate-800 p-6">
+                        <h3 class="text-lg font-semibold text-white mb-4">Tags</h3>
+                        <div class="flex flex-wrap gap-2">
+                            @foreach (var tag in _tags)
+                            {
+                                <span class="rounded-full bg-slate-700 px-3 py-1 text-xs font-medium text-slate-300 hover:bg-slate-600 transition cursor-pointer">
+                                    @tag
+                                </span>
+                            }
+                        </div>
+                    </div>
+
+                    <!-- About -->
+                    <div class="rounded-2xl bg-slate-800 p-6">
+                        <h3 class="text-lg font-semibold text-white mb-2">About BlazorBlog</h3>
+                        <p class="text-sm text-slate-300 leading-relaxed">
+                            A lightweight, modern blog template for Blazor. Easily themed with Tailwind and focused on readability.
+                        </p>
+                        <a href="#" class="mt-4 inline-block text-sm font-medium text-brand-400 hover:text-brand-300 transition">
+                            Integrate with Blazor →
+                        </a>
                     </div>
                 </div>
-            </div>
-        </section>
-}
+            </aside>
+        </div>
+    </div>
+</section>
 
-<div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-    <FeaturedBlogPosts Posts="_featured" />
-    </div>
-
-<div class="mx-auto max-w-7xl px-4 pb-10 sm:px-6 lg:px-8">
-    <div class="grid gap-8 lg:grid-cols-12">
-        <section class="lg:col-span-8">
-            <div class="mb-6 flex items-center justify-between">
-                <h2 class="text-xl font-bold">Latest Posts</h2>
-            </div>
-            <BlogPostList Posts="_recent" />
-        </section>
-        <aside class="lg:col-span-4">
-            <div class="lg:sticky lg:top-24 space-y-6">
-                <div>
-                    <h2 class="text-xl font-bold">Popular</h2>
-                    <PopularBlogPostList Posts="_popular" />
-                </div>
-            </div>
-        </aside>
-    </div>
-    </div>
+<!-- Getting started placeholder -->
+<section id="getting-started" class="mx-auto max-w-7xl px-4 pb-10 sm:px-6 lg:px-8">
+</section>

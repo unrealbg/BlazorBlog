@@ -5,6 +5,7 @@
         private BlogPostVm[] _featured = [];
         private BlogPostVm[] _popular = [];
         private BlogPostVm[] _recent = [];
+        private string[] _tags = ["blazor", ".net", "iot", "csharp", "tutorial"]; // simple placeholder tags for layout
 
         private BlogPostVm _firstFeatured = default!;
 
@@ -18,7 +19,7 @@
             var posts = await Task.WhenAll(
                 BlogPostService.GetFeaturedBlogPostsAsync(5, cancellationToken: _cts.Token),
                 BlogPostService.GetPopularBlogPostsAsync(4, cancellationToken: _cts.Token),
-                BlogPostService.GetRecentBlogPostsAsync(5, cancellationToken: _cts.Token)
+                BlogPostService.GetRecentBlogPostsAsync(6, cancellationToken: _cts.Token)
             );
 
             _featured = posts[0];
