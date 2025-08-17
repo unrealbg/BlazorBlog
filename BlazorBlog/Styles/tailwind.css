@@ -9,3 +9,44 @@
       Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
   }
 }
+
+/* Override default Blazor error UI styling with Tailwind utilities */
+@layer components {
+  /* Use !important to beat runtime-injected blazor.web.css */
+  #blazor-error-ui {
+    position: fixed !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    z-index: 9999 !important;
+    background-color: rgba(220, 38, 38, 0.95) !important; /* bg-red-600/95 */
+    color: #fff !important;
+    box-shadow: 0 10px 15px -3px rgba(0,0,0,.10), 0 4px 6px -4px rgba(0,0,0,.10) !important; /* shadow-lg */
+    padding: 0 !important; /* we control padding via inner container */
+  }
+  #blazor-error-ui .reload {
+    text-decoration-line: underline !important;
+    text-decoration-color: rgba(255,255,255,0.6) !important;
+    text-underline-offset: 4px !important;
+  }
+  #blazor-error-ui .dismiss {
+    position: static !important;
+    display: inline-flex !important;
+    height: 2rem !important; /* h-8 */
+    width: 2rem !important;  /* w-8 */
+    align-items: center !important;
+    justify-content: center !important;
+    border-radius: 0.375rem !important; /* rounded-md */
+  }
+
+  /* Also override the yellow error boundary overlay that Blazor injects around components */
+  .blazor-error-boundary {
+    background: transparent !important;
+    color: inherit !important;
+    border: none !important;
+  }
+  .blazor-error-boundary::after {
+    display: none !important;
+    content: none !important;
+  }
+}
