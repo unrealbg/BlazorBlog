@@ -16,6 +16,12 @@ module.exports = {
     "bottom-4",
     "right-4",
     "z-[9999]",
+    // post detail enhancements
+    "z-[60]",
+    "bg-brand-600",
+    "prose",
+    "prose-slate",
+    "dark:prose-invert",
   ],
   darkMode: "class",
   theme: {
