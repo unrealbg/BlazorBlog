@@ -1,5 +1,7 @@
 namespace BlazorBlog
 {
+    using System.Net;
+
     using Components.Account;
     using BlazorBlog.Infrastructure;
     using Ganss.Xss;
@@ -10,6 +12,7 @@ namespace BlazorBlog
     using Serilog;
     using BlazorBlog.Infrastructure.Persistence;
 
+    using Microsoft.AspNetCore.HttpOverrides;
 
     public class Program
     {
@@ -50,6 +53,20 @@ namespace BlazorBlog
 
             var app = builder.Build();
 
+#if DEBUG
+
+#else
+app.UseForwardedHeaders(new ForwardedHeadersOptions
+{
+    ForwardedHeaders =
+        ForwardedHeaders.XForwardedFor |
+        ForwardedHeaders.XForwardedProto |
+        ForwardedHeaders.XForwardedHost,
+    KnownProxies = { IPAddress.Parse("1.1.1.200") },
+    ForwardLimit = 1
+});
+#endif
+
             // Apply pending EF Core migrations automatically at startup.
             await ApplyMigrationsAsync(app.Services);
 
@@ -76,20 +93,20 @@ namespace BlazorBlog
 
             app.MapAdditionalIdentityEndpoints();
 
-                // Lightweight health endpoint
-                app.MapGet("/health", () => Results.Ok(new { status = "ok", timeUtc = DateTime.UtcNow }))
-                    .WithName("Health");
+            // Lightweight health endpoint
+            app.MapGet("/health", () => Results.Ok(new { status = "ok", timeUtc = DateTime.UtcNow }))
+                .WithName("Health");
 
             app.Run();
 
-        static async Task ApplyMigrationsAsync(IServiceProvider services)
+            static async Task ApplyMigrationsAsync(IServiceProvider services)
             {
                 await using var scope = services.CreateAsyncScope();
                 var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
                 try
                 {
                     logger.LogInformation("Applying database migrations...");
-            var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+                    var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
                     await db.Database.MigrateAsync();
                     logger.LogInformation("Database migrations applied successfully.");
                 }
