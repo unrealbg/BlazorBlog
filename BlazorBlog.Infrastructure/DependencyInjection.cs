@@ -3,13 +3,16 @@ namespace BlazorBlog.Infrastructure
     using BlazorBlog.Application.Contracts;
     using BlazorBlog.Application.UI;
     using BlazorBlog.Infrastructure.Contracts;
+    using BlazorBlog.Infrastructure.Persistence;
     using BlazorBlog.Infrastructure.Persistence.Repositories;
     using BlazorBlog.Infrastructure.Utilities;
 
+    using Microsoft.AspNetCore.Identity;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.EntityFrameworkCore.Diagnostics;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
+    using Npgsql.EntityFrameworkCore.PostgreSQL; // for UseNpgsql extensions
 
     public static class DependencyInjection
     {
@@ -28,6 +31,7 @@ namespace BlazorBlog.Infrastructure
             services.AddScoped<ISubscribeService, SubscribeService>();
             services.AddScoped<ITagService, TagService>();
             services.AddScoped<ISlugService, SlugService>();
+            services.AddScoped<IAdminProfileService, AdminProfileService>();
 
             return services;
         }
@@ -39,12 +43,12 @@ namespace BlazorBlog.Infrastructure
 
             services.AddDbContextPool<ApplicationDbContext>(options =>
                 options
-                    .UseSqlServer(connectionString)
+                    .UseNpgsql(connectionString)
                     .ConfigureWarnings(w => w.Ignore(RelationalEventId.PendingModelChangesWarning)));
 
             services.AddPooledDbContextFactory<ApplicationDbContext>(options =>
                 options
-                    .UseSqlServer(connectionString)
+                    .UseNpgsql(connectionString)
                     .ConfigureWarnings(w => w.Ignore(RelationalEventId.PendingModelChangesWarning)));
 
             // Identity and stores
