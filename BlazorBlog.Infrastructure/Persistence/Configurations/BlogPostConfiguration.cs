@@ -13,7 +13,8 @@ namespace BlazorBlog.Infrastructure.Persistence.Configurations
             builder.HasIndex(b => new { b.IsPublished, b.PublishedAt });
             builder.HasIndex(b => b.ViewCount);
 
-            builder.Property(b => b.RowVersion).IsRowVersion();
+            // Use PostgreSQL xmin as concurrency token via shadow property
+            builder.Property<uint>("xmin").IsRowVersion();
         }
     }
 }
