@@ -41,8 +41,5 @@ namespace BlazorBlog.Infrastructure.Persistence.Entities
         public DateTime CreatedAt { get; set; }
 
         public DateTime? PublishedAt { get; set; }
-
-        [Timestamp]
-        public byte[]? RowVersion { get; set; }
     }
 }
