@@ -6,76 +6,87 @@
 <div class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
     <div class="grid grid-cols-1 gap-8 lg:grid-cols-12 lg:gap-12">
         <aside class="lg:col-span-3">
-            <div class="sticky top-24 space-y-4">
-                <!-- Admin identity / welcome -->
+        <div class="sticky top-24 space-y-4">
+        <!-- Admin identity / welcome -->
                 <div class="overflow-hidden rounded-xl border border-slate-200/60 bg-white shadow-soft dark:border-slate-800 dark:bg-slate-900">
-                    <div class="bg-gradient-to-tr from-brand-600 to-accent-500 px-4 py-4">
-                        <div class="flex items-center gap-3 text-white">
-                            <span class="inline-grid h-10 w-10 place-items-center rounded-lg bg-white/15 shadow-soft">BB</span>
-                            <div>
-                                <div class="text-sm/5 font-semibold tracking-wide">Admin Console</div>
-                                <div class="text-xs/5 opacity-90">Site management</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="px-4 py-3">
-                        <AuthorizeView>
-                            <Authorized>
-                                <h6 class="text-center text-sm font-semibold text-slate-700 dark:text-slate-300">Welcome, @context.User.GetUserName()</h6>
-                            </Authorized>
-                        </AuthorizeView>
-                    </div>
-                </div>
+        <div class="bg-gradient-to-tr from-brand-600 to-accent-500 px-4 py-4">
+       <div class="flex items-center gap-3 text-white">
+        <span class="inline-grid h-10 w-10 place-items-center rounded-lg bg-white/15 shadow-soft">BB</span>
+     <div>
+       <div class="text-sm/5 font-semibold tracking-wide">Admin Console</div>
+          <div class="text-xs/5 opacity-90">Site management</div>
+      </div>
+               </div>
+      </div>
+        <div class="px-4 py-3">
+       <AuthorizeView>
+         <Authorized>
+      <h6 class="text-center text-sm font-semibold text-slate-700 dark:text-slate-300">Welcome, @context.User.GetUserName()</h6>
+    </Authorized>
+           </AuthorizeView>
+      </div>
+       </div>
 
-                <!-- Navigation -->
-                <nav class="rounded-xl border border-slate-200/60 bg-white p-2 shadow-soft dark:border-slate-800 dark:bg-slate-900">
-                    <ul class="space-y-1">
-                        <li>
-                            <NavLink href="admin/dashboard" class="group flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-slate-700 transition hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800" ActiveClass="active bg-brand-50 text-brand-700 ring-1 ring-inset ring-brand-600/20 dark:bg-brand-600/30 dark:text-brand-100 dark:ring-brand-600/40">
-                                <span class="inline-grid h-8 w-8 place-items-center rounded-md bg-slate-100 text-slate-600 transition-colors group-hover:text-brand-600 dark:bg-slate-800/70 dark:text-slate-400 group-[.active]:bg-brand-600/30 group-[.active]:text-brand-100 group-[.active]:ring-1 group-[.active]:ring-brand-600/40">
-                                    <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M12 3l9 8h-3v9h-5v-6H11v6H6v-9H3l9-8z"/></svg>
-                                </span>
-                                <span class="truncate">Dashboard</span>
-                            </NavLink>
-                        </li>
-                        <li>
-                            <NavLink href="admin/manage-categories" class="group flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-slate-700 transition hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800" ActiveClass="active bg-brand-50 text-brand-700 ring-1 ring-inset ring-brand-600/20 dark:bg-brand-600/30 dark:text-brand-100 dark:ring-brand-600/40">
-                                <span class="inline-grid h-8 w-8 place-items-center rounded-md bg-slate-100 text-slate-600 transition-colors group-hover:text-brand-600 dark:bg-slate-800/70 dark:text-slate-400 group-[.active]:bg-brand-600/30 group-[.active]:text-brand-100 group-[.active]:ring-1 group-[.active]:ring-brand-600/40">
-                                    <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M3 5h18v2H3V5zm0 6h18v2H3v-2zm0 6h18v2H3v-2z"/></svg>
-                                </span>
-                                <span class="truncate">Manage Categories</span>
-                            </NavLink>
-                        </li>
-                        <li>
-                            <NavLink href="admin/manage-blog-posts" class="group flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-slate-700 transition hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800" ActiveClass="active bg-brand-50 text-brand-700 ring-1 ring-inset ring-brand-600/20 dark:bg-brand-600/30 dark:text-brand-100 dark:ring-brand-600/40">
-                                <span class="inline-grid h-8 w-8 place-items-center rounded-md bg-slate-100 text-slate-600 transition-colors group-hover:text-brand-600 dark:bg-slate-800/70 dark:text-slate-400 group-[.active]:bg-brand-600/30 group-[.active]:text-brand-100 group-[.active]:ring-1 group-[.active]:ring-brand-600/40">
-                                    <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M4 4h16v2H4V4zm0 4h10v2H4V8zm0 4h10v2H4v-2zm0 4h16v2H4v-2z"/></svg>
-                                </span>
-                                <span class="truncate">Manage Blog Posts</span>
-                            </NavLink>
-                        </li>
-                        <li>
-                            <NavLink href="admin/manage-subscribers" class="group flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-slate-700 transition hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800" ActiveClass="active bg-brand-50 text-brand-700 ring-1 ring-inset ring-brand-600/20 dark:bg-brand-600/30 dark:text-brand-100 dark:ring-brand-600/40">
-                                <span class="inline-grid h-8 w-8 place-items-center rounded-md bg-slate-100 text-slate-600 transition-colors group-hover:text-brand-600 dark:bg-slate-800/70 dark:text-slate-400 group-[.active]:bg-brand-600/30 group-[.active]:text-brand-100 group-[.active]:ring-1 group-[.active]:ring-brand-600/40">
-                                    <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M16 11c1.7 0 3-1.3 3-3s-1.3-3-3-3-3 1.3-3 3 1.3 3 3 3zM8 11c1.7 0 3-1.3 3-3S9.7 5 8 5 5 6.3 5 8s1.3 3 3 3zm0 2c-2.3 0-7 1.2-7 3.5V19h14v-2.5C15 14.2 10.3 13 8 13zm8 0c-.3 0-.6 0-1 .1 1.2.8 2 2.1 2 3.4V19h7v-2.5c0-2.3-4.7-3.5-8-3.5z"/></svg>
-                                </span>
-                                <span class="truncate">Manage Subscribers</span>
-                            </NavLink>
-                        </li>
-                    </ul>
-                </nav>
+           <!-- Navigation -->
+        <nav class="rounded-xl border border-slate-200/60 bg-white p-2 shadow-soft dark:border-slate-800 dark:bg-slate-900">
+  <ul class="space-y-1">
+       <li>
+              <NavLink href="admin/dashboard" class="group flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-slate-700 transition hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800" ActiveClass="active bg-brand-50 text-brand-700 ring-1 ring-inset ring-brand-600/20 dark:bg-brand-600/30 dark:text-brand-100 dark:ring-brand-600/40">
+      <span class="inline-grid h-8 w-8 place-items-center rounded-md bg-slate-100 text-slate-600 transition-colors group-hover:text-brand-600 dark:bg-slate-800/70 dark:text-slate-400 group-[.active]:bg-brand-600/30 group-[.active]:text-brand-100 group-[.active]:ring-1 group-[.active]:ring-brand-600/40">
+  <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M12 3l9 8h-3v9h-5v-6H11v6H6v-9H3l9-8z"/></svg>
+       </span>
+       <span class="truncate">Dashboard</span>
+    </NavLink>
+         </li>
+        <li>
+           <NavLink href="admin/manage-categories" class="group flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-slate-700 transition hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800" ActiveClass="active bg-brand-50 text-brand-700 ring-1 ring-inset ring-brand-600/20 dark:bg-brand-600/30 dark:text-brand-100 dark:ring-brand-600/40">
+         <span class="inline-grid h-8 w-8 place-items-center rounded-md bg-slate-100 text-slate-600 transition-colors group-hover:text-brand-600 dark:bg-slate-800/70 dark:text-slate-400 group-[.active]:bg-brand-600/30 group-[.active]:text-brand-100 group-[.active]:ring-1 group-[.active]:ring-brand-600/40">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M3 5h18v2H3V5zm0 6h18v2H3v-2zm0 6h18v2H3v-2z"/></svg>
+    </span>
+       <span class="truncate">Manage Categories</span>
+       </NavLink>
+  </li>
+  <li>
+             <NavLink href="admin/manage-blog-posts" class="group flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-slate-700 transition hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800" ActiveClass="active bg-brand-50 text-brand-700 ring-1 ring-inset ring-brand-600/20 dark:bg-brand-600/30 dark:text-brand-100 dark:ring-brand-600/40">
+       <span class="inline-grid h-8 w-8 place-items-center rounded-md bg-slate-100 text-slate-600 transition-colors group-hover:text-brand-600 dark:bg-slate-800/70 dark:text-slate-400 group-[.active]:bg-brand-600/30 group-[.active]:text-brand-100 group-[.active]:ring-1 group-[.active]:ring-brand-600/40">
+     <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M4 4h16v2H4V4zm0 4h10v2H4V8zm0 4h10v2H4v-2zm0 4h16v2H4v-2z"/></svg>
+         </span>
+     <span class="truncate">Manage Blog Posts</span>
+      </NavLink>
+            </li>
+          <li>
+      <NavLink href="admin/manage-subscribers" class="group flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-slate-700 transition hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800" ActiveClass="active bg-brand-50 text-brand-700 ring-1 ring-inset ring-brand-600/20 dark:bg-brand-600/30 dark:text-brand-100 dark:ring-brand-600/40">
+ <span class="inline-grid h-8 w-8 place-items-center rounded-md bg-slate-100 text-slate-600 transition-colors group-hover:text-brand-600 dark:bg-slate-800/70 dark:text-slate-400 group-[.active]:bg-brand-600/30 group-[.active]:text-brand-100 group-[.active]:ring-1 group-[.active]:ring-brand-600/40">
+<svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M16 11c1.7 0 3-1.3 3-3s-1.3-3-3-3-3 1.3-3 3 1.3 3 3 3zM8 11c1.7 0 3-1.3 3-3S9.7 5 8 5 5 6.3 5 8s1.3 3 3 3zm0 2c-2.3 0-7 1.2-7 3.5V19h14v-2.5C15 14.2 10.3 13 8 13zm8 0c-.3 0-.6 0-1 .1 1.2.8 2 2.1 2 3.4V19h7v-2.5c0-2.3-4.7-3.5-8-3.5z"/></svg>
+          </span>
+           <span class="truncate">Manage Subscribers</span>
+             </NavLink>
+             </li>
+       <li>
+         <div class="my-2 h-px bg-slate-200/80 dark:bg-slate-700"></div>
+     </li>
+  <li>
+  <NavLink href="admin/profile" class="group flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-slate-700 transition hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800" ActiveClass="active bg-brand-50 text-brand-700 ring-1 ring-inset ring-brand-600/20 dark:bg-brand-600/30 dark:text-brand-100 dark:ring-brand-600/40">
+       <span class="inline-grid h-8 w-8 place-items-center rounded-md bg-slate-100 text-slate-600 transition-colors group-hover:text-brand-600 dark:bg-slate-800/70 dark:text-slate-400 group-[.active]:bg-brand-600/30 group-[.active]:text-brand-100 group-[.active]:ring-1 group-[.active]:ring-brand-600/40">
+ <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+    </span>
+           <span class="truncate">Admin Profile</span>
+             </NavLink>
+  </li>
+         </ul>
+       </nav>
 
-                <!-- Actions -->
+     <!-- Actions -->
                 <div class="rounded-xl border border-slate-200/60 bg-white p-3 shadow-soft dark:border-slate-800 dark:bg-slate-900">
-                    <div class="flex items-center justify-between gap-2">
-                        <a href="/" class="inline-flex items-center rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700">View site</a>
-                        <LogoutForm ButtonClasses="inline-flex items-center rounded-md bg-red-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-red-700" />
-                    </div>
-                </div>
+      <div class="flex items-center justify-between gap-2">
+   <a href="/" class="inline-flex items-center rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700">View site</a>
+         <LogoutForm ButtonClasses="inline-flex items-center rounded-md bg-red-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-red-700" />
+       </div>
             </div>
-        </aside>
+            </div>
+     </aside>
         <section class="lg:col-span-9 lg:border-l lg:border-slate-200/60 lg:pl-8 dark:lg:border-slate-800">
-            @Body
+    @Body
         </section>
     </div>
 </div>
