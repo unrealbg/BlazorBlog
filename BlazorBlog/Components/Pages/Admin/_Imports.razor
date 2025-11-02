@@ -1,4 +1,4 @@
 ﻿@using Microsoft.AspNetCore.Authorization
 @layout AdminLayout
 
-@attribute [Authorize]
+@attribute [Authorize(Policy = "RequireAdminOrEditorRole")]

@@ -1,6 +1,6 @@
 ﻿@page "/admin/manage-subscribers"
 
-@attribute [Authorize(Roles = "Admin")]
+@attribute [Authorize(Policy = "RequireAdminRole")]
 
 @rendermode @(new InteractiveServerRenderMode(prerender: false))
 
