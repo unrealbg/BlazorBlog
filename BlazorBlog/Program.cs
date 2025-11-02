@@ -41,6 +41,12 @@ namespace BlazorBlog
                 })
                 .AddIdentityCookies();
 
+            // Add authorization policies for role-based access control
+            builder.Services.AddAuthorizationBuilder()
+                .AddPolicy("RequireAdminRole", policy => policy.RequireRole("Admin"))
+                .AddPolicy("RequireEditorRole", policy => policy.RequireRole("Editor"))
+                .AddPolicy("RequireAdminOrEditorRole", policy => policy.RequireRole("Admin", "Editor"));
+
             builder.Services.AddInfrastructure(builder.Configuration);
 
             builder.Services.AddApplication();

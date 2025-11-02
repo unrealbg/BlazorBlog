@@ -1,0 +1,182 @@
+@page "/admin/create-user"
+@attribute [Authorize(Policy = "RequireAdminRole")]
+@rendermode InteractiveServer
+
+@inject IUserManagementService UserManagementService
+@inject IToastService ToastService
+@inject NavigationManager Navigation
+
+<PageTitle>@Utils.GetPageTitle("Create User")</PageTitle>
+
+<AdminHeader Title="Create New User" />
+
+<div class="mx-auto max-w-2xl">
+    <div class="rounded-xl border border-slate-200/60 bg-white p-6 shadow-soft dark:border-slate-800 dark:bg-slate-900">
+   <div class="mb-6">
+            <h2 class="text-lg font-semibold text-slate-900 dark:text-slate-100">User Information</h2>
+      <p class="mt-1 text-sm text-slate-600 dark:text-slate-300">Create a new admin or editor account for the blog.</p>
+    </div>
+
+  <EditForm Model="@_model" OnValidSubmit="CreateUserAsync" FormName="create-user-form">
+     <DataAnnotationsValidator />
+     
+            <div class="space-y-4">
+      <!-- Name -->
+           <div>
+     <label for="name" class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-200">
+        Name <span class="text-red-600">*</span>
+       </label>
+    <InputText id="name" 
+       @bind-Value="_model.Name" 
+             class="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm placeholder-slate-400 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-200 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 dark:placeholder-slate-500 dark:focus:border-brand-400"
+         placeholder="John Doe"
+    disabled="@_isSubmitting" />
+                <ValidationMessage For="@(() => _model.Name)" class="mt-1 text-xs text-red-600 dark:text-red-400" />
+        </div>
+
+  <!-- Email -->
+          <div>
+    <label for="email" class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-200">
+             Email <span class="text-red-600">*</span>
+        </label>
+    <InputText id="email" 
+           type="email"
+       @bind-Value="_model.Email" 
+      class="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm placeholder-slate-400 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-200 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 dark:placeholder-slate-500 dark:focus:border-brand-400"
+           placeholder="john@example.com"
+        disabled="@_isSubmitting" />
+          <ValidationMessage For="@(() => _model.Email)" class="mt-1 text-xs text-red-600 dark:text-red-400" />
+     </div>
+
+        <!-- Password -->
+       <div>
+<label for="password" class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-200">
+          Password <span class="text-red-600">*</span>
+  </label>
+ <div class="relative">
+                 <InputText id="password" 
+   type="@(_showPassword ? "text" : "password")"
+       @bind-Value="_model.Password" 
+         class="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 pr-10 text-sm text-slate-900 shadow-sm placeholder-slate-400 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-200 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 dark:placeholder-slate-500 dark:focus:border-brand-400"
+ placeholder="••••••••"
+  disabled="@_isSubmitting" />
+       <button type="button" 
+      @onclick="() => _showPassword = !_showPassword"
+ class="absolute right-2 top-1/2 -translate-y-1/2 rounded p-1 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300"
+       title="@(_showPassword ? "Hide password" : "Show password")">
+    @if (_showPassword)
+{
+            <svg class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor">
+         <path d="M12 6c-3.79 0-7.17 2.13-8.82 5.5.83 1.84 2.26 3.32 3.96 4.26L5.73 17A10.99 10.99 0 013 12c1.65-3.37 5.03-5.5 8.82-5.5 1.37 0 2.67.25 3.88.7L14.5 8.4A7.72 7.72 0 0012 8v-2zm9 6c-1.65 3.37-5.03 5.5-8.82 5.5-1.37 0-2.67-.25-3.88-.7l1.2-1.2c.83.15 1.7.25 2.58.25 3.79 0 7.17-2.13 8.82-5.5-.83-1.84-2.26-3.32-3.96-4.26L17.27 7A10.99 10.99 0 0121 12zM2.81 2.81L21.19 21.19l-1.41 1.41L1.41 4.22l1.4-1.41z"/>
+            </svg>
+        }
+        else
+    {
+<svg class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor">
+   <path d="M12 6c-3.79 0-7.17 2.13-8.82 5.5C4.83 14.87 8.21 17 12 17s7.17-2.13 8.82-5.5C19.17 8.13 15.79 6 12 6zm0 10c-2.48 0-4.5-2.02-4.5-4.5S9.52 7 12 7s4.5 2.02 4.5 4.5S14.48 16 12 16zm0-7c-1.38 0-2.5 1.12-2.5 2.5S10.62 14 12 14s2.5-1.12 2.5-2.5S13.38 9 12 9z"/>
+              </svg>
+    }
+            </button>
+    </div>
+         <ValidationMessage For="@(() => _model.Password)" class="mt-1 text-xs text-red-600 dark:text-red-400" />
+   <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">Minimum 6 characters</p>
+   </div>
+
+       <!-- Confirm Password -->
+     <div>
+        <label for="confirm-password" class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-200">
+             Confirm Password <span class="text-red-600">*</span>
+    </label>
+           <InputText id="confirm-password" 
+    type="password"
+       @bind-Value="_model.ConfirmPassword" 
+            class="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm placeholder-slate-400 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-200 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 dark:placeholder-slate-500 dark:focus:border-brand-400"
+        placeholder="••••••••"
+              disabled="@_isSubmitting" />
+         <ValidationMessage For="@(() => _model.ConfirmPassword)" class="mt-1 text-xs text-red-600 dark:text-red-400" />
+        </div>
+
+      <!-- Role Selection -->
+      <div>
+     <label for="role" class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-200">
+     Role <span class="text-red-600">*</span>
+            </label>
+  <InputSelect id="role" 
+           @bind-Value="_model.Role" 
+        class="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-200 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 dark:focus:border-brand-400"
+      disabled="@_isSubmitting">
+    <option value="">-- Select Role --</option>
+       @foreach (var role in _availableRoles)
+          {
+    <option value="@role">@role</option>
+    }
+     </InputSelect>
+            <ValidationMessage For="@(() => _model.Role)" class="mt-1 text-xs text-red-600 dark:text-red-400" />
+     <div class="mt-2 space-y-1 text-xs text-slate-600 dark:text-slate-400">
+      <p><strong>Admin:</strong> Full access to all features</p>
+       <p><strong>Editor:</strong> Can manage posts and categories only</p>
+          </div>
+            </div>
+
+     <!-- Email Confirmed Checkbox -->
+       <div class="flex items-center gap-2">
+           <InputCheckbox id="email-confirmed" 
+              @bind-Value="_model.EmailConfirmed"
+      class="h-4 w-4 rounded border-slate-300 text-brand-600 focus:ring-2 focus:ring-brand-500 dark:border-slate-700"
+         disabled="@_isSubmitting" />
+             <label for="email-confirmed" class="text-sm text-slate-700 dark:text-slate-200">
+      Email is confirmed (user can login immediately)
+          </label>
+             </div>
+         </div>
+
+   <!-- Buttons -->
+<div class="mt-6 flex items-center justify-end gap-3">
+                <a href="/admin/manage-users" 
+     class="inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 shadow-sm transition-colors hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700 dark:focus:ring-offset-slate-900">
+      <svg class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M19 11H7.83l4.88-4.88c.39-.39.39-1.03 0-1.42a.996.996 0 00-1.41 0l-6.59 6.59a.996.996 0 000 1.41l6.59 6.59a.996.996 0 101.41-1.41L7.83 13H19c.55 0 1-.45 1-1s-.45-1-1-1z"/>
+      </svg>
+      Cancel
+ </a>
+    <button type="submit" 
+           disabled="@_isSubmitting"
+   class="inline-flex items-center gap-2 rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-all hover:bg-brand-700 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 dark:focus:ring-offset-slate-900">
+   @if (_isSubmitting)
+      {
+       <svg class="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+          <circle class="opacity-25" cx="12" cy="12" r="10"/>
+     <path class="opacity-75" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"/>
+         </svg>
+      <span>Creating...</span>
+           }
+         else
+{
+    <svg class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+          </svg>
+        <span>Create User</span>
+      }
+    </button>
+  </div>
+        </EditForm>
+    </div>
+
+  <!-- Info Box -->
+    <div class="mt-4 rounded-lg border border-blue-200 bg-blue-50 p-4 dark:border-blue-900 dark:bg-blue-950/30">
+        <div class="flex gap-3">
+            <svg class="h-5 w-5 flex-shrink-0 text-blue-600 dark:text-blue-400" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+        </svg>
+            <div class="text-sm text-blue-800 dark:text-blue-200">
+   <p class="font-medium">About User Creation</p>
+                <ul class="mt-1 list-inside list-disc space-y-1 text-blue-700 dark:text-blue-300">
+   <li>Users created here can access the admin panel immediately</li>
+ <li>Email confirmation is automatic for admin-created users</li>
+    <li>You can change roles later from the Manage Users page</li>
+        <li>Passwords must be at least 6 characters long</li>
+ </ul>
+        </div>
+        </div>
+    </div>
+</div>

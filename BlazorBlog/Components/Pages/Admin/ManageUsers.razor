@@ -1,0 +1,224 @@
+@page "/admin/manage-users"
+@attribute [Authorize(Policy = "RequireAdminRole")]
+@rendermode InteractiveServer
+
+@inject IUserManagementService UserManagementService
+@inject IToastService ToastService
+
+<PageTitle>@Utils.GetPageTitle("Manage Users")</PageTitle>
+
+<div class="mb-6 flex items-center justify-between">
+ <AdminHeader Title="Manage Users & Roles" />
+    <a href="/admin/create-user" 
+       class="inline-flex items-center gap-2 rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-all hover:bg-brand-700 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2 dark:focus:ring-offset-slate-900">
+        <svg class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor">
+  <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+  </svg>
+    Create User
+    </a>
+</div>
+
+@if (_isLoading)
+{
+    <Loader LoaderText="Loading users..." />
+}
+else
+{
+    <div class="space-y-6">
+ <!-- Summary Cards -->
+   <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
+    <div class="rounded-xl border border-slate-200/60 bg-white p-4 shadow-soft dark:border-slate-800 dark:bg-slate-900">
+ <div class="flex items-center justify-between">
+     <div>
+  <p class="text-sm font-medium text-slate-600 dark:text-slate-400">Total Users</p>
+     <p class="mt-1 text-2xl font-bold text-slate-900 dark:text-slate-100">@_users.Count</p>
+      </div>
+     <span class="inline-grid h-12 w-12 place-items-center rounded-lg bg-brand-50 text-brand-600 dark:bg-brand-600/15">
+    <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+ <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+     </svg>
+   </span>
+     </div>
+     </div>
+
+  <div class="rounded-xl border border-slate-200/60 bg-white p-4 shadow-soft dark:border-slate-800 dark:bg-slate-900">
+    <div class="flex items-center justify-between">
+    <div>
+   <p class="text-sm font-medium text-slate-600 dark:text-slate-400">Administrators</p>
+        <p class="mt-1 text-2xl font-bold text-slate-900 dark:text-slate-100">@_users.Count(u => u.CurrentRole == "Admin")</p>
+  </div>
+      <span class="inline-grid h-12 w-12 place-items-center rounded-lg bg-purple-50 text-purple-600 dark:bg-purple-600/15">
+  <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+ <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/>
+      </svg>
+   </span>
+     </div>
+ </div>
+
+ <div class="rounded-xl border border-slate-200/60 bg-white p-4 shadow-soft dark:border-slate-800 dark:bg-slate-900">
+ <div class="flex items-center justify-between">
+<div>
+   <p class="text-sm font-medium text-slate-600 dark:text-slate-400">Editors</p>
+      <p class="mt-1 text-2xl font-bold text-slate-900 dark:text-slate-100">@_users.Count(u => u.CurrentRole == "Editor")</p>
+ </div>
+      <span class="inline-grid h-12 w-12 place-items-center rounded-lg bg-green-50 text-green-600 dark:bg-green-600/15">
+    <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+   <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
+      </svg>
+  </span>
+ </div>
+ </div>
+    </div>
+
+     <!-- Users Table -->
+      <div class="overflow-hidden rounded-xl border border-slate-200/60 bg-white shadow-soft dark:border-slate-800 dark:bg-slate-900">
+  <div class="overflow-x-auto">
+   <table class="w-full text-left text-sm">
+    <thead class="bg-slate-50 dark:bg-slate-800">
+     <tr>
+       <th class="px-4 py-3 font-semibold text-slate-700 dark:text-slate-200">Name</th>
+     <th class="px-4 py-3 font-semibold text-slate-700 dark:text-slate-200">Email</th>
+     <th class="px-4 py-3 font-semibold text-slate-700 dark:text-slate-200">Role</th>
+   <th class="px-4 py-3 font-semibold text-slate-700 dark:text-slate-200">Status</th>
+ <th class="px-4 py-3 font-semibold text-slate-700 dark:text-slate-200">Actions</th>
+   </tr>
+     </thead>
+     <tbody class="divide-y divide-slate-200 dark:divide-slate-800">
+ @foreach (var user in _users)
+     {
+   <tr class="cursor-pointer transition-colors duration-150 hover:bg-brand-50/50 dark:hover:bg-brand-900/20">
+    <td class="px-4 py-3">
+         <div class="flex items-center gap-2">
+  <span class="inline-grid h-8 w-8 place-items-center rounded-full bg-brand-50 text-xs font-semibold text-brand-700 dark:bg-brand-600/15 dark:text-brand-300">
+ @GetInitials(user.Name)
+   </span>
+      <span class="font-medium text-slate-900 dark:text-slate-100">@user.Name</span>
+     </div>
+ </td>
+    <td class="px-4 py-3 text-slate-600 dark:text-slate-300">
+ <div class="flex items-center gap-2">
+  @user.Email
+   @if (user.EmailConfirmed)
+  {
+  <svg class="h-4 w-4 text-green-600 dark:text-green-400" viewBox="0 0 24 24" fill="currentColor" title="Email verified">
+     <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/>
+   </svg>
+     }
+      </div>
+       </td>
+      <td class="px-4 py-3">
+ @if (_editingUserId == user.Id)
+  {
+   <select @bind="_selectedRole" class="rounded-md border border-slate-300 bg-white px-2 py-1 text-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-200 dark:border-slate-700 dark:bg-slate-800 dark:focus:border-brand-400">
+   <option value="">No Role</option>
+   @foreach (var role in _availableRoles)
+    {
+ <option value="@role">@role</option>
+   }
+  </select>
+         }
+  else
+    {
+  @if (!string.IsNullOrEmpty(user.CurrentRole))
+  {
+  <span class="inline-flex items-center rounded-full px-2 py-1 text-xs font-medium @GetRoleBadgeClass(user.CurrentRole)">
+  @user.CurrentRole
+      </span>
+ }
+  else
+ {
+ <span class="text-slate-400 dark:text-slate-500">No role</span>
+}
+  }
+      </td>
+   <td class="px-4 py-3">
+    @if (user.IsLockedOut)
+      {
+    <span class="inline-flex items-center gap-1 rounded-full bg-red-50 px-2 py-1 text-xs font-medium text-red-700 ring-1 ring-inset ring-red-600/20 dark:bg-red-600/15 dark:text-red-300 dark:ring-red-400/30">
+  <svg class="h-3 w-3" viewBox="0 0 24 24" fill="currentColor">
+  <path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zM9 6c0-1.66 1.34-3 3-3s3 1.34 3 3v2H9V6z"/>
+      </svg>
+      Locked
+  </span>
+ }
+     else
+       {
+    <span class="inline-flex items-center gap-1 rounded-full bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20 dark:bg-green-600/15 dark:text-green-300 dark:ring-green-400/30">
+  <svg class="h-3 w-3" viewBox="0 0 24 24" fill="currentColor">
+   <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/>
+</svg>
+   Active
+  </span>
+ }
+    </td>
+     <td class="px-4 py-3">
+   <div class="flex items-center gap-2">
+    @if (_editingUserId == user.Id)
+    {
+<button @onclick="() => SaveRoleAsync(user.Id)" disabled="@_isSaving" 
+   class="inline-flex items-center gap-1 rounded-md bg-green-600 px-3 py-1.5 text-xs font-medium text-white shadow-sm transition-all hover:bg-green-700 hover:shadow focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 dark:focus:ring-offset-slate-900">
+      @if (_isSaving)
+ {
+   <svg class="h-3 w-3 animate-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+   <circle class="opacity-25" cx="12" cy="12" r="10"/>
+     <path class="opacity-75" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"/>
+   </svg>
+  <span>Saving...</span>
+     }
+    else
+{
+          <svg class="h-3 w-3" viewBox="0 0 24 24" fill="currentColor">
+   <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/>
+    </svg>
+ <span>Save</span>
+       }
+  </button>
+ <button @onclick="CancelEdit" disabled="@_isSaving" 
+   class="inline-flex items-center gap-1 rounded-md border border-slate-300 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 shadow-sm transition-all hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700 dark:focus:ring-offset-slate-900">
+     <svg class="h-3 w-3" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/>
+              </svg>
+  Cancel
+ </button>
+ }
+       else
+ {
+ <button @onclick="() => EditRole(user)" 
+  class="inline-flex items-center gap-1 rounded-full bg-blue-600 px-3 py-1 text-xs font-medium text-white transition-colors hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600">
+ <svg class="h-3 w-3" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
+     </svg>
+  Edit Role
+   </button>
+ 
+    @if (user.IsLockedOut)
+      {
+  <button @onclick="() => UnlockUserAsync(user.Id)" 
+      class="inline-flex items-center gap-1 rounded-full bg-green-600 px-3 py-1 text-xs font-medium text-white transition-colors hover:bg-green-700">
+     <svg class="h-3 w-3" viewBox="0 0 24 24" fill="currentColor">
+  <path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6h2c0-1.66 1.34-3 3-3s3 1.34 3 3v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2z"/>
+       </svg>
+        Unlock
+  </button>
+          }
+       else
+    {
+         <button @onclick="() => LockUserAsync(user.Id)" 
+     class="inline-flex items-center gap-1 rounded-full bg-red-600 px-3 py-1 text-xs font-medium text-white transition-colors hover:bg-red-700">
+ <svg class="h-3 w-3" viewBox="0 0 24 24" fill="currentColor">
+         <path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zM9 6c0-1.66 1.34-3 3-3s3 1.34 3 3v2H9V6z"/>
+    </svg>
+Lock
+   </button>
+  }
+   }
+    </div>
+   </td>
+ </tr>
+}
+      </tbody>
+ </table>
+     </div>
+     </div>
+    </div>
+}
