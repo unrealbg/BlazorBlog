@@ -32,6 +32,7 @@ namespace BlazorBlog.Infrastructure
             services.AddScoped<ITagService, TagService>();
             services.AddScoped<ISlugService, SlugService>();
             services.AddScoped<IAdminProfileService, AdminProfileService>();
+            services.AddScoped<IUserManagementService, UserManagementService>();
 
             return services;
         }
