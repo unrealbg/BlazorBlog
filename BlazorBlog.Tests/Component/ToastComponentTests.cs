@@ -12,10 +12,10 @@ namespace BlazorBlog.Tests.Component
         [Fact]
         public async Task Toast_Shows_And_Hides_Message()
         {
-            using var ctx = new TestContext();
+            using var ctx = new BunitContext();
             ctx.Services.AddSingleton<BlazorBlog.Application.UI.IToastService, ToastService>();
 
-            var cut = ctx.RenderComponent<Toast>();
+            var cut = ctx.Render<Toast>();
 
             var svc = ctx.Services.GetRequiredService<BlazorBlog.Application.UI.IToastService>();
             await cut.InvokeAsync(() => svc.ShowToast(BlazorBlog.Application.UI.ToastLevel.Success, "Hello", "Hi"));

@@ -39,7 +39,7 @@ namespace BlazorBlog.Tests.Services
                 .ReturnsAsync((BlogPost b, string _, CancellationToken __) => b);
 
             var before = signal.Version;
-            var saved = await svc.SaveBlogPostAsync(post, "u1");
+            var saved = await svc.SaveBlogPostAsync(post, "u1", TestContext.Current.CancellationToken);
             var after = signal.Version;
 
             Assert.Equal("hello-world-1", saved.Slug);
@@ -58,7 +58,7 @@ namespace BlazorBlog.Tests.Services
             repo.Setup(r => r.TitleExistsAsync("Duplicate", null, It.IsAny<CancellationToken>()))
                 .ReturnsAsync(true);
 
-            await Assert.ThrowsAsync<InvalidOperationException>(() => svc.SaveBlogPostAsync(post, "u1"));
+            await Assert.ThrowsAsync<InvalidOperationException>(() => svc.SaveBlogPostAsync(post, "u1", TestContext.Current.CancellationToken));
         }
 
         [Fact]
@@ -68,7 +68,7 @@ namespace BlazorBlog.Tests.Services
             repo.Setup(r => r.DeleteBlogPostAsync(5, It.IsAny<CancellationToken>()))
                 .ReturnsAsync(true);
             var before = signal.Version;
-            var ok = await svc.DeleteBlogPostAsync(5);
+            var ok = await svc.DeleteBlogPostAsync(5, TestContext.Current.CancellationToken);
             var after = signal.Version;
             Assert.True(ok);
             Assert.True(after > before);
