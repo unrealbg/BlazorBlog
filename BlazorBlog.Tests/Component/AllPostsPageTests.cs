@@ -20,7 +20,7 @@ namespace BlazorBlog.Tests.Component
         [Fact]
         public void AllPosts_Renders_NoPosts_State()
         {
-            using var ctx = new TestContext();
+            using var ctx = new BunitContext();
 
             var blogMock = new Mock<IBlogPostService>(MockBehavior.Strict);
             blogMock.Setup(s => s.GetBlogPostsAsync(0, 8, 0, It.IsAny<CancellationToken>()))
@@ -38,7 +38,7 @@ namespace BlazorBlog.Tests.Component
             ctx.Services.AddSingleton<ISubscribeService, BlazorBlog.Tests.Component.DummySubscribeService>();
             ctx.Services.AddScoped<IValidator<BlazorBlog.Domain.Entities.Subscriber>, BlazorBlog.Tests.Component.DummySubscriberValidator>();
 
-            var cut = ctx.RenderComponent<AllPosts>();
+            var cut = ctx.Render<AllPosts>();
             cut.WaitForAssertion(() => Assert.Contains("All Posts", cut.Markup));
             Assert.Contains("No posts yet", cut.Markup);
         }
@@ -46,7 +46,7 @@ namespace BlazorBlog.Tests.Component
         [Fact]
         public async Task AllPosts_Changing_PageNumber_Loads_New_Page()
         {
-            using var ctx = new TestContext();
+            using var ctx = new BunitContext();
 
             var blogMock = new Mock<IBlogPostService>(MockBehavior.Strict);
             // Initial load for page 1
@@ -70,8 +70,8 @@ namespace BlazorBlog.Tests.Component
             ctx.Services.AddSingleton<ISubscribeService, BlazorBlog.Tests.Component.DummySubscribeService>();
             ctx.Services.AddScoped<IValidator<BlazorBlog.Domain.Entities.Subscriber>, BlazorBlog.Tests.Component.DummySubscriberValidator>();
 
-            var cut = ctx.RenderComponent<AllPosts>(p => p.Add(x => x.PageNumber, 1));
-            await cut.InvokeAsync(() => cut.SetParametersAndRender(parameters => parameters.Add(x => x.PageNumber, 2)));
+            var cut = ctx.Render<AllPosts>(p => p.Add(x => x.PageNumber, 1));
+            await cut.InvokeAsync(() => cut.Render(parameters => parameters.Add(x => x.PageNumber, 2)));
 
             blogMock.VerifyAll();
         }

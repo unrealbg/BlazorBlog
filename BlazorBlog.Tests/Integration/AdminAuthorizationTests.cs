@@ -1,5 +1,6 @@
 namespace BlazorBlog.Tests.Integration
 {
+    using System.Threading.Tasks;
     using Xunit;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.AspNetCore.Authorization;
@@ -7,7 +8,7 @@ namespace BlazorBlog.Tests.Integration
     public class AdminAuthorizationTests
     {
         [Fact]
-        public void Dashboard_RequiresAdminRole()
+        public async Task Dashboard_RequiresAdminRole()
         {
             // Arrange
             var services = new ServiceCollection();
@@ -21,7 +22,7 @@ namespace BlazorBlog.Tests.Integration
 
             // Act
             var authOptions = serviceProvider.GetRequiredService<IAuthorizationPolicyProvider>();
-            var policy = authOptions.GetPolicyAsync("RequireAdminRole").Result;
+            var policy = await authOptions.GetPolicyAsync("RequireAdminRole");
 
             // Assert
             Assert.NotNull(policy);
@@ -29,7 +30,7 @@ namespace BlazorBlog.Tests.Integration
         }
 
         [Fact]
-        public void ManageBlogPosts_RequiresAdminOrEditorRole()
+        public async Task ManageBlogPosts_RequiresAdminOrEditorRole()
         {
             // Arrange
             var services = new ServiceCollection();
@@ -43,7 +44,7 @@ namespace BlazorBlog.Tests.Integration
 
             // Act
             var authOptions = serviceProvider.GetRequiredService<IAuthorizationPolicyProvider>();
-            var policy = authOptions.GetPolicyAsync("RequireAdminOrEditorRole").Result;
+            var policy = await authOptions.GetPolicyAsync("RequireAdminOrEditorRole");
 
             // Assert
             Assert.NotNull(policy);
@@ -51,7 +52,7 @@ namespace BlazorBlog.Tests.Integration
         }
 
         [Fact]
-        public void ManageSubscribers_RequiresAdminRole()
+        public async Task ManageSubscribers_RequiresAdminRole()
         {
             // Arrange
             var services = new ServiceCollection();
@@ -65,7 +66,7 @@ namespace BlazorBlog.Tests.Integration
 
             // Act
             var authOptions = serviceProvider.GetRequiredService<IAuthorizationPolicyProvider>();
-            var policy = authOptions.GetPolicyAsync("RequireAdminRole").Result;
+            var policy = await authOptions.GetPolicyAsync("RequireAdminRole");
 
             // Assert
             Assert.NotNull(policy);
@@ -73,7 +74,7 @@ namespace BlazorBlog.Tests.Integration
         }
 
         [Fact]
-        public void ManageCategories_RequiresAdminOrEditorRole()
+        public async Task ManageCategories_RequiresAdminOrEditorRole()
         {
             // Arrange
             var services = new ServiceCollection();
@@ -87,7 +88,7 @@ namespace BlazorBlog.Tests.Integration
 
             // Act
             var authOptions = serviceProvider.GetRequiredService<IAuthorizationPolicyProvider>();
-            var policy = authOptions.GetPolicyAsync("RequireAdminOrEditorRole").Result;
+            var policy = await authOptions.GetPolicyAsync("RequireAdminOrEditorRole");
 
             // Assert
             Assert.NotNull(policy);

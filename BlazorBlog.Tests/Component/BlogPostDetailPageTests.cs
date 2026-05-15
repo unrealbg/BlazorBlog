@@ -18,14 +18,14 @@ namespace BlazorBlog.Tests.Component
         [Fact]
         public void Navigates_Home_When_Empty_Result()
         {
-            using var ctx = new TestContext();
+            using var ctx = new BunitContext();
             var blog = new Mock<IBlogPostService>(MockBehavior.Strict);
             blog.Setup(s => s.GetBlogPostBySlugAsync("missing", It.IsAny<CancellationToken>()))
                 .ReturnsAsync(DetailPageModel.Empty());
             ctx.Services.AddSingleton(blog.Object);
 
             var nav = ctx.Services.GetRequiredService<NavigationManager>();
-            var cut = ctx.RenderComponent<BlogPostDetail>(p => p.Add(x => x.BlogPostSlug, "missing"));
+            var cut = ctx.Render<BlogPostDetail>(p => p.Add(x => x.BlogPostSlug, "missing"));
             // Blazor TestContext provides base URI http://localhost/
             Assert.StartsWith("http://localhost/", nav.Uri);
         }
@@ -33,7 +33,7 @@ namespace BlazorBlog.Tests.Component
         [Fact]
         public void Shows_Post_And_Loads_Popular_In_Category()
         {
-            using var ctx = new TestContext();
+            using var ctx = new BunitContext();
             var blog = new Mock<IBlogPostService>(MockBehavior.Strict);
 
             var vm = new BlogPostVm
@@ -53,7 +53,7 @@ namespace BlazorBlog.Tests.Component
             ctx.Services.AddSingleton<ISubscribeService, BlazorBlog.Tests.Component.DummySubscribeService>();
             ctx.Services.AddScoped<IValidator<BlazorBlog.Domain.Entities.Subscriber>, BlazorBlog.Tests.Component.DummySubscriberValidator>();
 
-            var cut = ctx.RenderComponent<BlogPostDetail>(p => p.Add(x => x.BlogPostSlug, "ok"));
+            var cut = ctx.Render<BlogPostDetail>(p => p.Add(x => x.BlogPostSlug, "ok"));
             // Should not navigate; ensures render
             Assert.Contains("Post", cut.Markup);
         }

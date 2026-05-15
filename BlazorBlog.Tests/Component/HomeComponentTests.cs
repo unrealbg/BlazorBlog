@@ -16,7 +16,7 @@ namespace BlazorBlog.Tests.Component
         [Fact]
         public void Home_Render_DoesNotThrow()
         {
-            using var ctx = new TestContext();
+            using var ctx = new BunitContext();
             // Minimal DI to render; the component renders before OnInitializedAsync completes
             ctx.Services.AddSingleton<BlazorBlog.Application.Contracts.IBlogPostService>(new FakeBlogPostService());
             ctx.Services.AddSingleton<BlazorBlog.Infrastructure.Contracts.ITagService>(new FakeTagService());
@@ -24,7 +24,7 @@ namespace BlazorBlog.Tests.Component
             // Register validator used by SubscribeBox
             ctx.Services.AddScoped<FluentValidation.IValidator<BlazorBlog.Domain.Entities.Subscriber>, DummySubscriberValidator>();
 
-            var cut = ctx.RenderComponent<Home>();
+            var cut = ctx.Render<Home>();
             Assert.NotNull(cut.Instance);
         }
     }

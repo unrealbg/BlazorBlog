@@ -18,7 +18,7 @@ namespace BlazorBlog.Tests.Services
             var svc = new BlogPostAdminService(repo.Object, new SlugService(), new BlogCacheSignal());
             repo.Setup(r => r.GetBlogPostsAsync(0, 10, It.IsAny<CancellationToken>()))
                 .ReturnsAsync(new BlazorBlog.Application.Models.PageResult<BlogPost>(System.Array.Empty<BlogPost>(), 0));
-            var result = await svc.GetBlogPostsAsync(0, 10);
+            var result = await svc.GetBlogPostsAsync(0, 10, TestContext.Current.CancellationToken);
             Assert.Equal(0, result.TotalCount);
             repo.VerifyAll();
         }
@@ -30,7 +30,7 @@ namespace BlazorBlog.Tests.Services
             var svc = new BlogPostAdminService(repo.Object, new SlugService(), new BlogCacheSignal());
             repo.Setup(r => r.GetBlogPostByIdAsync(5, It.IsAny<CancellationToken>()))
                 .ReturnsAsync((BlogPost?)null);
-            var result = await svc.GetBlogPostByIdAsync(5);
+            var result = await svc.GetBlogPostByIdAsync(5, TestContext.Current.CancellationToken);
             Assert.Null(result);
             repo.VerifyAll();
         }
@@ -44,7 +44,7 @@ namespace BlazorBlog.Tests.Services
             var before = signal.Version;
             repo.Setup(r => r.DeleteBlogPostAsync(7, It.IsAny<CancellationToken>()))
                 .ReturnsAsync(true);
-            var ok = await svc.DeleteBlogPostAsync(7);
+            var ok = await svc.DeleteBlogPostAsync(7, TestContext.Current.CancellationToken);
             Assert.True(ok);
             Assert.True(signal.Version > before);
             repo.VerifyAll();

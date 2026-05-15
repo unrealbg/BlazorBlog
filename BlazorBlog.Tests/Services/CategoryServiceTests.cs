@@ -26,7 +26,7 @@ namespace BlazorBlog.Tests.Services
             repo.Setup(r => r.SaveCategoryAsync(It.Is<Category>(c => c.Slug == "c-net"), It.IsAny<CancellationToken>()))
                 .ReturnsAsync((Category c, CancellationToken _) => c);
 
-            var saved = await svc.SaveCategoryAsync(category);
+            var saved = await svc.SaveCategoryAsync(category, TestContext.Current.CancellationToken);
             Assert.Equal("c-net", saved.Slug);
             repo.VerifyAll();
         }
@@ -41,7 +41,7 @@ namespace BlazorBlog.Tests.Services
             repo.Setup(r => r.GetCategoriesAsync(It.IsAny<CancellationToken>()))
                 .ReturnsAsync([]);
 
-            var result = await svc.GetCategoriesAsync();
+            var result = await svc.GetCategoriesAsync(TestContext.Current.CancellationToken);
             Assert.Empty(result);
             repo.VerifyAll();
         }
@@ -52,7 +52,7 @@ namespace BlazorBlog.Tests.Services
             var repo = new Mock<ICategoryRepository>(MockBehavior.Strict);
             var slug = new SlugService();
             var svc = new CategoryService(repo.Object, slug);
-            await Assert.ThrowsAsync<InvalidOperationException>(() => svc.SaveCategoryAsync(new Category { Name = "" }));
+            await Assert.ThrowsAsync<InvalidOperationException>(() => svc.SaveCategoryAsync(new Category { Name = "" }, TestContext.Current.CancellationToken));
         }
 
         [Fact]
@@ -69,7 +69,7 @@ namespace BlazorBlog.Tests.Services
             repo.Setup(r => r.SaveCategoryAsync(It.Is<Category>(c => c.Slug == "category"), It.IsAny<CancellationToken>()))
                 .ReturnsAsync((Category c, CancellationToken _) => c);
 
-            var saved = await svc.SaveCategoryAsync(category);
+            var saved = await svc.SaveCategoryAsync(category, TestContext.Current.CancellationToken);
             Assert.Equal("category", saved.Slug);
             repo.VerifyAll();
         }

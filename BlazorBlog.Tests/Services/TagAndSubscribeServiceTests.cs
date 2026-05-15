@@ -24,9 +24,9 @@ namespace BlazorBlog.Tests.Services
             repo.Setup(r => r.SetTagsForPostAsync(12, It.IsAny<string[]>(), It.IsAny<CancellationToken>()))
                 .Returns(Task.CompletedTask);
 
-            Assert.Empty(await svc.GetTopTagsAsync(5));
-            Assert.Empty(await svc.GetTagsForPostAsync(12));
-            await svc.SetTagsForPostAsync(12, new[] { "x" });
+            Assert.Empty(await svc.GetTopTagsAsync(5, TestContext.Current.CancellationToken));
+            Assert.Empty(await svc.GetTagsForPostAsync(12, TestContext.Current.CancellationToken));
+            await svc.SetTagsForPostAsync(12, new[] { "x" }, TestContext.Current.CancellationToken);
 
             repo.VerifyAll();
         }
@@ -43,9 +43,9 @@ namespace BlazorBlog.Tests.Services
             repo.Setup(r => r.GetSubscribersAsync(0, 10, It.IsAny<CancellationToken>()))
                 .ReturnsAsync(page);
 
-            var err = await svc.AddSubscriberAsync(new Subscriber { Email = "e@x.com", Name = "n" });
+            var err = await svc.AddSubscriberAsync(new Subscriber { Email = "e@x.com", Name = "n" }, TestContext.Current.CancellationToken);
             Assert.Null(err);
-            var subs = await svc.GetSubscribersAsync(0, 10);
+            var subs = await svc.GetSubscribersAsync(0, 10, TestContext.Current.CancellationToken);
             Assert.Equal(0, subs.TotalCount);
 
             repo.VerifyAll();

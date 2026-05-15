@@ -33,11 +33,11 @@ namespace BlazorBlog.Tests.Services
                 .ReturnsAsync(posts)
                 .Verifiable();
 
-            var first = await svc.GetRecentBlogPostsAsync(3);
+            var first = await svc.GetRecentBlogPostsAsync(3, cancellationToken: TestContext.Current.CancellationToken);
             Assert.Single(first);
 
             // Second call returns from cache; repository should not be hit again
-            var second = await svc.GetRecentBlogPostsAsync(3);
+            var second = await svc.GetRecentBlogPostsAsync(3, cancellationToken: TestContext.Current.CancellationToken);
             Assert.Single(second);
             repo.Verify(r => r.GetRecentBlogPostsAsync(3, 0, It.IsAny<CancellationToken>()), Times.Once);
 
@@ -45,7 +45,7 @@ namespace BlazorBlog.Tests.Services
             signal.Bump();
             repo.Setup(r => r.GetRecentBlogPostsAsync(3, 0, It.IsAny<CancellationToken>()))
                 .ReturnsAsync(posts);
-            var third = await svc.GetRecentBlogPostsAsync(3);
+            var third = await svc.GetRecentBlogPostsAsync(3, cancellationToken: TestContext.Current.CancellationToken);
             Assert.Single(third);
             repo.Verify(r => r.GetRecentBlogPostsAsync(3, 0, It.IsAny<CancellationToken>()), Times.Exactly(2));
         }
@@ -58,7 +58,7 @@ namespace BlazorBlog.Tests.Services
             repo.Setup(r => r.GetBlogPostBySlugAsync("slug", It.IsAny<CancellationToken>()))
                 .ReturnsAsync(expected);
 
-            var result = await svc.GetBlogPostBySlugAsync("slug");
+            var result = await svc.GetBlogPostBySlugAsync("slug", TestContext.Current.CancellationToken);
             Assert.Equal(123, result.BlogPost.Id);
             repo.VerifyAll();
         }
@@ -73,17 +73,17 @@ namespace BlazorBlog.Tests.Services
                 .ReturnsAsync(posts)
                 .Verifiable();
 
-            var first = await svc.GetFeaturedBlogPostsAsync(5);
+            var first = await svc.GetFeaturedBlogPostsAsync(5, cancellationToken: TestContext.Current.CancellationToken);
             Assert.Single(first);
 
-            var second = await svc.GetFeaturedBlogPostsAsync(5);
+            var second = await svc.GetFeaturedBlogPostsAsync(5, cancellationToken: TestContext.Current.CancellationToken);
             Assert.Single(second);
             repo.Verify(r => r.GetFeaturedBlogPostsAsync(5, 0, It.IsAny<CancellationToken>()), Times.Once);
 
             signal.Bump();
             repo.Setup(r => r.GetFeaturedBlogPostsAsync(5, 0, It.IsAny<CancellationToken>()))
                 .ReturnsAsync(posts);
-            var third = await svc.GetFeaturedBlogPostsAsync(5);
+            var third = await svc.GetFeaturedBlogPostsAsync(5, cancellationToken: TestContext.Current.CancellationToken);
             Assert.Single(third);
             repo.Verify(r => r.GetFeaturedBlogPostsAsync(5, 0, It.IsAny<CancellationToken>()), Times.Exactly(2));
         }
@@ -98,17 +98,17 @@ namespace BlazorBlog.Tests.Services
                 .ReturnsAsync(posts)
                 .Verifiable();
 
-            var first = await svc.GetPopularBlogPostsAsync(4);
+            var first = await svc.GetPopularBlogPostsAsync(4, cancellationToken: TestContext.Current.CancellationToken);
             Assert.Single(first);
 
-            var second = await svc.GetPopularBlogPostsAsync(4);
+            var second = await svc.GetPopularBlogPostsAsync(4, cancellationToken: TestContext.Current.CancellationToken);
             Assert.Single(second);
             repo.Verify(r => r.GetPopularBlogPostsAsync(4, 0, It.IsAny<CancellationToken>()), Times.Once);
 
             signal.Bump();
             repo.Setup(r => r.GetPopularBlogPostsAsync(4, 0, It.IsAny<CancellationToken>()))
                 .ReturnsAsync(posts);
-            var third = await svc.GetPopularBlogPostsAsync(4);
+            var third = await svc.GetPopularBlogPostsAsync(4, cancellationToken: TestContext.Current.CancellationToken);
             Assert.Single(third);
             repo.Verify(r => r.GetPopularBlogPostsAsync(4, 0, It.IsAny<CancellationToken>()), Times.Exactly(2));
         }
@@ -123,17 +123,17 @@ namespace BlazorBlog.Tests.Services
                 .ReturnsAsync(posts)
                 .Verifiable();
 
-            var first = await svc.GetRecentBlogPostsByTagAsync("tag", 2);
+            var first = await svc.GetRecentBlogPostsByTagAsync("tag", 2, TestContext.Current.CancellationToken);
             Assert.Single(first);
 
-            var second = await svc.GetRecentBlogPostsByTagAsync("tag", 2);
+            var second = await svc.GetRecentBlogPostsByTagAsync("tag", 2, TestContext.Current.CancellationToken);
             Assert.Single(second);
             repo.Verify(r => r.GetRecentBlogPostsByTagAsync("tag", 2, It.IsAny<CancellationToken>()), Times.Once);
 
             signal.Bump();
             repo.Setup(r => r.GetRecentBlogPostsByTagAsync("tag", 2, It.IsAny<CancellationToken>()))
                 .ReturnsAsync(posts);
-            var third = await svc.GetRecentBlogPostsByTagAsync("tag", 2);
+            var third = await svc.GetRecentBlogPostsByTagAsync("tag", 2, TestContext.Current.CancellationToken);
             Assert.Single(third);
             repo.Verify(r => r.GetRecentBlogPostsByTagAsync("tag", 2, It.IsAny<CancellationToken>()), Times.Exactly(2));
         }
@@ -148,17 +148,17 @@ namespace BlazorBlog.Tests.Services
                 .ReturnsAsync(posts)
                 .Verifiable();
 
-            var first = await svc.GetPopularBlogPostsByTagAsync("tag", 2);
+            var first = await svc.GetPopularBlogPostsByTagAsync("tag", 2, TestContext.Current.CancellationToken);
             Assert.Single(first);
 
-            var second = await svc.GetPopularBlogPostsByTagAsync("tag", 2);
+            var second = await svc.GetPopularBlogPostsByTagAsync("tag", 2, TestContext.Current.CancellationToken);
             Assert.Single(second);
             repo.Verify(r => r.GetPopularBlogPostsByTagAsync("tag", 2, It.IsAny<CancellationToken>()), Times.Once);
 
             signal.Bump();
             repo.Setup(r => r.GetPopularBlogPostsByTagAsync("tag", 2, It.IsAny<CancellationToken>()))
                 .ReturnsAsync(posts);
-            var third = await svc.GetPopularBlogPostsByTagAsync("tag", 2);
+            var third = await svc.GetPopularBlogPostsByTagAsync("tag", 2, TestContext.Current.CancellationToken);
             Assert.Single(third);
             repo.Verify(r => r.GetPopularBlogPostsByTagAsync("tag", 2, It.IsAny<CancellationToken>()), Times.Exactly(2));
         }
@@ -169,7 +169,7 @@ namespace BlazorBlog.Tests.Services
             var svc = CreateService(out var repo, out _);
             repo.Setup(r => r.GetBlogPostsAsync(1, 10, 0, It.IsAny<CancellationToken>()))
                 .ReturnsAsync(Array.Empty<BlogPostVm>());
-            var result = await svc.GetBlogPostsAsync(1, 10, 0);
+            var result = await svc.GetBlogPostsAsync(1, 10, 0, TestContext.Current.CancellationToken);
             Assert.Empty(result);
             repo.VerifyAll();
         }
@@ -180,7 +180,7 @@ namespace BlazorBlog.Tests.Services
             var svc = CreateService(out var repo, out _);
             repo.Setup(r => r.GetBlogPostsByTagAsync("tag", 0, 10, It.IsAny<CancellationToken>()))
                 .ReturnsAsync(Array.Empty<BlogPostVm>());
-            var result = await svc.GetBlogPostsByTagAsync("tag", 0, 10);
+            var result = await svc.GetBlogPostsByTagAsync("tag", 0, 10, TestContext.Current.CancellationToken);
             Assert.Empty(result);
             repo.VerifyAll();
         }
