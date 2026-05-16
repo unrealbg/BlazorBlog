@@ -37,42 +37,42 @@ Below are some screenshots showcasing the different aspects and features of the 
 
 ### Main View
 
-![Main View of Blazor Blog](https://github.com/unrealbg/BlazorBlog/assets/3398536/1f060f1d-0d88-4188-90dd-1dc6c9e99c28 "Main View")
-_The main landing page of the Blazor Blog, showing an overview of the blog's layout and design._
+![Main View of Blazor Blog](docs/screenshots/home.png "Main View")
+_The main landing page of the Blazor Blog with the current .NET 10 hero, navigation, and sidebar widgets._
 
-### Recent Posts
+### All Posts
 
-![Recent Posts on Blazor Blog](https://github.com/unrealbg/BlazorBlog/assets/3398536/3c27efce-669f-43a9-a4d6-659fd62266d0 "Recent Posts")
-_Continuation of the main view, displaying the latest blog posts._
+![All Posts on Blazor Blog](docs/screenshots/all-posts.png "All Posts")
+_The public posts listing page with subscription and category sidebar content._
 
 ### Dashboard
 
-![Dashboard on Blazor Blog](https://github.com/unrealbg/BlazorBlog/assets/3398536/82b167f4-f1f0-4b58-9efb-511bae2869a7 "Dashboard")
+![Dashboard on Blazor Blog](docs/screenshots/dashboard.png "Dashboard")
 _The dashboard interface for managing the blog._
 
 ### Manage Categories
 
-![Manage Categories on Blazor Blog](https://github.com/unrealbg/BlazorBlog/assets/3398536/5d25c658-2622-48f1-8dea-dc20875da0a3 "Manage Categories")
+![Manage Categories on Blazor Blog](docs/screenshots/manage-categories.png "Manage Categories")
 _The section for managing blog categories._
 
 ### Manage Blog Posts
 
-![Manage Blog Posts on Blazor Blog](https://github.com/unrealbg/BlazorBlog/assets/3398536/5229d02b-1f18-4ae7-9258-a005418f11f3 "Manage Blog Posts")
+![Manage Blog Posts on Blazor Blog](docs/screenshots/manage-blog-posts.png "Manage Blog Posts")
 _Interface for managing individual blog posts._
 
 ### Manage Subscribers
 
-![Manage Subscribers on Blazor Blog](https://github.com/unrealbg/BlazorBlog/assets/3398536/d0de2709-93fd-4dc0-9b6b-76f76d75e6dc "Manage Subscribers")
+![Manage Subscribers on Blazor Blog](docs/screenshots/manage-subscribers.png "Manage Subscribers")
 _The section dedicated to managing blog subscribers._
 
 ### Create a New Blog Post
 
-![Create New Blog Post on Blazor Blog](https://github.com/unrealbg/BlazorBlog/assets/3398536/5f95e8da-1ace-4bc3-b155-20dfdfa1c3d4 "Create New Blog Post")
+![Create New Blog Post on Blazor Blog](docs/screenshots/create-blog-post.png "Create New Blog Post")
 _The interface for creating a new blog post._
 
 ### Create a New Category
 
-![Create New Category on Blazor Blog](https://github.com/unrealbg/BlazorBlog/assets/3398536/cb22bc8d-5564-4bcd-9d0f-08b5ee342f18 "Create New Category")
+![Create New Category on Blazor Blog](docs/screenshots/create-category.png "Create New Category")
 _The interface for adding a new category to the blog._
 
 ## Architecture
