@@ -12,14 +12,14 @@
 
         private bool HasPosts => _featured is not null;
 
-    [Inject] NavigationManager NavigationManager { get; set; } = default!;
+        [Inject] NavigationManager NavigationManager { get; set; } = default!;
 
-    [Inject] IBlogPostService BlogPostService { get; set; } = default!;
+        [Inject] IBlogPostService BlogPostService { get; set; } = default!;
 
-    [Inject] ICategoryService CategoryService { get; set; } = default!;
+        [Inject] ICategoryService CategoryService { get; set; } = default!;
 
         [Parameter]
-    public string CategorySlug { get; set; } = string.Empty;
+        public string CategorySlug { get; set; } = string.Empty;
 
         protected override async Task OnInitializedAsync()
         {

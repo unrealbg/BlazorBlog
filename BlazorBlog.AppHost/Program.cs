@@ -1,7 +1,8 @@
 var builder = DistributedApplication.CreateBuilder(args);
 
 var postgres = builder.AddPostgres("postgres")
-    .WithDataVolume("blazorblog-postgres-data");
+    .WithImageTag("16")
+    .WithDataVolume("blazorblog-postgres16-data");
 
 var database = postgres.AddDatabase("DefaultConnection", "blazorblog");
 

@@ -11,8 +11,8 @@ namespace BlazorBlog.Infrastructure.Persistence
         public DbSet<Category> Categories { get; set; }
         public DbSet<BlogPost> BlogPosts { get; set; }
         public DbSet<Subscriber> Subscribers { get; set; }
-    public DbSet<Tag> Tags { get; set; }
-    public DbSet<BlogPostTag> BlogPostTags { get; set; }
+        public DbSet<Tag> Tags { get; set; }
+        public DbSet<BlogPostTag> BlogPostTags { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

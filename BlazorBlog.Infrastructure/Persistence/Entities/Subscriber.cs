@@ -7,10 +7,10 @@ namespace BlazorBlog.Infrastructure.Persistence.Entities
         public int Id { get; set; }
 
         [EmailAddress, Required, MaxLength(150)]
-    public string Email { get; set; } = string.Empty;
+        public string Email { get; set; } = string.Empty;
 
         [Required, MaxLength(25)]
-    public string Name { get; set; } = string.Empty;
+        public string Name { get; set; } = string.Empty;
 
         public DateTime SubscribedOn { get; set; }
     }

@@ -1,6 +1,9 @@
 namespace BlazorBlog.Tests.Integration
 {
+    using System;
+    using System.Linq;
     using System.Threading.Tasks;
+    using BlazorBlog.Components.Pages.Admin;
     using Xunit;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.AspNetCore.Authorization;
@@ -93,6 +96,20 @@ namespace BlazorBlog.Tests.Integration
             // Assert
             Assert.NotNull(policy);
             Assert.Single(policy.Requirements);
+        }
+
+        [Theory]
+        [InlineData(typeof(ManageBlogPosts))]
+        [InlineData(typeof(ManageCategories))]
+        [InlineData(typeof(SaveBlogPost))]
+        public void ContentManagementPages_DoNotRequireAdminOnlyRole(Type pageType)
+        {
+            var attributes = pageType.GetCustomAttributes(typeof(AuthorizeAttribute), inherit: true)
+                .Cast<AuthorizeAttribute>()
+                .ToArray();
+
+            Assert.Contains(attributes, attribute => attribute.Policy == "RequireAdminOrEditorRole");
+            Assert.DoesNotContain(attributes, attribute => attribute.Roles == "Admin");
         }
     }
 }

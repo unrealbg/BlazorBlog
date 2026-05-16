@@ -6,9 +6,9 @@
     {
         private bool _isLoading;
         private string? _loadingText;
-    private bool _showLoader;
+        private bool _showLoader;
 
-    private BlogPost _selectedBlogPost = new();
+        private BlogPost _selectedBlogPost = new();
         private bool _showConfirmationModal = false;
 
         private List<BlogPost> _currentBlogPosts = new List<BlogPost>();
@@ -20,25 +20,25 @@
             ItemsPerPage = PageSize
         };
 
-    private GridItemsProvider<BlogPost> _blogPostProvider { get; set; } = default!;
+        private GridItemsProvider<BlogPost> _blogPostProvider { get; set; } = default!;
         private QuickGrid<BlogPost>? _grid;
 
         private readonly CancellationTokenSource _cts = new();
 
         private Dictionary<int, string> _categoryNames = new();
-    private HashSet<int> _savingToggles = new();
+        private HashSet<int> _savingToggles = new();
 
-    [Inject]
-    private IBlogPostAdminService BlogPostService { get; set; } = default!;
+        [Inject]
+        private IBlogPostAdminService BlogPostService { get; set; } = default!;
 
-    [Inject]
-    private ICategoryService CategoryService { get; set; } = default!;
+        [Inject]
+        private ICategoryService CategoryService { get; set; } = default!;
 
-    [Inject]
-    private AuthenticationStateProvider AuthenticationStateProvider { get; set; } = default!;
+        [Inject]
+        private AuthenticationStateProvider AuthenticationStateProvider { get; set; } = default!;
 
-    [Inject]
-    private IToastService ToastService { get; set; } = default!;
+        [Inject]
+        private IToastService ToastService { get; set; } = default!;
 
         protected override async Task OnInitializedAsync()
         {
@@ -50,15 +50,15 @@
             {
                 _isLoading = true;
                 _loadingText = "Fetching blog posts";
-        _ = Task.Run(async () =>
-                {
-                    await Task.Delay(250, _cts.Token);
-                    if (_isLoading)
-                    {
-                        _showLoader = true;
-            await InvokeAsync(StateHasChanged);
-                    }
-                });
+                _ = Task.Run(async () =>
+                        {
+                            await Task.Delay(250, _cts.Token);
+                            if (_isLoading)
+                            {
+                                _showLoader = true;
+                                await InvokeAsync(StateHasChanged);
+                            }
+                        });
 
                 var pagedBlogs = await BlogPostService.GetBlogPostsAsync(request.StartIndex, request.Count ?? PageSize, _cts.Token);
                 _currentBlogPosts = pagedBlogs.Records.ToList();

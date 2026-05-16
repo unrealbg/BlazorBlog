@@ -12,8 +12,8 @@ namespace BlazorBlog.Infrastructure
             _repo = repo;
         }
 
-    public Task<BlazorBlog.Application.Models.TagVm[]> GetTopTagsAsync(int count = 20, CancellationToken cancellationToken = default)
-            => _repo.GetTopTagsAsync(count, cancellationToken);
+        public Task<BlazorBlog.Application.Models.TagVm[]> GetTopTagsAsync(int count = 20, CancellationToken cancellationToken = default)
+                => _repo.GetTopTagsAsync(count, cancellationToken);
 
         public Task<string[]> GetTagsForPostAsync(int postId, CancellationToken cancellationToken = default)
             => _repo.GetTagsForPostAsync(postId, cancellationToken);

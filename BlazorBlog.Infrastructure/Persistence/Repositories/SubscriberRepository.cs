@@ -4,6 +4,7 @@ namespace BlazorBlog.Infrastructure.Persistence.Repositories
     using BlazorBlog.Application.Models;
     using BlazorBlog.Application.Contracts;
     using Microsoft.EntityFrameworkCore;
+    using Npgsql;
     using System.Threading;
 
     public class SubscriberRepository : ISubscriberRepository
@@ -18,8 +19,10 @@ namespace BlazorBlog.Infrastructure.Persistence.Repositories
         public async Task<string?> AddSubscriberAsync(Subscriber subscriber, CancellationToken cancellationToken = default)
         {
             await using var context = await _contextFactory.CreateDbContextAsync(cancellationToken);
+            var normalizedEmail = subscriber.Email.Trim().ToLowerInvariant();
+
             var existingSubscriber = await context.Subscribers
-                .FirstOrDefaultAsync(s => s.Email == subscriber.Email, cancellationToken);
+                .FirstOrDefaultAsync(s => s.Email.ToLower() == normalizedEmail, cancellationToken);
 
             if (existingSubscriber != null)
             {
@@ -28,15 +31,27 @@ namespace BlazorBlog.Infrastructure.Persistence.Repositories
 
             var entity = new BlazorBlog.Infrastructure.Persistence.Entities.Subscriber
             {
-                Email = subscriber.Email,
-                Name = subscriber.Name,
+                Email = normalizedEmail,
+                Name = subscriber.Name.Trim(),
                 SubscribedOn = DateTime.UtcNow
             };
 
             await context.Subscribers.AddAsync(entity, cancellationToken);
-            await context.SaveChangesAsync(cancellationToken);
+            try
+            {
+                await context.SaveChangesAsync(cancellationToken);
+            }
+            catch (DbUpdateException ex) when (IsUniqueConstraintViolation(ex))
+            {
+                return "You are already subscribed.";
+            }
 
             return null;
+        }
+
+        private static bool IsUniqueConstraintViolation(DbUpdateException exception)
+        {
+            return exception.InnerException is PostgresException { SqlState: PostgresErrorCodes.UniqueViolation };
         }
 
         public async Task<PageResult<Subscriber>> GetSubscribersAsync(int startIndex, int pageSize, CancellationToken cancellationToken = default)

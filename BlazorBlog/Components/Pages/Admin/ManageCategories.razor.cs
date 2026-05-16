@@ -23,21 +23,21 @@
 
         private EditContext _editContext = default!;
         private ValidationMessageStore? _messageStore;
-    private HashSet<int> _savingToggles = new();
+        private HashSet<int> _savingToggles = new();
 
-    [Inject]
-    IValidator<Category> Validator { get; set; } = default!;
+        [Inject]
+        IValidator<Category> Validator { get; set; } = default!;
 
         protected override async Task OnInitializedAsync() => await LoadCategoriesAsync();
 
-    [Inject]
-    ICategoryService CategoryService { get; set; } = default!;
+        [Inject]
+        ICategoryService CategoryService { get; set; } = default!;
 
-    [Inject]
-    NavigationManager NavigationManager { get; set; } = default!;
+        [Inject]
+        NavigationManager NavigationManager { get; set; } = default!;
 
-    [Inject]
-    IToastService ToastService { get; set; } = default!;
+        [Inject]
+        IToastService ToastService { get; set; } = default!;
 
         private async Task HandleShowOnNavBarChanged(Category category)
         {

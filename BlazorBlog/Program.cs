@@ -4,6 +4,7 @@ namespace BlazorBlog
 
     using Components.Account;
     using BlazorBlog.Infrastructure;
+    using BlazorBlog.Infrastructure.Settings;
     using Ganss.Xss;
     using Microsoft.AspNetCore.Identity;
     using Microsoft.EntityFrameworkCore;
@@ -27,7 +28,7 @@ namespace BlazorBlog
             builder.Host.UseSerilog(Log.Logger, true);
 
             builder.Services.AddRazorComponents()
-                .AddInteractiveServerComponents(options => options.DetailedErrors = true);
+                .AddInteractiveServerComponents(options => options.DetailedErrors = builder.Environment.IsDevelopment());
 
             builder.Services.AddCascadingAuthenticationState();
             builder.Services.AddScoped<IdentityUserAccessor>();
@@ -57,27 +58,21 @@ namespace BlazorBlog
 
             builder.Services.AddSingleton<IHtmlSanitizer, HtmlSanitizer>(_ => new HtmlSanitizer());
 
+            ValidateStartupConfiguration(builder);
+
             var app = builder.Build();
 
-#if DEBUG
+            ConfigureForwardedHeaders(app);
 
-#else
-app.UseForwardedHeaders(new ForwardedHeadersOptions
-{
-    ForwardedHeaders =
-        ForwardedHeaders.XForwardedFor |
-        ForwardedHeaders.XForwardedProto |
-        ForwardedHeaders.XForwardedHost,
-    KnownProxies = { IPAddress.Parse("1.1.1.200") },
-    ForwardLimit = 1
-});
-#endif
+            if (ShouldApplyMigrations(app))
+            {
+                await ApplyMigrationsAsync(app.Services);
+            }
 
-            // Apply pending EF Core migrations automatically at startup.
-            await ApplyMigrationsAsync(app.Services);
-
-            // Seed the database.
-            await SeedDataAsync(app.Services);
+            if (app.Configuration.GetValue("Database:SeedOnStartup", true))
+            {
+                await SeedDataAsync(app.Services);
+            }
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
@@ -138,6 +133,74 @@ app.UseForwardedHeaders(new ForwardedHeadersOptions
                 {
                     logger.LogError(ex, "Error while seeding data.");
                     throw;
+                }
+            }
+
+            static bool ShouldApplyMigrations(WebApplication app)
+            {
+                return app.Configuration.GetValue<bool?>("Database:ApplyMigrationsOnStartup")
+                    ?? app.Environment.IsDevelopment();
+            }
+
+            static void ConfigureForwardedHeaders(WebApplication app)
+            {
+                if (app.Environment.IsDevelopment())
+                {
+                    return;
+                }
+
+                var knownProxies = app.Configuration.GetSection("ForwardedHeaders:KnownProxies").Get<string[]>() ?? [];
+                if (knownProxies.Length == 0)
+                {
+                    app.Logger.LogInformation("Forwarded headers are disabled because no known proxies are configured.");
+                    return;
+                }
+
+                var options = new ForwardedHeadersOptions
+                {
+                    ForwardedHeaders =
+                        ForwardedHeaders.XForwardedFor |
+                        ForwardedHeaders.XForwardedProto |
+                        ForwardedHeaders.XForwardedHost,
+                    ForwardLimit = 1
+                };
+
+                foreach (var proxy in knownProxies)
+                {
+                    if (IPAddress.TryParse(proxy, out var address))
+                    {
+                        options.KnownProxies.Add(address);
+                    }
+                    else
+                    {
+                        app.Logger.LogWarning("Ignoring invalid forwarded header proxy address '{Proxy}'.", proxy);
+                    }
+                }
+
+                if (options.KnownProxies.Count > 0)
+                {
+                    app.UseForwardedHeaders(options);
+                }
+            }
+
+            static void ValidateStartupConfiguration(WebApplicationBuilder builder)
+            {
+                if (builder.Environment.IsDevelopment())
+                {
+                    return;
+                }
+
+                var adminSettings = builder.Configuration.GetSection("AdminUser").Get<AdminUserSettings>() ?? new AdminUserSettings();
+                if (string.IsNullOrWhiteSpace(adminSettings.Password) ||
+                    string.Equals(adminSettings.Password, "Admin@123", StringComparison.Ordinal))
+                {
+                    throw new InvalidOperationException("Production requires a non-default AdminUser:Password value.");
+                }
+
+                var emailSettings = builder.Configuration.GetSection(EmailSettings.SectionName).Get<EmailSettings>() ?? new EmailSettings();
+                if (emailSettings.RequireConfiguredSender && !emailSettings.IsConfigured)
+                {
+                    throw new InvalidOperationException("Email:RequireConfiguredSender is true, but SMTP Email settings are incomplete.");
                 }
             }
         }

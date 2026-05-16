@@ -5,7 +5,7 @@
     public partial class ManageSubscribers
     {
         private bool _isLoading;
-    private bool _showLoader;
+        private bool _showLoader;
         private GridItemsProvider<Subscriber>? _subscribersProvider;
 
         private const int PageSize = 5;
@@ -14,8 +14,8 @@
             ItemsPerPage = PageSize
         };
 
-    [Inject] 
-    ISubscribeService SubscriberService { get; set; } = default!;
+        [Inject]
+        ISubscribeService SubscriberService { get; set; } = default!;
 
         protected override void OnInitialized()
         {

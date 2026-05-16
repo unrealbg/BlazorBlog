@@ -7,6 +7,6 @@ namespace BlazorBlog.Infrastructure.Persistence
     public class ApplicationUser : IdentityUser
     {
         [Required, MaxLength(25)]
-    public string Name { get; set; } = string.Empty;
+        public string Name { get; set; } = string.Empty;
     }
 }

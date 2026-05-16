@@ -1,6 +1,6 @@
 ﻿@page "/admin/manage-categories"
 
-@attribute [Authorize(Roles = "Admin")]
+@attribute [Authorize(Policy = "RequireAdminOrEditorRole")]
 
 @rendermode @(new InteractiveServerRenderMode(prerender: false))
 

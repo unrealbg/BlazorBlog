@@ -12,7 +12,9 @@ namespace BlazorBlog.Components.Account.Pages
         [SupplyParameterFromQuery] public string? Code { get; set; }
 
         [SupplyParameterFromForm]
-        private InputModel Input { get; set; } = new();
+        private InputModel? FormInput { get; set; }
+
+        private InputModel Input => FormInput ??= new();
 
         [Inject]
         private UserManager<ApplicationUser> UserManager { get; set; } = default!;

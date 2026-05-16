@@ -8,21 +8,21 @@
 
         private string PageTitle => $"{_category?.Name} Posts {(_pageNumber > 1 ? $"(Page - {_pageNumber})" : "")}";
         private int _pageNumber = 1;
-    private Category _category = new();
+        private Category _category = new();
         private BlogPostVm[] _posts = [];
         private BlogPostVm[] _popular = [];
 
-    [Inject] 
-    NavigationManager NavigationManager { get; set; } = default!;
+        [Inject]
+        NavigationManager NavigationManager { get; set; } = default!;
 
-    [Inject] 
-    IBlogPostService BlogPostService { get; set; } = default!;
+        [Inject]
+        IBlogPostService BlogPostService { get; set; } = default!;
 
-    [Inject] 
-    ICategoryService CategoryService { get; set; } = default!;
+        [Inject]
+        ICategoryService CategoryService { get; set; } = default!;
 
-    [Parameter]
-    public string CategorySlug { get; set; } = string.Empty;
+        [Parameter]
+        public string CategorySlug { get; set; } = string.Empty;
 
         [Parameter]
         public int? UriPageNumber { get; set; }

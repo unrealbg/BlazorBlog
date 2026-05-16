@@ -2,32 +2,36 @@
 {
     public partial class Login
     {
+        private const string InvalidLoginMessage = "Error: Invalid login attempt.";
+
         private string? _errorMessage;
-    private bool _showPassword;
-    private bool _isSubmitting;
+        private bool _showPassword;
+        private bool _isSubmitting;
 
         [CascadingParameter]
         private HttpContext HttpContext { get; set; } = default!;
 
         [SupplyParameterFromForm]
-        private InputModel Input { get; set; } = new();
+        private InputModel? FormInput { get; set; }
+
+        private InputModel Input => FormInput ??= new();
 
         [SupplyParameterFromQuery] private string? ReturnUrl { get; set; } = "/admin/dashboard";
 
-    [Inject] 
-    SignInManager<BlazorBlog.Infrastructure.Persistence.ApplicationUser> SignInManager { get; set; } = default!;
+        [Inject]
+        SignInManager<BlazorBlog.Infrastructure.Persistence.ApplicationUser> SignInManager { get; set; } = default!;
 
-    [Inject] 
-    ILogger<Login> Logger { get; set; } = default!;
+        [Inject]
+        ILogger<Login> Logger { get; set; } = default!;
 
-    [Inject] 
-    NavigationManager NavigationManager { get; set; } = default!;
+        [Inject]
+        NavigationManager NavigationManager { get; set; } = default!;
 
-    [Inject] 
-    IdentityRedirectManager RedirectManager { get; set; } = default!;
+        [Inject]
+        IdentityRedirectManager RedirectManager { get; set; } = default!;
 
-    [Inject]
-    UserManager<BlazorBlog.Infrastructure.Persistence.ApplicationUser> UserManager { get; set; } = default!;
+        [Inject]
+        UserManager<BlazorBlog.Infrastructure.Persistence.ApplicationUser> UserManager { get; set; } = default!;
 
         protected override async Task OnInitializedAsync()
         {
@@ -61,15 +65,22 @@
 
                 if (user is null)
                 {
-                    _errorMessage = "Error: Invalid login attempt.";
+                    _errorMessage = InvalidLoginMessage;
                     return;
                 }
 
-                var result = await SignInManager.CheckPasswordSignInAsync(user, Input.Password, false);
+                var result = await SignInManager.CheckPasswordSignInAsync(user, Input.Password, lockoutOnFailure: true);
+
+                if (result.IsLockedOut)
+                {
+                    Logger.LogWarning("User account locked out.");
+                    _errorMessage = "Error: This account is locked. Please try again later.";
+                    return;
+                }
 
                 if (!result.Succeeded)
                 {
-                    _errorMessage = "Error: Incorrect Password!";
+                    _errorMessage = InvalidLoginMessage;
                     return;
                 }
 

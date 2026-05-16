@@ -19,11 +19,11 @@ namespace BlazorBlog.Application.Utilities
             }
 
             var text = Regex.Replace(html, "<[^>]+>", " ");
-            
+
             text = Regex.Replace(text, @"\s+", " ").Trim();
 
             var words = Regex.Matches(text, @"\b[\p{L}\p{M}\w']+\b", RegexOptions.Multiline).Count;
-            
+
             if (words == 0)
             {
                 return ("0 min read", 0);

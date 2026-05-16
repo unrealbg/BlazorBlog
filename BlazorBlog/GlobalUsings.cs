@@ -25,8 +25,6 @@ global using Microsoft.AspNetCore.Identity;
 
 global using Ganss.Xss;
 
-global using Blazored.TextEditor;
-
 global using System.ComponentModel.DataAnnotations;
 global using System.Security.Claims;
 
