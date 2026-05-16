@@ -10,7 +10,7 @@ namespace BlazorBlog.Components.Pages
         private BlogPostVm[] _posts = [];
         private BlogPostVm[] _popularPosts = [];
         private Category[] _categories = [];
-        
+
         private int _currentPage = 1;
         private int _totalPages = 1;
 
@@ -86,10 +86,10 @@ namespace BlazorBlog.Components.Pages
         {
             var pageIndex = _currentPage - 1;
             _posts = await BlogPostService.GetBlogPostsAsync(pageIndex, PageSize, categoryId: 0, _cts.Token);
-            
+
             if (_posts.Length == PageSize)
             {
-                _totalPages = _currentPage + 1; 
+                _totalPages = _currentPage + 1;
             }
             else
             {

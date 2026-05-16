@@ -22,7 +22,7 @@ namespace BlazorBlog.Infrastructure.Persistence.Repositories
         private static BlogPostVm Map(BlogPostEntity p)
         {
             var (readingTime, wordCount) = ReadingTimeCalculator.Calculate(p.Content);
-            
+
             return new()
             {
                 Id = p.Id,
@@ -44,7 +44,7 @@ namespace BlazorBlog.Infrastructure.Persistence.Repositories
             };
         }
 
-        private static DomainBlogPost MapToDomain(BlogPostEntity e) => new()
+        private static DomainBlogPost MapToDomain(BlogPostEntity e, uint? xmin = null) => new()
         {
             Id = e.Id,
             Title = e.Title,
@@ -59,7 +59,8 @@ namespace BlazorBlog.Infrastructure.Persistence.Repositories
             IsFeatured = e.IsFeatured,
             IsDeleted = e.IsDeleted,
             CreatedAt = e.CreatedAt,
-            PublishedAt = e.PublishedAt
+            PublishedAt = e.PublishedAt,
+            RowVersion = xmin.HasValue ? BitConverter.GetBytes(xmin.Value) : null
         };
 
         private static void MapToEntity(DomainBlogPost src, BlogPostEntity dest)
@@ -78,7 +79,7 @@ namespace BlazorBlog.Infrastructure.Persistence.Repositories
         public async Task<PageResult<DomainBlogPost>> GetBlogPostsAsync(int startIndex, int pageSize, CancellationToken cancellationToken = default)
         {
             await using var context = _contextFactory.CreateDbContext();
-            var query = context.BlogPosts.AsNoTracking();
+            var query = context.BlogPosts.AsNoTracking().Where(b => !b.IsDeleted);
 
             var count = await query.CountAsync(cancellationToken);
             var results = await query.Include(b => b.Category)
@@ -87,17 +88,24 @@ namespace BlazorBlog.Infrastructure.Persistence.Repositories
                 .Take(pageSize)
                 .ToArrayAsync(cancellationToken);
 
-            return new PageResult<DomainBlogPost>(results.Select(MapToDomain).ToArray(), count);
+            return new PageResult<DomainBlogPost>(results.Select(result => MapToDomain(result)).ToArray(), count);
         }
 
         public async Task<DomainBlogPost?> GetBlogPostByIdAsync(int id, CancellationToken cancellationToken = default)
         {
             await using var context = await _contextFactory.CreateDbContextAsync(cancellationToken);
-            var e = await context.BlogPosts
+            var result = await context.BlogPosts
                 .AsNoTracking()
                 .Include(b => b.Category)
-                .FirstOrDefaultAsync(b => b.Id == id, cancellationToken);
-            return e is null ? null : MapToDomain(e);
+                .Where(b => b.Id == id && !b.IsDeleted)
+                .Select(b => new
+                {
+                    Entity = b,
+                    Xmin = EF.Property<uint>(b, "xmin")
+                })
+                .FirstOrDefaultAsync(cancellationToken);
+
+            return result is null ? null : MapToDomain(result.Entity, result.Xmin);
         }
 
         public async Task<DomainBlogPost> SaveBlogPostAsync(DomainBlogPost blogPost, string userId, CancellationToken cancellationToken = default)
@@ -113,8 +121,13 @@ namespace BlazorBlog.Infrastructure.Persistence.Repositories
             }
             else
             {
-                entity = await context.BlogPosts.FirstOrDefaultAsync(x => x.Id == blogPost.Id, cancellationToken)
+                entity = await context.BlogPosts.FirstOrDefaultAsync(x => x.Id == blogPost.Id && !x.IsDeleted, cancellationToken)
                     ?? throw new InvalidOperationException($"Blog post not found.");
+
+                if (TryReadRowVersion(blogPost.RowVersion, out var xmin))
+                {
+                    context.Entry(entity).Property<uint>("xmin").OriginalValue = xmin;
+                }
 
                 MapToEntity(blogPost, entity);
             }
@@ -128,7 +141,7 @@ namespace BlazorBlog.Infrastructure.Persistence.Repositories
                 throw new InvalidOperationException("The blog post was modified by another user. Please refresh and try again.", ex);
             }
 
-            return MapToDomain(entity);
+            return MapToDomain(entity, context.Entry(entity).Property<uint>("xmin").CurrentValue);
         }
 
         public async Task<bool> DeleteBlogPostAsync(int id, CancellationToken cancellationToken = default)
@@ -137,7 +150,7 @@ namespace BlazorBlog.Infrastructure.Persistence.Repositories
             var blogPost = await context.BlogPosts.FindAsync([id], cancellationToken);
             if (blogPost == null) return false;
 
-            context.BlogPosts.Remove(blogPost);
+            blogPost.IsDeleted = true;
             await context.SaveChangesAsync(cancellationToken);
             return true;
         }
@@ -149,7 +162,7 @@ namespace BlazorBlog.Infrastructure.Persistence.Repositories
                 .AsNoTracking()
                 .Include(p => p.Category)
                 .Include(p => p.User)
-                .Where(p => p.IsPublished);
+                .Where(p => p.IsPublished && !p.IsDeleted);
 
             if (categoryId > 0)
             {
@@ -172,7 +185,7 @@ namespace BlazorBlog.Infrastructure.Persistence.Repositories
                 .AsNoTracking()
                 .Include(p => p.Category)
                 .Include(p => p.User)
-                .Where(p => p.IsPublished && p.IsFeatured);
+                .Where(p => p.IsPublished && p.IsFeatured && !p.IsDeleted);
 
             if (categoryId > 0)
             {
@@ -201,7 +214,7 @@ namespace BlazorBlog.Infrastructure.Persistence.Repositories
                 .AsNoTracking()
                 .Include(p => p.Category)
                 .Include(p => p.User)
-                .Where(p => p.IsPublished);
+                .Where(p => p.IsPublished && !p.IsDeleted);
 
             if (categoryId > 0)
             {
@@ -223,7 +236,7 @@ namespace BlazorBlog.Infrastructure.Persistence.Repositories
                 .AsNoTracking()
                 .Include(p => p.Category)
                 .Include(p => p.User)
-                .Where(p => p.IsPublished);
+                .Where(p => p.IsPublished && !p.IsDeleted);
 
             if (categoryId > 0)
             {
@@ -245,18 +258,23 @@ namespace BlazorBlog.Infrastructure.Persistence.Repositories
                 .AsNoTracking()
                 .Include(p => p.Category)
                 .Include(p => p.User)
-                .FirstOrDefaultAsync(p => p.Slug == slug && p.IsPublished, cancellationToken);
+                .FirstOrDefaultAsync(p => p.Slug == slug && p.IsPublished && !p.IsDeleted, cancellationToken);
 
             if (blogPost == null)
             {
                 return DetailPageModel.Empty();
             }
 
+            await context.BlogPosts
+                .Where(p => p.Id == blogPost.Id)
+                .ExecuteUpdateAsync(updates => updates.SetProperty(p => p.ViewCount, p => p.ViewCount + 1), cancellationToken);
+            blogPost.ViewCount++;
+
             var relatedPosts = await context.BlogPosts
                 .AsNoTracking()
                 .Include(p => p.Category)
                 .Include(p => p.User)
-                .Where(p => p.CategoryId == blogPost.CategoryId && p.Id != blogPost.Id && p.IsPublished)
+                .Where(p => p.CategoryId == blogPost.CategoryId && p.Id != blogPost.Id && p.IsPublished && !p.IsDeleted)
                 .OrderByDescending(p => p.PublishedAt)
                 .Take(4)
                 .ToArrayAsync(cancellationToken);
@@ -293,7 +311,7 @@ namespace BlazorBlog.Infrastructure.Persistence.Repositories
             await using var context = _contextFactory.CreateDbContext();
             var postIdsQuery = context.BlogPostTags
                 .AsNoTracking()
-                .Where(bpt => bpt.Tag.Slug == tagSlug && bpt.BlogPost.IsPublished)
+                .Where(bpt => bpt.Tag.Slug == tagSlug && bpt.BlogPost.IsPublished && !bpt.BlogPost.IsDeleted)
                 .Select(bpt => bpt.BlogPost.Id)
                 .Distinct();
 
@@ -314,7 +332,7 @@ namespace BlazorBlog.Infrastructure.Persistence.Repositories
             await using var context = _contextFactory.CreateDbContext();
             var postIdsQuery = context.BlogPostTags
                 .AsNoTracking()
-                .Where(bpt => bpt.Tag.Slug == tagSlug && bpt.BlogPost.IsPublished)
+                .Where(bpt => bpt.Tag.Slug == tagSlug && bpt.BlogPost.IsPublished && !bpt.BlogPost.IsDeleted)
                 .Select(bpt => bpt.BlogPost.Id)
                 .Distinct();
 
@@ -335,7 +353,7 @@ namespace BlazorBlog.Infrastructure.Persistence.Repositories
             await using var context = _contextFactory.CreateDbContext();
             var postIdsQuery = context.BlogPostTags
                 .AsNoTracking()
-                .Where(bpt => bpt.Tag.Slug == tagSlug && bpt.BlogPost.IsPublished)
+                .Where(bpt => bpt.Tag.Slug == tagSlug && bpt.BlogPost.IsPublished && !bpt.BlogPost.IsDeleted)
                 .Select(bpt => bpt.BlogPost.Id)
                 .Distinct();
 
@@ -350,6 +368,18 @@ namespace BlazorBlog.Infrastructure.Persistence.Repositories
                 .ToArrayAsync(cancellationToken);
 
             return posts.Select(Map).ToArray();
+        }
+
+        private static bool TryReadRowVersion(byte[]? rowVersion, out uint xmin)
+        {
+            xmin = default;
+            if (rowVersion is not { Length: sizeof(uint) })
+            {
+                return false;
+            }
+
+            xmin = BitConverter.ToUInt32(rowVersion);
+            return true;
         }
     }
 }

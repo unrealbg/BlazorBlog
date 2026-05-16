@@ -13,7 +13,9 @@ namespace BlazorBlog.Components.Account.Pages
         private string? _devToken;
 
         [SupplyParameterFromForm]
-        private InputModel Input { get; set; } = new();
+        private InputModel? FormInput { get; set; }
+
+        private InputModel Input => FormInput ??= new();
 
         [Inject]
         private UserManager<ApplicationUser> UserManager { get; set; } = default!;

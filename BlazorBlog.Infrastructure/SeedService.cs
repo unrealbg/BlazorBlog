@@ -22,8 +22,6 @@
 
         public async Task SeedDataAsync()
         {
-            await MigrateDatabaseAsync();
-
             // Seed Admin role
             if (await _roleManager.FindByNameAsync(_adminUserSettings.Role) is null)
             {
@@ -61,6 +59,7 @@
 
                 adminUser.Name = _adminUserSettings.Name;
                 adminUser.Email = _adminUserSettings.Email;
+                adminUser.EmailConfirmed = true;
 
                 await _userStore.SetUserNameAsync(adminUser, _adminUserSettings.Email, CancellationToken.None);
 
@@ -109,7 +108,8 @@
                 testEditor = new ApplicationUser
                 {
                     Name = "Test Editor",
-                    Email = testEditorEmail
+                    Email = testEditorEmail,
+                    EmailConfirmed = true
                 };
 
                 await _userStore.SetUserNameAsync(testEditor, testEditorEmail, CancellationToken.None);
@@ -128,14 +128,5 @@
             }
         }
 
-        private async Task MigrateDatabaseAsync()
-        {
-#if DEBUG
-            if (await _ctx.Database.GetPendingMigrationsAsync() is { } migrations && migrations.Any())
-            {
-                await _ctx.Database.MigrateAsync();
-            }
-#endif
-        }
     }
 }

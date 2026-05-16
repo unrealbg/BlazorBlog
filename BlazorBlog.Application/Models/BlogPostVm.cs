@@ -40,5 +40,7 @@ namespace BlazorBlog.Application.Models
         public string ReadingTime { get; set; } = string.Empty;
 
         public string[] Tags { get; set; } = Array.Empty<string>();
+
+        public byte[]? RowVersion { get; set; }
     }
 }

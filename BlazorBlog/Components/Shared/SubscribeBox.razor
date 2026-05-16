@@ -9,7 +9,7 @@
     <div class="rounded-2xl bg-white border border-slate-200 p-6 shadow-soft dark:bg-slate-800 dark:border-slate-700">
         <h3 class="text-lg font-semibold text-slate-900 dark:text-white mb-2">Subscribe</h3>
         <p class="text-sm text-slate-600 dark:text-slate-300 mb-4">Get new articles delivered right to your inbox.</p>
-        <EditForm EditContext="_editContext" method="post" OnSubmit="SubscribeAsync" FormName="subscribe-form" Enhance>
+        <EditForm EditContext="_editContext" method="post" OnSubmit="SubscribeAsync" FormName="@FormName" Enhance>
             <DataAnnotationsValidator />
             <div class="flex gap-2">
                 <InputText type="email" 
@@ -35,7 +35,7 @@ else
                 <p class="mt-1 text-sm text-slate-600 dark:text-slate-300">Get the latest news right in your inbox. It's free and you can unsubscribe at any time. We hate spam as much as we do, so we never spam!</p>
             </div>
             <div>
-                <EditForm EditContext="_editContext" method="post" OnSubmit="SubscribeAsync" FormName="subscribe-form" Enhance>
+                <EditForm EditContext="_editContext" method="post" OnSubmit="SubscribeAsync" FormName="@FormName" Enhance>
                     <DataAnnotationsValidator />
                     <div class="grid gap-3 sm:grid-cols-2">
                         <div>
@@ -65,10 +65,18 @@ else
 
 @code {
     [SupplyParameterFromForm]
-    private Subscriber Subscriber { get; set; } = new Subscriber();
+    private Subscriber? FormSubscriber { get; set; }
+
+    private Subscriber Subscriber
+    {
+        get => FormSubscriber ??= new Subscriber();
+        set => FormSubscriber = value;
+    }
 
     [Parameter]
     public bool Simple { get; set; }
+
+    private string FormName => Simple ? "subscribe-form-simple" : "subscribe-form-full";
 
     private string? _message;
 

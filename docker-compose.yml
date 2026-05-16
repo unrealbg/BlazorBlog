@@ -5,9 +5,9 @@ services:
     environment:
       - POSTGRES_DB=${POSTGRES_DB:-blazorblog}
       - POSTGRES_USER=${POSTGRES_USER:-postgres}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-postgres}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in your environment or .env file}
     ports:
-      - "5432:5432"
+      - "${POSTGRES_PORT:-15432}:5432"
     volumes:
       - postgres-data:/var/lib/postgresql/data
     healthcheck:
@@ -24,7 +24,21 @@ services:
     image: unrealbg/blazorblog:latest
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
-      - ConnectionStrings__DefaultConnection=Host=db;Port=5432;Database=${POSTGRES_DB:-blazorblog};Username=${POSTGRES_USER:-postgres};Password=${POSTGRES_PASSWORD:-postgres}
+      - ConnectionStrings__DefaultConnection=Host=db;Port=5432;Database=${POSTGRES_DB:-blazorblog};Username=${POSTGRES_USER:-postgres};Password=${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in your environment or .env file}
+      - AdminUser__Name=${ADMIN_USER_NAME:-Admin}
+      - AdminUser__Email=${ADMIN_USER_EMAIL:-admin@bblog.com}
+      - AdminUser__Password=${ADMIN_USER_PASSWORD:?Set ADMIN_USER_PASSWORD in your environment or .env file}
+      - AdminUser__Role=Admin
+      - Database__ApplyMigrationsOnStartup=${APPLY_MIGRATIONS_ON_STARTUP:-true}
+      - Database__SeedOnStartup=${SEED_ON_STARTUP:-true}
+      - Email__Host=${EMAIL_HOST:-}
+      - Email__Port=${EMAIL_PORT:-587}
+      - Email__EnableSsl=${EMAIL_ENABLE_SSL:-true}
+      - Email__UserName=${EMAIL_USERNAME:-}
+      - Email__Password=${EMAIL_PASSWORD:-}
+      - Email__SenderEmail=${EMAIL_SENDER_EMAIL:-}
+      - Email__SenderName=${EMAIL_SENDER_NAME:-Blazor Blog}
+      - Email__RequireConfiguredSender=${EMAIL_REQUIRE_CONFIGURED_SENDER:-false}
     depends_on:
       db:
         condition: service_healthy

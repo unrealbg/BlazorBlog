@@ -1,6 +1,6 @@
 ﻿@page "/admin/manage-blog-posts"
 
-@attribute [Authorize(Roles = "Admin")]
+@attribute [Authorize(Policy = "RequireAdminOrEditorRole")]
 
 @rendermode InteractiveServer
 

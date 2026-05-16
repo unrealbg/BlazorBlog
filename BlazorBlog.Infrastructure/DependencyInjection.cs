@@ -5,14 +5,13 @@ namespace BlazorBlog.Infrastructure
     using BlazorBlog.Infrastructure.Contracts;
     using BlazorBlog.Infrastructure.Persistence;
     using BlazorBlog.Infrastructure.Persistence.Repositories;
+    using BlazorBlog.Infrastructure.Settings;
     using BlazorBlog.Infrastructure.Utilities;
 
     using Microsoft.AspNetCore.Identity;
     using Microsoft.EntityFrameworkCore;
-    using Microsoft.EntityFrameworkCore.Diagnostics;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
-    using Npgsql.EntityFrameworkCore.PostgreSQL; // for UseNpgsql extensions
 
     public static class DependencyInjection
     {
@@ -44,13 +43,11 @@ namespace BlazorBlog.Infrastructure
 
             services.AddDbContextPool<ApplicationDbContext>(options =>
                 options
-                    .UseNpgsql(connectionString)
-                    .ConfigureWarnings(w => w.Ignore(RelationalEventId.PendingModelChangesWarning)));
+                    .UseNpgsql(connectionString));
 
             services.AddPooledDbContextFactory<ApplicationDbContext>(options =>
                 options
-                    .UseNpgsql(connectionString)
-                    .ConfigureWarnings(w => w.Ignore(RelationalEventId.PendingModelChangesWarning)));
+                    .UseNpgsql(connectionString));
 
             // Identity and stores
             services.AddIdentityCore<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = false)
@@ -59,7 +56,16 @@ namespace BlazorBlog.Infrastructure
                 .AddSignInManager()
                 .AddDefaultTokenProviders();
 
-            services.AddSingleton<IEmailSender<ApplicationUser>, NoOpEmailSender>();
+            services.Configure<EmailSettings>(configuration.GetSection(EmailSettings.SectionName));
+            var emailSettings = configuration.GetSection(EmailSettings.SectionName).Get<EmailSettings>() ?? new EmailSettings();
+            if (emailSettings.IsConfigured)
+            {
+                services.AddTransient<IEmailSender<ApplicationUser>, SmtpEmailSender>();
+            }
+            else
+            {
+                services.AddSingleton<IEmailSender<ApplicationUser>, NoOpEmailSender>();
+            }
 
             // Repositories
             services.AddScoped<IBlogPostAdminRepository, BlogPostRepository>();

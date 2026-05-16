@@ -32,7 +32,7 @@
             var baseSlug = _slugService.GenerateSlug(category.Name);
             if (string.IsNullOrWhiteSpace(baseSlug))
             {
-                baseSlug = "category"; 
+                baseSlug = "category";
             }
 
             var uniqueSlug = await EnsureUniqueSlugAsync(baseSlug, category.Id, cancellationToken);
@@ -61,7 +61,7 @@
                 var existing = await _categoryRepository.GetCategoryBySlugAsync(slug, ct);
                 if (existing is null || existing.Id == currentCategoryId)
                 {
-                    return slug; 
+                    return slug;
                 }
 
                 slug = $"{baseSlug}-{suffix++}";
