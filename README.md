@@ -33,47 +33,14 @@ Welcome to the Blazor Blog Project! This repository hosts a modern, responsive b
 
 ## Screenshots
 
-Below are some screenshots showcasing the different aspects and features of the Blazor Blog Project.
+The gallery below was captured in dark mode with representative demo content, so the public and admin workflows are easier to scan.
 
-### Main View
-
-![Main View of Blazor Blog](docs/screenshots/home.png "Main View")
-_The main landing page of the Blazor Blog with the current .NET 10 hero, navigation, and sidebar widgets._
-
-### All Posts
-
-![All Posts on Blazor Blog](docs/screenshots/all-posts.png "All Posts")
-_The public posts listing page with subscription and category sidebar content._
-
-### Dashboard
-
-![Dashboard on Blazor Blog](docs/screenshots/dashboard.png "Dashboard")
-_The dashboard interface for managing the blog._
-
-### Manage Categories
-
-![Manage Categories on Blazor Blog](docs/screenshots/manage-categories.png "Manage Categories")
-_The section for managing blog categories._
-
-### Manage Blog Posts
-
-![Manage Blog Posts on Blazor Blog](docs/screenshots/manage-blog-posts.png "Manage Blog Posts")
-_Interface for managing individual blog posts._
-
-### Manage Subscribers
-
-![Manage Subscribers on Blazor Blog](docs/screenshots/manage-subscribers.png "Manage Subscribers")
-_The section dedicated to managing blog subscribers._
-
-### Create a New Blog Post
-
-![Create New Blog Post on Blazor Blog](docs/screenshots/create-blog-post.png "Create New Blog Post")
-_The interface for creating a new blog post._
-
-### Create a New Category
-
-![Create New Category on Blazor Blog](docs/screenshots/create-category.png "Create New Category")
-_The interface for adding a new category to the blog._
+| Public experience | Admin workflow |
+| --- | --- |
+| ![Home page in dark mode](docs/screenshots/home.png "Home page in dark mode")<br><sub>Home page with featured content, tags, and subscription sidebar.</sub> | ![Admin dashboard in dark mode](docs/screenshots/dashboard.png "Admin dashboard in dark mode")<br><sub>Admin dashboard with content, subscriber, and user management shortcuts.</sub> |
+| ![All posts page in dark mode](docs/screenshots/all-posts.png "All posts page in dark mode")<br><sub>Published posts list with popular posts and category navigation.</sub> | ![Manage blog posts in dark mode](docs/screenshots/manage-blog-posts.png "Manage blog posts in dark mode")<br><sub>QuickGrid post management with publish and featured toggles.</sub> |
+| ![New blog post form in dark mode](docs/screenshots/create-blog-post.png "New blog post form in dark mode")<br><sub>Rich post editor with category, tags, image upload, and publish options.</sub> | ![Manage categories in dark mode](docs/screenshots/manage-categories.png "Manage categories in dark mode")<br><sub>Category management with navbar visibility controls.</sub> |
+| ![New category form in dark mode](docs/screenshots/create-category.png "New category form in dark mode")<br><sub>Inline category creation flow.</sub> | ![Manage subscribers in dark mode](docs/screenshots/manage-subscribers.png "Manage subscribers in dark mode")<br><sub>Subscriber list for newsletter management.</sub> |
 
 ## Architecture
 
