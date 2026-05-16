@@ -27,8 +27,8 @@
     </script>
 
     <!-- Load component styles first -->
-    <link rel="stylesheet" href="BlazorBlog.styles.css" />
-    <link rel="stylesheet" href="app.css" />
+    <link rel="stylesheet" href="@Assets["BlazorBlog.styles.css"]" />
+    <link rel="stylesheet" href="@Assets["app.css"]" />
 
         <!-- Inter font -->
         <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -38,7 +38,7 @@
             html { font-family: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji"; }
         </style>
 
-    <link rel="icon" type="image/png" href="favicon.png" />
+    <link rel="icon" type="image/png" href="@Assets["favicon.png"]" />
 
     <HeadOutlet />
 </head>
@@ -50,12 +50,12 @@
         </div>
     </CascadingAuthenticationState>
     <!-- Theme helpers (menu/theme toggles) -->
-    <script src="assets/js/functions.js" type="text/javascript"></script>
+    <script src="@Assets["assets/js/functions.js"]" type="text/javascript"></script>
 
     <SectionOutlet SectionName="scripts" />
 
     <!-- Blazor Scripts -->
-    <script src="_framework/blazor.web.js"></script>
+    <script src="@Assets["_framework/blazor.web.js"]"></script>
 </body>
 
 </html>
