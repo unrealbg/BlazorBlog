@@ -3,7 +3,7 @@
 Thanks for taking the time to contribute!
 
 ## Prerequisites
-- .NET 9 SDK
+- .NET 10 SDK
 - Node.js (for Tailwind build on publish)
 - IDE: VS 2022 17.10+ or VS Code
 

@@ -35,47 +35,57 @@ Welcome to the Blazor Blog Project! This repository hosts a modern, responsive b
 
 ## Screenshots
 
-Updated screenshots showcasing the current UI.
+Below are some screenshots showcasing the different aspects and features of the Blazor Blog Project.
+
+### Main View
+
+![Main View of Blazor Blog](docs/screenshots/home.png "Main View")
+_The main landing page of the Blazor Blog with the current .NET 10 hero, navigation, and sidebar widgets._
+
+### All Posts
+
+![All Posts on Blazor Blog](docs/screenshots/all-posts.png "All Posts")
+_The public posts listing page with subscription and category sidebar content._
+
+### Dashboard
+
+![Dashboard on Blazor Blog](docs/screenshots/dashboard.png "Dashboard")
+_The dashboard interface for managing the blog._
 
 ### 1) Home – Hero
 ![Home – Hero](https://www.unrealbg.com/blazorblog/01-home-hero.png "Home – Hero")
 _The landing page hero with tag badges and primary CTAs._
 
-### 2) Home – Latest Posts
-![Home – Latest Posts](https://www.unrealbg.com/blazorblog/02-home-latest-posts.png "Home – Latest Posts")
-_The Latest Posts section on the homepage and the footer navigation._
+![Manage Categories on Blazor Blog](docs/screenshots/manage-categories.png "Manage Categories")
+_The section for managing blog categories._
 
 ### 3) All Posts
 ![All Posts](https://www.unrealbg.com/blazorblog/03-all-posts.png "All Posts")
 _A full list of articles with sidebar: Subscribe, Popular Posts, and Categories._
 
-### 4) Post Details
-![Post Details](https://www.unrealbg.com/blazorblog/04-post-details.png "Post Details")
-_Single post view with title, metadata, author, and cover image._
+![Manage Blog Posts on Blazor Blog](docs/screenshots/manage-blog-posts.png "Manage Blog Posts")
+_Interface for managing individual blog posts._
 
 ### 5) Post – Footer & Subscribe
 ![Post – Footer & Subscribe](https://www.unrealbg.com/blazorblog/05-post-footer-subscribe.png "Post – Footer & Subscribe")
 _Post footer with share actions and newsletter subscribe form._
 
-### 6) Category – Featured Card
-![Category – Featured Card](https://www.unrealbg.com/blazorblog/06-category-featured-large.png "Category – Featured Card")
-_Category page highlighting a featured article with a large card preview._
+![Manage Subscribers on Blazor Blog](docs/screenshots/manage-subscribers.png "Manage Subscribers")
+_The section dedicated to managing blog subscribers._
 
 ### 7) Tag Page – Latest & Subscribe
 ![Tag Page – Latest & Subscribe](https://www.unrealbg.com/blazorblog/07-tag-page-latest-subscribe.png "Tag Page – Latest & Subscribe")
 _Tag page (e.g., #javascript) with latest posts and a subscribe form._
 
-### 8) Login
-![Login](https://www.unrealbg.com/blazorblog/08-login.png "Login")
-_Login screen with email, password, “Remember me,” and “Forgot password?” link._
+![Create New Blog Post on Blazor Blog](docs/screenshots/create-blog-post.png "Create New Blog Post")
+_The interface for creating a new blog post._
 
 ### 9) Admin – Dashboard
 ![Admin – Dashboard](https://www.unrealbg.com/blazorblog/09-admin-dashboard.png "Admin – Dashboard")
 _Admin console overview with quick actions for categories, posts, and subscribers._
 
-### 10) Admin – Manage Categories
-![Admin – Manage Categories](https://www.unrealbg.com/blazorblog/10-admin-manage-categories.png "Admin – Manage Categories")
-_Category management table with name, slug, navbar visibility, and Edit/Delete actions._
+![Create New Category on Blazor Blog](docs/screenshots/create-category.png "Create New Category")
+_The interface for adding a new category to the blog._
 
 ## Architecture
 
