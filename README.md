@@ -11,6 +11,8 @@
 [![Open PRs](https://img.shields.io/github/issues-pr/unrealbg/BlazorBlog.svg)](https://github.com/unrealbg/BlazorBlog/pulls)
 [![.NET](https://img.shields.io/badge/.NET-10.0-512BD4?logo=dotnet&logoColor=white)](https://dotnet.microsoft.com/)
 
+Live demo: https://blog.unrealbg.com/
+
 ## Overview
 
 Welcome to the Blazor Blog Project! This repository hosts a modern, responsive blog application built with [Blazor Web App](https://dotnet.microsoft.com/apps/aspnet/web-apps/blazor) on .NET 10. The goal is to deliver fast, interactive user interfaces with a clean architecture and a practical admin workflow.
