@@ -9,13 +9,13 @@
 [![Last commit](https://img.shields.io/github/last-commit/unrealbg/BlazorBlog.svg)](https://github.com/unrealbg/BlazorBlog/commits)
 [![Open issues](https://img.shields.io/github/issues/unrealbg/BlazorBlog.svg)](https://github.com/unrealbg/BlazorBlog/issues)
 [![Open PRs](https://img.shields.io/github/issues-pr/unrealbg/BlazorBlog.svg)](https://github.com/unrealbg/BlazorBlog/pulls)
-[![.NET](https://img.shields.io/badge/.NET-9.0-512BD4?logo=dotnet&logoColor=white)](https://dotnet.microsoft.com/)
+[![.NET](https://img.shields.io/badge/.NET-10.0-512BD4?logo=dotnet&logoColor=white)](https://dotnet.microsoft.com/)
 
 Live demo: https://blog.unrealbg.com/
 
 ## Overview
 
-Welcome to the Blazor Blog Project! This repository hosts a modern, responsive blog application, built using the latest [Blazor Web App](https://dotnet.microsoft.com/apps/aspnet/web-apps/blazor) template. Our goal is to leverage Blazor's capabilities to deliver fast and interactive user interfaces, ensuring an engaging and seamless experience for our users.
+Welcome to the Blazor Blog Project! This repository hosts a modern, responsive blog application built with [Blazor Web App](https://dotnet.microsoft.com/apps/aspnet/web-apps/blazor) on .NET 10. The goal is to deliver fast, interactive user interfaces with a clean architecture and a practical admin workflow.
 
 ## Features
 
@@ -30,6 +30,7 @@ Welcome to the Blazor Blog Project! This repository hosts a modern, responsive b
 - In-memory caching for public lists (2 min TTL) with automatic cache bust on admin changes
 - HTML sanitization for user content (Ganss.Xss)
 - Server-side validation with FluentValidation
+- PostgreSQL persistence through EF Core and Npgsql
 
 ## Screenshots
 
@@ -81,7 +82,7 @@ This solution follows Clean Architecture:
 
 - Domain: Core entities and business rules with no dependencies.
 - Application: Use cases, contracts, and validators; depends only on Domain.
-- Infrastructure: EF Core persistence, Identity, and service implementations; depends on Application.
+- Infrastructure: EF Core persistence, ASP.NET Core Identity, and service implementations; depends on Application.
 - Web (BlazorBlog): UI; depends on Application and Infrastructure.
 
 Data and Identity live under `BlazorBlog.Infrastructure.Persistence` (single `ApplicationDbContext` and `ApplicationUser`). UI helpers use Application abstractions (e.g., `IToastService`) implemented in Infrastructure.
@@ -92,15 +93,24 @@ Data and Identity live under `BlazorBlog.Infrastructure.Persistence` (single `Ap
 - BlazorBlog.Infrastructure (EF Core, Identity, seeding, data services)
 - BlazorBlog.Application (view models, validators, contracts)
 - BlazorBlog.Domain (entities)
-- BlazorBlog.Tests (xUnit + bUnit)
+- BlazorBlog.Tests (xUnit v3 + bUnit)
+
+### Tech stack
+
+- .NET 10 / ASP.NET Core Blazor Web App
+- EF Core 10 with Npgsql/PostgreSQL
+- ASP.NET Core Identity with role-based authorization
+- QuickGrid, FluentValidation, Mapster, Serilog
+- Tailwind CSS
+- xUnit v3, bUnit, Moq, coverlet
 
 ## Getting Started
 
 ### Prerequisites
 
-- .NET 9 SDK
+- .NET 10 SDK
 - Recommended: Visual Studio 2022 (latest) with ASP.NET workload
-- SQL Server (default is `(localdb)\\MSSQLLocalDB`). Change the connection string if needed
+- PostgreSQL. The default local connection string expects `postgres/postgres` on `localhost:5432`
 - Node.js 18+ (LTS) if you plan to run the Tailwind CSS watcher during development or rely on the publish-time CSS build
 
 ### Configuration
@@ -110,7 +120,7 @@ Update the connection string and Admin user settings in `BlazorBlog/appsettings.
 ```json
 {
   "ConnectionStrings": {
-    "DefaultConnection": "Server=(localdb)\\MSSQLLocalDB;Database=BlazorBlog;Trusted_Connection=True;MultipleActiveResultSets=true;Encrypt=False;"
+    "DefaultConnection": "Host=localhost;Port=5432;Database=blazorblog;Username=postgres;Password=postgres"
   },
   "AdminUser": {
     "Name": "Admin",
@@ -121,6 +131,12 @@ Update the connection string and Admin user settings in `BlazorBlog/appsettings.
 }
 ```
 
+To start a local PostgreSQL container:
+
+```bash
+docker run --name blazorblog-postgres -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=blazorblog -p 5432:5432 -d postgres:16
+```
+
 ### Run the application
 
 From the repository root:
@@ -128,6 +144,13 @@ From the repository root:
 ```bash
 # Runs the UI project
 dotnet run --project BlazorBlog/BlazorBlog.csproj
+```
+
+### Build
+
+```bash
+dotnet restore BlazorBlog.sln
+dotnet build BlazorBlog.sln
 ```
 
 ### CSS development (Tailwind)
@@ -201,7 +224,16 @@ Admin-only pages (require the `Admin` role):
 - Run tests from the repo root:
 
 ```bash
- dotnet test
+dotnet test BlazorBlog.sln
+```
+
+## Docker
+
+The Dockerfile builds the Blazor app with the .NET 10 SDK image and publishes a runtime image on ASP.NET Core 10:
+
+```bash
+docker build -t blazorblog .
+docker run --rm -p 8080:8080 -e ConnectionStrings__DefaultConnection="Host=host.docker.internal;Port=5432;Database=blazorblog;Username=postgres;Password=postgres" blazorblog
 ```
 
 ## Contributing
