@@ -35,57 +35,14 @@ Welcome to the Blazor Blog Project! This repository hosts a modern, responsive b
 
 ## Screenshots
 
-Below are some screenshots showcasing the different aspects and features of the Blazor Blog Project.
+The gallery below was captured in dark mode with representative demo content, so the public and admin workflows are easier to scan.
 
-### Main View
-
-![Main View of Blazor Blog](docs/screenshots/home.png "Main View")
-_The main landing page of the Blazor Blog with the current .NET 10 hero, navigation, and sidebar widgets._
-
-### All Posts
-
-![All Posts on Blazor Blog](docs/screenshots/all-posts.png "All Posts")
-_The public posts listing page with subscription and category sidebar content._
-
-### Dashboard
-
-![Dashboard on Blazor Blog](docs/screenshots/dashboard.png "Dashboard")
-_The dashboard interface for managing the blog._
-
-### 1) Home – Hero
-![Home – Hero](https://www.unrealbg.com/blazorblog/01-home-hero.png "Home – Hero")
-_The landing page hero with tag badges and primary CTAs._
-
-![Manage Categories on Blazor Blog](docs/screenshots/manage-categories.png "Manage Categories")
-_The section for managing blog categories._
-
-### 3) All Posts
-![All Posts](https://www.unrealbg.com/blazorblog/03-all-posts.png "All Posts")
-_A full list of articles with sidebar: Subscribe, Popular Posts, and Categories._
-
-![Manage Blog Posts on Blazor Blog](docs/screenshots/manage-blog-posts.png "Manage Blog Posts")
-_Interface for managing individual blog posts._
-
-### 5) Post – Footer & Subscribe
-![Post – Footer & Subscribe](https://www.unrealbg.com/blazorblog/05-post-footer-subscribe.png "Post – Footer & Subscribe")
-_Post footer with share actions and newsletter subscribe form._
-
-![Manage Subscribers on Blazor Blog](docs/screenshots/manage-subscribers.png "Manage Subscribers")
-_The section dedicated to managing blog subscribers._
-
-### 7) Tag Page – Latest & Subscribe
-![Tag Page – Latest & Subscribe](https://www.unrealbg.com/blazorblog/07-tag-page-latest-subscribe.png "Tag Page – Latest & Subscribe")
-_Tag page (e.g., #javascript) with latest posts and a subscribe form._
-
-![Create New Blog Post on Blazor Blog](docs/screenshots/create-blog-post.png "Create New Blog Post")
-_The interface for creating a new blog post._
-
-### 9) Admin – Dashboard
-![Admin – Dashboard](https://www.unrealbg.com/blazorblog/09-admin-dashboard.png "Admin – Dashboard")
-_Admin console overview with quick actions for categories, posts, and subscribers._
-
-![Create New Category on Blazor Blog](docs/screenshots/create-category.png "Create New Category")
-_The interface for adding a new category to the blog._
+| Public experience | Admin workflow |
+| --- | --- |
+| ![Home page in dark mode](docs/screenshots/home.png "Home page in dark mode")<br><sub>Home page with featured content, tags, and subscription sidebar.</sub> | ![Admin dashboard in dark mode](docs/screenshots/dashboard.png "Admin dashboard in dark mode")<br><sub>Admin dashboard with content, subscriber, and user management shortcuts.</sub> |
+| ![All posts page in dark mode](docs/screenshots/all-posts.png "All posts page in dark mode")<br><sub>Published posts list with popular posts and category navigation.</sub> | ![Manage blog posts in dark mode](docs/screenshots/manage-blog-posts.png "Manage blog posts in dark mode")<br><sub>QuickGrid post management with publish and featured toggles.</sub> |
+| ![New blog post form in dark mode](docs/screenshots/create-blog-post.png "New blog post form in dark mode")<br><sub>Rich post editor with category, tags, image upload, and publish options.</sub> | ![Manage categories in dark mode](docs/screenshots/manage-categories.png "Manage categories in dark mode")<br><sub>Category management with navbar visibility controls.</sub> |
+| ![New category form in dark mode](docs/screenshots/create-category.png "New category form in dark mode")<br><sub>Inline category creation flow.</sub> | ![Manage subscribers in dark mode](docs/screenshots/manage-subscribers.png "Manage subscribers in dark mode")<br><sub>Subscriber list for newsletter management.</sub> |
 
 ## Architecture
 
