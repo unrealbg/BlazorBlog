@@ -21,7 +21,7 @@ Fixes #<id> / Closes #<id>
 - [ ] Manual testing across browsers
 
 ## Checklist
-- [ ] dotnet build succeeds locally (.NET 9)
+- [ ] dotnet build succeeds locally (.NET 10)
 - [ ] dotnet test all tests pass
 - [ ] dotnet format --verify-no-changes
 - [ ] Updated docs/CHANGELOG if needed
