@@ -24,7 +24,8 @@ Welcome to the Blazor Blog Project! This repository hosts a modern, responsive b
 - Rich text editor for posts with direct Quill integration
 - Configurable EF Core migrations and data seeding on startup
 - Serilog logging (console + rolling files)
-- Health endpoint: GET /health
+- Health endpoints: GET /health and GET /ready
+- Static asset versioning and cache headers for production
 - In-memory caching for public lists (2 min TTL) with automatic cache bust on admin changes
 - HTML sanitization for user content (Ganss.Xss)
 - Server-side validation with FluentValidation
@@ -145,6 +146,9 @@ Optional runtime settings:
   "ForwardedHeaders": {
     "KnownProxies": [ "10.0.0.10" ]
   },
+  "HealthChecks": {
+    "MinimumFreeDiskBytes": 104857600
+  },
   "Email": {
     "Host": "smtp.example.com",
     "Port": 587,
@@ -216,6 +220,7 @@ Notes:
 
 - On publish, CSS is built automatically by an MSBuild target that runs `npx tailwindcss` (requires Node.js installed on the machine).
 - The generated stylesheet is `BlazorBlog/wwwroot/app.css`.
+- Local static assets are referenced through Blazor static asset versioning and served with long-lived cache headers outside Development.
 
 ### First run behavior
 
@@ -256,9 +261,10 @@ Content management pages require `Admin` or `Editor`:
 - Configure the `Email` section for SMTP delivery; without it, the development fallback logs a warning and does not send email
 - Development helper: In Development the Forgot Password page displays a 'Development only' section with the generated reset link and token for easy local testing
 
-## Health endpoint
+## Health endpoints
 
 - `GET /health` returns `{ status, timeUtc }`
+- `GET /ready` checks database connectivity and disk space, then returns a JSON report
 
 ## Logging
 
