@@ -11,12 +11,12 @@
         [CascadingParameter]
         private HttpContext HttpContext { get; set; } = default!;
 
-        [SupplyParameterFromForm]
+        [SupplyParameterFromForm(Name = "Input")]
         private InputModel? FormInput { get; set; }
 
         private InputModel Input => FormInput ??= new();
 
-        [SupplyParameterFromQuery] private string? ReturnUrl { get; set; } = "/admin/dashboard";
+        [SupplyParameterFromQuery] private string? ReturnUrl { get; set; }
 
         [Inject]
         SignInManager<BlazorBlog.Infrastructure.Persistence.ApplicationUser> SignInManager { get; set; } = default!;
@@ -89,7 +89,7 @@
                 await SignInManager.SignInWithClaimsAsync(user, Input.RememberMe, additionalClaims);
 
                 Logger.LogInformation("User logged in.");
-                RedirectManager.RedirectTo(ReturnUrl);
+                RedirectManager.RedirectTo(string.IsNullOrWhiteSpace(ReturnUrl) ? "/admin/dashboard" : ReturnUrl);
             }
             finally
             {
