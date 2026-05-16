@@ -11,6 +11,8 @@
 [![Open PRs](https://img.shields.io/github/issues-pr/unrealbg/BlazorBlog.svg)](https://github.com/unrealbg/BlazorBlog/pulls)
 [![.NET](https://img.shields.io/badge/.NET-10.0-512BD4?logo=dotnet&logoColor=white)](https://dotnet.microsoft.com/)
 
+Live demo: https://blog.unrealbg.com/
+
 ## Overview
 
 Welcome to the Blazor Blog Project! This repository hosts a modern, responsive blog application built with [Blazor Web App](https://dotnet.microsoft.com/apps/aspnet/web-apps/blazor) on .NET 10. The goal is to deliver fast, interactive user interfaces with a clean architecture and a practical admin workflow.
@@ -50,27 +52,37 @@ _The public posts listing page with subscription and category sidebar content._
 ![Dashboard on Blazor Blog](docs/screenshots/dashboard.png "Dashboard")
 _The dashboard interface for managing the blog._
 
-### Manage Categories
+### 1) Home – Hero
+![Home – Hero](https://www.unrealbg.com/blazorblog/01-home-hero.png "Home – Hero")
+_The landing page hero with tag badges and primary CTAs._
 
 ![Manage Categories on Blazor Blog](docs/screenshots/manage-categories.png "Manage Categories")
 _The section for managing blog categories._
 
-### Manage Blog Posts
+### 3) All Posts
+![All Posts](https://www.unrealbg.com/blazorblog/03-all-posts.png "All Posts")
+_A full list of articles with sidebar: Subscribe, Popular Posts, and Categories._
 
 ![Manage Blog Posts on Blazor Blog](docs/screenshots/manage-blog-posts.png "Manage Blog Posts")
 _Interface for managing individual blog posts._
 
-### Manage Subscribers
+### 5) Post – Footer & Subscribe
+![Post – Footer & Subscribe](https://www.unrealbg.com/blazorblog/05-post-footer-subscribe.png "Post – Footer & Subscribe")
+_Post footer with share actions and newsletter subscribe form._
 
 ![Manage Subscribers on Blazor Blog](docs/screenshots/manage-subscribers.png "Manage Subscribers")
 _The section dedicated to managing blog subscribers._
 
-### Create a New Blog Post
+### 7) Tag Page – Latest & Subscribe
+![Tag Page – Latest & Subscribe](https://www.unrealbg.com/blazorblog/07-tag-page-latest-subscribe.png "Tag Page – Latest & Subscribe")
+_Tag page (e.g., #javascript) with latest posts and a subscribe form._
 
 ![Create New Blog Post on Blazor Blog](docs/screenshots/create-blog-post.png "Create New Blog Post")
 _The interface for creating a new blog post._
 
-### Create a New Category
+### 9) Admin – Dashboard
+![Admin – Dashboard](https://www.unrealbg.com/blazorblog/09-admin-dashboard.png "Admin – Dashboard")
+_Admin console overview with quick actions for categories, posts, and subscribers._
 
 ![Create New Category on Blazor Blog](docs/screenshots/create-category.png "Create New Category")
 _The interface for adding a new category to the blog._
