@@ -91,6 +91,7 @@ Data and Identity live under `BlazorBlog.Infrastructure.Persistence` (single `Ap
 - BlazorBlog.Infrastructure (EF Core, Identity, seeding, data services)
 - BlazorBlog.Application (view models, validators, contracts)
 - BlazorBlog.Domain (entities)
+- BlazorBlog.AppHost (Aspire local orchestration)
 - BlazorBlog.Tests (xUnit v3 + bUnit)
 
 ### Tech stack
@@ -100,6 +101,7 @@ Data and Identity live under `BlazorBlog.Infrastructure.Persistence` (single `Ap
 - ASP.NET Core Identity with role-based authorization
 - QuickGrid, FluentValidation, Mapster, Serilog
 - Tailwind CSS
+- Aspire AppHost for local orchestration
 - xUnit v3, bUnit, Moq, coverlet
 
 ## Getting Started
@@ -107,6 +109,7 @@ Data and Identity live under `BlazorBlog.Infrastructure.Persistence` (single `Ap
 ### Prerequisites
 
 - .NET 10 SDK
+- Docker Desktop or another OCI-compatible container runtime for Aspire/Docker workflows
 - Recommended: Visual Studio 2022 (latest) with ASP.NET workload
 - PostgreSQL. The default local connection string expects `postgres/postgres` on `localhost:5432`
 - Node.js 18+ (LTS) if you plan to run the Tailwind CSS watcher during development or rely on the publish-time CSS build
@@ -135,7 +138,17 @@ To start a local PostgreSQL container:
 docker run --name blazorblog-postgres -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=blazorblog -p 5432:5432 -d postgres:16
 ```
 
-### Run the application
+### Run with Aspire
+
+The AppHost starts PostgreSQL, waits for it to become healthy, injects `ConnectionStrings__DefaultConnection`, and starts the Blazor app with a `/health` check.
+
+```bash
+dotnet run --project BlazorBlog.AppHost/BlazorBlog.AppHost.csproj
+```
+
+The Aspire dashboard opens at `http://localhost:15053`.
+
+### Run the application directly
 
 From the repository root:
 
