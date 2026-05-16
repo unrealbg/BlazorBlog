@@ -22,6 +22,7 @@ COPY BlazorBlog.Application/BlazorBlog.Application.csproj BlazorBlog.Application
 COPY BlazorBlog.Domain/BlazorBlog.Domain.csproj BlazorBlog.Domain/
 COPY BlazorBlog.Infrastructure/BlazorBlog.Infrastructure.csproj BlazorBlog.Infrastructure/
 COPY BlazorBlog.Tests/BlazorBlog.Tests.csproj BlazorBlog.Tests/
+COPY BlazorBlog.AppHost/BlazorBlog.AppHost.csproj BlazorBlog.AppHost/
 COPY BlazorBlog.sln ./
 
 # Restore for the Linux runtime target.
