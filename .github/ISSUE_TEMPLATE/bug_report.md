@@ -13,7 +13,7 @@ A clear and concise description of what the bug is.
 - OS:
 - .NET SDK:
 - Browser (and version):
-- Project: Blazor (.NET 9)
+- Project: Blazor (.NET 10)
 
 ## Version/Commit
 - App version or commit SHA:
