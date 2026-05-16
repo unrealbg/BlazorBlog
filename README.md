@@ -21,8 +21,8 @@ Welcome to the Blazor Blog Project! This repository hosts a modern, responsive b
 - Responsive Design
 - Interactive UI with QuickGrid for admin tables
 - Identity (cookie auth) with seeded Admin user
-- Rich text editor for posts (Blazored.TextEditor / Quill)
-- Auto-apply EF Core migrations and data seeding on startup
+- Rich text editor for posts with direct Quill integration
+- Configurable EF Core migrations and data seeding on startup
 - Serilog logging (console + rolling files)
 - Health endpoint: GET /health
 - In-memory caching for public lists (2 min TTL) with automatic cache bust on admin changes
@@ -116,7 +116,7 @@ Data and Identity live under `BlazorBlog.Infrastructure.Persistence` (single `Ap
 
 ### Configuration
 
-Update the connection string and Admin user settings in `BlazorBlog/appsettings.json`:
+For local development, update the connection string and Admin user settings in `BlazorBlog/appsettings.json` or user secrets:
 
 ```json
 {
@@ -128,6 +128,32 @@ Update the connection string and Admin user settings in `BlazorBlog/appsettings.
     "Email": "admin@bblog.com",
     "Password": "Admin@123",
     "Role": "Admin"
+  }
+}
+```
+
+Production must override `AdminUser:Password`; the app refuses to start with the default `Admin@123` password outside Development.
+
+Optional runtime settings:
+
+```json
+{
+  "Database": {
+    "ApplyMigrationsOnStartup": false,
+    "SeedOnStartup": true
+  },
+  "ForwardedHeaders": {
+    "KnownProxies": [ "10.0.0.10" ]
+  },
+  "Email": {
+    "Host": "smtp.example.com",
+    "Port": 587,
+    "EnableSsl": true,
+    "UserName": "smtp-user",
+    "Password": "smtp-password",
+    "SenderEmail": "no-reply@example.com",
+    "SenderName": "Blazor Blog",
+    "RequireConfiguredSender": true
   }
 }
 ```
@@ -147,6 +173,8 @@ dotnet run --project BlazorBlog.AppHost/BlazorBlog.AppHost.csproj
 ```
 
 The Aspire dashboard opens at `http://localhost:15053`.
+
+The AppHost pins PostgreSQL 16 and stores data in the `blazorblog-postgres16-data` Docker volume. If you previously ran the project with PostgreSQL 17, keep the old volume for backup or remove it after exporting any local data you still need.
 
 ### Run the application directly
 
@@ -191,8 +219,9 @@ Notes:
 
 ### First run behavior
 
-- Pending EF Core migrations are applied automatically on startup
-- Initial data is seeded via `ISeedService` (Admin role/user + default categories)
+- In Development, pending EF Core migrations are applied automatically on startup
+- Outside Development, set `Database:ApplyMigrationsOnStartup=true` to opt in
+- Initial data is seeded via `ISeedService` (Admin role/user + default categories) when `Database:SeedOnStartup` is true
 
 > Optional: You can still apply migrations manually with `dotnet ef database update`, but it's not required for local runs.
 
@@ -200,7 +229,7 @@ Notes:
 
 - Cookie authentication using ASP.NET Core Identity
 - Login page: `/Account/Login`
-- Default Admin credentials (change in appsettings before first run):
+- Default local Admin credentials (change before first production run):
   - Email: `admin@bblog.com`
   - Password: `Admin@123`
 
@@ -209,16 +238,22 @@ Notes:
 Admin-only pages (require the `Admin` role):
 
 - `/admin/dashboard`
+- `/admin/manage-subscribers`
+- `/admin/manage-users`
+- `/admin/create-user`
+
+Content management pages require `Admin` or `Editor`:
+
 - `/admin/manage-blog-posts` (+ create/edit pages)
 - `/admin/manage-categories`
-- `/admin/manage-subscribers`
 
 ## Forgot/Reset password
 
 - Pages:
   - `/Account/ForgotPassword`
   - `/Account/ResetPassword?email=...&code=...`
-- Email sending uses `IEmailSender<ApplicationUser>`. The default is a no-op sender for local development
+- Email sending uses `IEmailSender<ApplicationUser>`
+- Configure the `Email` section for SMTP delivery; without it, the development fallback logs a warning and does not send email
 - Development helper: In Development the Forgot Password page displays a 'Development only' section with the generated reset link and token for easy local testing
 
 ## Health endpoint
@@ -244,7 +279,24 @@ The Dockerfile builds the Blazor app with the .NET 10 SDK image and publishes a 
 
 ```bash
 docker build -t blazorblog .
-docker run --rm -p 8080:8080 -e ConnectionStrings__DefaultConnection="Host=host.docker.internal;Port=5432;Database=blazorblog;Username=postgres;Password=postgres" blazorblog
+docker run --rm -p 8080:8080 \
+  -e ConnectionStrings__DefaultConnection="Host=host.docker.internal;Port=5432;Database=blazorblog;Username=postgres;Password=postgres" \
+  -e AdminUser__Password="replace-with-a-strong-password" \
+  -e Database__ApplyMigrationsOnStartup=true \
+  blazorblog
+```
+
+With Compose, create a `.env` file or export variables first:
+
+```bash
+POSTGRES_PASSWORD=replace-with-a-strong-db-password
+ADMIN_USER_PASSWORD=replace-with-a-strong-admin-password
+```
+
+Then run:
+
+```bash
+docker compose up --build
 ```
 
 ## Contributing
