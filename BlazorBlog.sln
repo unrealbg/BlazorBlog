@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorBlog.Infrastructure",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorBlog.Tests", "BlazorBlog.Tests\BlazorBlog.Tests.csproj", "{B1C3D7E1-0000-0000-0000-000000000000}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorBlog.AppHost", "BlazorBlog.AppHost\BlazorBlog.AppHost.csproj", "{9E40B453-AE7C-4C96-ABAC-CAB93EB63AF2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -83,6 +85,18 @@ Global
 		{B1C3D7E1-0000-0000-0000-000000000000}.Release|x64.Build.0 = Release|Any CPU
 		{B1C3D7E1-0000-0000-0000-000000000000}.Release|x86.ActiveCfg = Release|Any CPU
 		{B1C3D7E1-0000-0000-0000-000000000000}.Release|x86.Build.0 = Release|Any CPU
+		{9E40B453-AE7C-4C96-ABAC-CAB93EB63AF2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9E40B453-AE7C-4C96-ABAC-CAB93EB63AF2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9E40B453-AE7C-4C96-ABAC-CAB93EB63AF2}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{9E40B453-AE7C-4C96-ABAC-CAB93EB63AF2}.Debug|x64.Build.0 = Debug|Any CPU
+		{9E40B453-AE7C-4C96-ABAC-CAB93EB63AF2}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{9E40B453-AE7C-4C96-ABAC-CAB93EB63AF2}.Debug|x86.Build.0 = Debug|Any CPU
+		{9E40B453-AE7C-4C96-ABAC-CAB93EB63AF2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9E40B453-AE7C-4C96-ABAC-CAB93EB63AF2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9E40B453-AE7C-4C96-ABAC-CAB93EB63AF2}.Release|x64.ActiveCfg = Release|Any CPU
+		{9E40B453-AE7C-4C96-ABAC-CAB93EB63AF2}.Release|x64.Build.0 = Release|Any CPU
+		{9E40B453-AE7C-4C96-ABAC-CAB93EB63AF2}.Release|x86.ActiveCfg = Release|Any CPU
+		{9E40B453-AE7C-4C96-ABAC-CAB93EB63AF2}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
