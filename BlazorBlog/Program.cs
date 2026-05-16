@@ -1,15 +1,20 @@
 namespace BlazorBlog
 {
     using System.Net;
+    using System.Text.Json;
 
     using Components.Account;
+    using BlazorBlog.Health;
     using BlazorBlog.Infrastructure;
     using BlazorBlog.Infrastructure.Settings;
     using Ganss.Xss;
+    using Microsoft.AspNetCore.Diagnostics.HealthChecks;
     using Microsoft.AspNetCore.Identity;
     using Microsoft.EntityFrameworkCore;
     using BlazorBlog.Application;
     using Microsoft.Extensions.Logging;
+    using Microsoft.Extensions.Diagnostics.HealthChecks;
+    using Microsoft.AspNetCore.StaticFiles;
     using Serilog;
     using BlazorBlog.Infrastructure.Persistence;
 
@@ -58,6 +63,10 @@ namespace BlazorBlog
 
             builder.Services.AddSingleton<IHtmlSanitizer, HtmlSanitizer>(_ => new HtmlSanitizer());
 
+            builder.Services.AddHealthChecks()
+                .AddCheck<DatabaseHealthCheck>("database", tags: ["ready"])
+                .AddCheck<DiskSpaceHealthCheck>("disk", tags: ["ready"]);
+
             ValidateStartupConfiguration(builder);
 
             var app = builder.Build();
@@ -86,19 +95,123 @@ namespace BlazorBlog
             }
 
             app.UseHttpsRedirection();
-            app.UseStaticFiles();
+            app.Use(ApplyStaticAssetCacheHeaders);
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                OnPrepareResponse = ConfigureStaticFileCacheHeaders
+            });
             app.UseAntiforgery();
+
+            app.MapStaticAssets();
 
             app.MapRazorComponents<App>()
                 .AddInteractiveServerRenderMode();
 
             app.MapAdditionalIdentityEndpoints();
 
-            // Lightweight health endpoint
-            app.MapGet("/health", () => Results.Ok(new { status = "ok", timeUtc = DateTime.UtcNow }))
-                .WithName("Health");
+            app.MapGet("/health", (ILogger<Program> logger) =>
+                {
+                    logger.LogDebug("Liveness health check completed.");
+                    return Results.Ok(new { status = "ok", timeUtc = DateTime.UtcNow });
+                })
+                .WithName("Health")
+                .WithTags("Health");
+
+            app.MapHealthChecks("/ready", new HealthCheckOptions
+            {
+                Predicate = check => check.Tags.Contains("ready", StringComparer.OrdinalIgnoreCase),
+                ResponseWriter = WriteHealthCheckResponseAsync
+            })
+                .WithName("Ready")
+                .WithTags("Health");
 
             app.Run();
+
+            static Task WriteHealthCheckResponseAsync(HttpContext context, HealthReport report)
+            {
+                var logger = context.RequestServices.GetRequiredService<ILogger<Program>>();
+                var logLevel = report.Status == HealthStatus.Healthy ? LogLevel.Information : LogLevel.Warning;
+
+                logger.Log(
+                    logLevel,
+                    "Readiness health check completed with status {Status} in {ElapsedMilliseconds} ms.",
+                    report.Status,
+                    report.TotalDuration.TotalMilliseconds);
+
+                context.Response.ContentType = "application/json";
+
+                var response = new
+                {
+                    status = report.Status.ToString(),
+                    timeUtc = DateTime.UtcNow,
+                    totalDurationMilliseconds = Math.Round(report.TotalDuration.TotalMilliseconds, 2),
+                    checks = report.Entries.ToDictionary(
+                        entry => entry.Key,
+                        entry => new
+                        {
+                            status = entry.Value.Status.ToString(),
+                            entry.Value.Description,
+                            durationMilliseconds = Math.Round(entry.Value.Duration.TotalMilliseconds, 2),
+                            entry.Value.Data
+                        })
+                };
+
+                return context.Response.WriteAsJsonAsync(response, new JsonSerializerOptions(JsonSerializerDefaults.Web));
+            }
+
+            static async Task ApplyStaticAssetCacheHeaders(HttpContext context, RequestDelegate next)
+            {
+                var path = context.Request.Path.Value ?? string.Empty;
+
+                if (IsLongLivedAsset(path))
+                {
+                    var environment = context.RequestServices.GetRequiredService<IWebHostEnvironment>();
+
+                    context.Response.OnStarting(() =>
+                    {
+                        if (!context.Response.Headers.ContainsKey("Cache-Control"))
+                        {
+                            context.Response.Headers.CacheControl = environment.IsDevelopment()
+                                ? "no-cache"
+                                : "public,max-age=31536000,immutable";
+                        }
+
+                        return Task.CompletedTask;
+                    });
+                }
+
+                await next(context);
+            }
+
+            static void ConfigureStaticFileCacheHeaders(StaticFileResponseContext context)
+            {
+                var environment = context.Context.RequestServices.GetRequiredService<IWebHostEnvironment>();
+                var path = context.Context.Request.Path.Value ?? string.Empty;
+
+                context.Context.Response.Headers.CacheControl = environment.IsDevelopment()
+                    ? "no-cache"
+                    : IsLongLivedAsset(path)
+                        ? "public,max-age=31536000,immutable"
+                        : "public,max-age=3600";
+            }
+
+            static bool IsLongLivedAsset(string path)
+            {
+                var extension = Path.GetExtension(path);
+
+                return extension.Equals(".css", StringComparison.OrdinalIgnoreCase) ||
+                    extension.Equals(".js", StringComparison.OrdinalIgnoreCase) ||
+                    extension.Equals(".png", StringComparison.OrdinalIgnoreCase) ||
+                    extension.Equals(".jpg", StringComparison.OrdinalIgnoreCase) ||
+                    extension.Equals(".jpeg", StringComparison.OrdinalIgnoreCase) ||
+                    extension.Equals(".gif", StringComparison.OrdinalIgnoreCase) ||
+                    extension.Equals(".svg", StringComparison.OrdinalIgnoreCase) ||
+                    extension.Equals(".webp", StringComparison.OrdinalIgnoreCase) ||
+                    extension.Equals(".avif", StringComparison.OrdinalIgnoreCase) ||
+                    extension.Equals(".ico", StringComparison.OrdinalIgnoreCase) ||
+                    extension.Equals(".woff", StringComparison.OrdinalIgnoreCase) ||
+                    extension.Equals(".woff2", StringComparison.OrdinalIgnoreCase);
+            }
 
             static async Task ApplyMigrationsAsync(IServiceProvider services)
             {
