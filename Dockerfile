@@ -7,7 +7,7 @@ WORKDIR /app
 EXPOSE 8080
 ENV ASPNETCORE_URLS=http://+:8080 \
     DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false
-RUN apk add --no-cache icu-libs
+RUN apk add --no-cache icu-libs krb5-libs
 
 # ---- Build ----
 FROM mcr.microsoft.com/dotnet/sdk:${DOTNET_VERSION}-alpine AS build

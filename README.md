@@ -257,7 +257,7 @@ docker build -t blazorblog .
 docker run --rm -p 8080:8080 \
   --add-host=host.docker.internal:host-gateway \
   -e ConnectionStrings__DefaultConnection="Host=host.docker.internal;Port=5432;Database=blazorblog;Username=postgres;Password=postgres" \
-  -e AdminUser__Password="replace-with-a-strong-password" \
+  -e AdminUser__Password="ChangeMe-2026!" \
   -e Database__ApplyMigrationsOnStartup=true \
   blazorblog
 ```
@@ -267,8 +267,8 @@ On native Linux, `--add-host=host.docker.internal:host-gateway` maps `host.docke
 With Compose, create a `.env` file or export variables first:
 
 ```bash
-POSTGRES_PASSWORD=replace-with-a-strong-db-password
-ADMIN_USER_PASSWORD=replace-with-a-strong-admin-password
+POSTGRES_PASSWORD=change-this-db-password
+ADMIN_USER_PASSWORD=ChangeMe-2026!
 ```
 
 Then run:
