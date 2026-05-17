@@ -1,6 +1,8 @@
 **/bin/
 **/obj/
+**/node_modules/
 **/TestResults/
+**/Logs/
 .vs/
 .vscode/
 .git/
