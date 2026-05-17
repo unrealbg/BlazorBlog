@@ -255,11 +255,14 @@ The Dockerfile builds the Blazor app with the .NET 10 SDK image and publishes a 
 ```bash
 docker build -t blazorblog .
 docker run --rm -p 8080:8080 \
+  --add-host=host.docker.internal:host-gateway \
   -e ConnectionStrings__DefaultConnection="Host=host.docker.internal;Port=5432;Database=blazorblog;Username=postgres;Password=postgres" \
   -e AdminUser__Password="replace-with-a-strong-password" \
   -e Database__ApplyMigrationsOnStartup=true \
   blazorblog
 ```
+
+On native Linux, `--add-host=host.docker.internal:host-gateway` maps `host.docker.internal` to the Docker host gateway. Docker Desktop usually provides this name automatically.
 
 With Compose, create a `.env` file or export variables first:
 
