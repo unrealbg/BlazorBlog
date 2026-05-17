@@ -31,6 +31,7 @@ services:
       - AdminUser__Role=Admin
       - Database__ApplyMigrationsOnStartup=${APPLY_MIGRATIONS_ON_STARTUP:-true}
       - Database__SeedOnStartup=${SEED_ON_STARTUP:-true}
+      - Security__UseHttpsRedirection=${USE_HTTPS_REDIRECTION:-false}
       - Email__Host=${EMAIL_HOST:-}
       - Email__Port=${EMAIL_PORT:-587}
       - Email__EnableSsl=${EMAIL_ENABLE_SSL:-true}

@@ -94,7 +94,11 @@ namespace BlazorBlog
                 app.UseHsts();
             }
 
-            app.UseHttpsRedirection();
+            if (ShouldUseHttpsRedirection(app))
+            {
+                app.UseHttpsRedirection();
+            }
+
             app.Use(ApplyStaticAssetCacheHeaders);
             app.UseStaticFiles(new StaticFileOptions
             {
@@ -253,6 +257,12 @@ namespace BlazorBlog
             {
                 return app.Configuration.GetValue<bool?>("Database:ApplyMigrationsOnStartup")
                     ?? app.Environment.IsDevelopment();
+            }
+
+            static bool ShouldUseHttpsRedirection(WebApplication app)
+            {
+                return app.Configuration.GetValue<bool?>("Security:UseHttpsRedirection")
+                    ?? !app.Configuration.GetValue<bool>("DOTNET_RUNNING_IN_CONTAINER");
             }
 
             static void ConfigureForwardedHeaders(WebApplication app)
