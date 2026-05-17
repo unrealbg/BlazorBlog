@@ -259,6 +259,7 @@ docker run --rm -p 8080:8080 \
   -e ConnectionStrings__DefaultConnection="Host=host.docker.internal;Port=5432;Database=blazorblog;Username=postgres;Password=postgres" \
   -e AdminUser__Password="ChangeMe-2026!" \
   -e Database__ApplyMigrationsOnStartup=true \
+  -e Security__UseHttpsRedirection=false \
   blazorblog
 ```
 
