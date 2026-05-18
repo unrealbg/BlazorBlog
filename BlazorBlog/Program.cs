@@ -72,6 +72,7 @@ namespace BlazorBlog
             var app = builder.Build();
 
             ConfigureForwardedHeaders(app);
+            app.Use(RejectInvalidRequestHost);
 
             if (ShouldApplyMigrations(app))
             {
@@ -90,7 +91,15 @@ namespace BlazorBlog
             }
             else
             {
-                app.UseExceptionHandler("/Error");
+                app.UseExceptionHandler(errorApp =>
+                {
+                    errorApp.Run(async context =>
+                    {
+                        context.Response.StatusCode = StatusCodes.Status500InternalServerError;
+                        context.Response.ContentType = "text/plain";
+                        await context.Response.WriteAsync("An error occurred while processing your request.");
+                    });
+                });
                 app.UseHsts();
             }
 
@@ -185,6 +194,28 @@ namespace BlazorBlog
                 }
 
                 await next(context);
+            }
+
+            static async Task RejectInvalidRequestHost(HttpContext context, RequestDelegate next)
+            {
+                if (IsValidRequestHost(context.Request.Host))
+                {
+                    await next(context);
+                    return;
+                }
+
+                var logger = context.RequestServices.GetRequiredService<ILogger<Program>>();
+                logger.LogWarning("Rejected request with invalid Host header '{Host}'.", context.Request.Host.Value);
+
+                context.Response.StatusCode = StatusCodes.Status400BadRequest;
+                await context.Response.WriteAsync("Bad Request");
+            }
+
+            static bool IsValidRequestHost(HostString host)
+            {
+                return host.HasValue &&
+                    Uri.TryCreate($"http://{host.Value}/", UriKind.Absolute, out var uri) &&
+                    uri.HostNameType != UriHostNameType.Unknown;
             }
 
             static void ConfigureStaticFileCacheHeaders(StaticFileResponseContext context)
