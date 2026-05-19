@@ -151,6 +151,16 @@ namespace BlazorBlog
                     report.Status,
                     report.TotalDuration.TotalMilliseconds);
 
+                foreach (var (name, entry) in report.Entries.Where(entry => entry.Value.Status != HealthStatus.Healthy))
+                {
+                    logger.LogWarning(
+                        entry.Exception,
+                        "Readiness check '{Name}' failed with status {Status}: {Description}",
+                        name,
+                        entry.Status,
+                        entry.Description);
+                }
+
                 context.Response.ContentType = "application/json";
 
                 var response = new

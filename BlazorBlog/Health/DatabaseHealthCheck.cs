@@ -20,11 +20,10 @@ namespace BlazorBlog.Health
             try
             {
                 await using var db = await _contextFactory.CreateDbContextAsync(cancellationToken);
-                var canConnect = await db.Database.CanConnectAsync(cancellationToken);
+                await db.Database.OpenConnectionAsync(cancellationToken);
+                await db.Database.CloseConnectionAsync();
 
-                return canConnect
-                    ? HealthCheckResult.Healthy("Database connection is available.")
-                    : HealthCheckResult.Unhealthy("Database connection is not available.");
+                return HealthCheckResult.Healthy("Database connection is available.");
             }
             catch (Exception ex)
             {
