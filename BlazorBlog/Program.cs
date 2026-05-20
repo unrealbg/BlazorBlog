@@ -15,6 +15,7 @@ namespace BlazorBlog
     using Microsoft.Extensions.Logging;
     using Microsoft.Extensions.Diagnostics.HealthChecks;
     using Microsoft.AspNetCore.StaticFiles;
+    using Microsoft.AspNetCore.DataProtection;
     using Serilog;
     using BlazorBlog.Infrastructure.Persistence;
 
@@ -62,6 +63,7 @@ namespace BlazorBlog
             builder.Services.AddInfrastructureServices();
 
             builder.Services.AddSingleton<IHtmlSanitizer, HtmlSanitizer>(_ => new HtmlSanitizer());
+            ConfigureDataProtection(builder);
 
             builder.Services.AddHealthChecks()
                 .AddCheck<DatabaseHealthCheck>("database", tags: ["ready"])
@@ -304,6 +306,23 @@ namespace BlazorBlog
             {
                 return app.Configuration.GetValue<bool?>("Security:UseHttpsRedirection")
                     ?? !app.Configuration.GetValue<bool>("DOTNET_RUNNING_IN_CONTAINER");
+            }
+
+            static void ConfigureDataProtection(WebApplicationBuilder builder)
+            {
+                var keysPath = builder.Configuration["DataProtection:KeysPath"];
+                if (string.IsNullOrWhiteSpace(keysPath))
+                {
+                    return;
+                }
+
+                var keysDirectory = new DirectoryInfo(keysPath);
+                keysDirectory.Create();
+
+                builder.Services
+                    .AddDataProtection()
+                    .SetApplicationName("BlazorBlog")
+                    .PersistKeysToFileSystem(keysDirectory);
             }
 
             static void ConfigureForwardedHeaders(WebApplication app)
