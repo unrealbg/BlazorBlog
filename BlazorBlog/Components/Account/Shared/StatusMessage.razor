@@ -1,11 +1,18 @@
-﻿@if (!string.IsNullOrEmpty(DisplayMessage))
+@if (!string.IsNullOrWhiteSpace(DisplayMessage))
 {
-    var isError = DisplayMessage.StartsWith("Error");
-    var containerClass = isError
-        ? "rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800 dark:border-red-900 dark:bg-red-950/40 dark:text-red-200"
-        : "rounded-md border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800 dark:border-emerald-900 dark:bg-emerald-950/40 dark:text-emerald-200";
-    <div class="@containerClass" role="alert">
+    var toastLevel = GetToastLevel(DisplayMessage);
+    var toastHeading = GetToastHeading(toastLevel);
+
+    <div role="alert"
+         style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;">
         @DisplayMessage
+    </div>
+
+    <div hidden
+         data-status-toast
+         data-toast-level="@toastLevel"
+         data-toast-heading="@toastHeading"
+         data-toast-message="@DisplayMessage">
     </div>
 }
 
@@ -29,4 +36,19 @@
             HttpContext.Response.Cookies.Delete(IdentityRedirectManager.StatusCookieName);
         }
     }
+
+    private static string GetToastLevel(string message)
+    {
+        if (message.StartsWith("Error", StringComparison.OrdinalIgnoreCase) ||
+            message.Contains("invalid", StringComparison.OrdinalIgnoreCase) ||
+            message.Contains("expired", StringComparison.OrdinalIgnoreCase) ||
+            message.Contains("failed", StringComparison.OrdinalIgnoreCase))
+        {
+            return "Error";
+        }
+
+        return "Success";
+    }
+
+    private static string GetToastHeading(string level) => level == "Error" ? "Error" : "Success";
 }
