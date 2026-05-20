@@ -49,4 +49,29 @@
     display: none !important;
     content: none !important;
   }
+
+  .article-content :where(pre):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+    @apply overflow-x-auto rounded-md border border-slate-800 bg-slate-950 p-4 text-sm leading-6 text-slate-100 shadow-inner;
+  }
+
+  .article-content :where(pre code):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+    @apply block bg-transparent p-0 font-mono text-sm font-normal leading-6 text-inherit;
+  }
+
+  .article-content :where(code):not(:where(pre code, [class~="not-prose"], [class~="not-prose"] *)) {
+    @apply rounded bg-slate-100 px-1.5 py-0.5 font-mono text-[0.875em] font-semibold text-slate-900 dark:bg-slate-800 dark:text-slate-100;
+  }
+
+  .article-content :where(code):not(:where([class~="not-prose"], [class~="not-prose"] *))::before,
+  .article-content :where(code):not(:where([class~="not-prose"], [class~="not-prose"] *))::after {
+    content: none !important;
+  }
+
+  .ql-editor .ql-code-block-container {
+    @apply rounded-md bg-slate-950 px-4 py-3 text-slate-100;
+  }
+
+  .ql-editor .ql-code-block {
+    @apply font-mono text-sm leading-6;
+  }
 }

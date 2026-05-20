@@ -26,13 +26,13 @@
         private ValidationMessageStore? _messageStore;
         private Category[] _categories = [];
         private string? _content = default!;
-        private string? _errorMessage = null;
         private IBrowserFile? _fileToUpload;
         private string? _imageUrl;
         private string _sourceContent = string.Empty;
         private ContentEditorMode _editorMode = ContentEditorMode.Visual;
         private string PageTitle => Id is > 0 ? "Edit Blog Post" : "New Blog Post";
         private bool _isSaving;
+        private bool _quillInitialized;
         private readonly string _editorId = $"blog-post-editor-{Guid.NewGuid():N}";
         private readonly string _toolbarId = $"blog-post-toolbar-{Guid.NewGuid():N}";
         public bool IsSaving => _isSaving;
@@ -136,6 +136,7 @@
                     _toolbarId,
                     _content ?? string.Empty,
                     "Enter your blog post content here...");
+                _quillInitialized = true;
             }
         }
 
@@ -210,18 +211,21 @@
             var validationResult = await Validator.ValidateAsync(_blogPostVm, _cts.Token);
             if (!validationResult.IsValid)
             {
+                var validationMessages = new List<string>();
+
                 foreach (var error in validationResult.Errors)
                 {
                     var fi = new FieldIdentifier(_blogPostVm, error.PropertyName);
                     _messageStore.Add(fi, error.ErrorMessage);
+                    validationMessages.Add(error.ErrorMessage);
                 }
+
                 _editContext.NotifyValidationStateChanged();
+                ShowValidationToast(validationMessages);
                 return;
             }
 
             _isSaving = true;
-            _isLoading = true;
-            _loadingText = "Saving blog post...";
             StateHasChanged();
             await SaveBlogPostAsync();
         }
@@ -231,6 +235,22 @@
             var fi = new FieldIdentifier(_blogPostVm, nameof(_blogPostVm.Content));
             _messageStore!.Add(fi, message);
             _editContext.NotifyValidationStateChanged();
+            ShowValidationToast([message]);
+        }
+
+        private void ShowValidationToast(IEnumerable<string> messages)
+        {
+            var message = string.Join(" ", messages
+                .Where(message => !string.IsNullOrWhiteSpace(message))
+                .Distinct()
+                .Take(3));
+
+            if (string.IsNullOrWhiteSpace(message))
+            {
+                message = "Please fix the highlighted fields and try again.";
+            }
+
+            ToastService.ShowToast(ToastLevel.Warning, message, heading: "Validation", durationMs: 8000);
         }
 
         private async Task SaveBlogPostAsync()
@@ -243,7 +263,11 @@
                 if (_fileToUpload is not null)
                 {
                     var uploadedFileUrl = await SaveFileAsync(_fileToUpload);
-                    if (uploadedFileUrl is null) return;
+                    if (uploadedFileUrl is null)
+                    {
+                        _isSaving = false;
+                        return;
+                    }
 
                     if (_blogPostVm.Id > 0 && !string.IsNullOrWhiteSpace(_blogPostVm.Image))
                     {
@@ -282,7 +306,7 @@
                     ToastService.ShowToast(ToastLevel.Warning, "Saved post, but failed to save tags.", heading: "Warning");
                 }
 
-                NavigationManager.NavigateTo("/admin/manage-blog-posts");
+                NavigationManager.NavigateTo("/admin/manage-blog-posts?toast=post-saved");
             }
             catch (Exception ex)
             {
@@ -383,12 +407,19 @@
 
         public async ValueTask DisposeAsync()
         {
-            try
+            if (_quillInitialized)
             {
-                await JsRuntime.InvokeVoidAsync("blazorBlogQuill.dispose", _editorId);
-            }
-            catch (JSDisconnectedException)
-            {
+                try
+                {
+                    await JsRuntime.InvokeVoidAsync("blazorBlogQuill.dispose", _editorId);
+                }
+                catch (JSDisconnectedException)
+                {
+                }
+                catch (InvalidOperationException)
+                {
+                    // The prerendered component instance can be disposed before JS interop is available.
+                }
             }
 
             _cts.Cancel();
