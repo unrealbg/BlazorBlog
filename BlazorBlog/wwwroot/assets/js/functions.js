@@ -40,6 +40,21 @@ document.addEventListener("click", (e) => {
   toggleTheme();
 });
 
+document.addEventListener("click", (e) => {
+  const button = e.target instanceof Element ? e.target.closest("[data-password-toggle]") : null;
+  if (!button) return;
+
+  const selector = button.getAttribute("data-password-toggle");
+  const input = selector ? document.querySelector(selector) : null;
+
+  if (!(input instanceof HTMLInputElement)) return;
+
+  const showPassword = input.type === "password";
+  input.type = showPassword ? "text" : "password";
+  button.setAttribute("aria-pressed", String(showPassword));
+  button.setAttribute("aria-label", showPassword ? "Hide password" : "Show password");
+});
+
 document.addEventListener('blazor:navigation-start', applyStoredTheme);
 document.addEventListener('blazor:navigation-end', applyStoredTheme);
 document.addEventListener('blazor:navigation-end', () => {

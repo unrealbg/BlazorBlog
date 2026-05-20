@@ -5,7 +5,6 @@
         private const string InvalidLoginMessage = "Error: Invalid login attempt.";
 
         private string? _errorMessage;
-        private bool _showPassword;
         private bool _isSubmitting;
 
         [CascadingParameter]
@@ -26,9 +25,6 @@
 
         [Inject]
         NavigationManager NavigationManager { get; set; } = default!;
-
-        [Inject]
-        IdentityRedirectManager RedirectManager { get; set; } = default!;
 
         [Inject]
         UserManager<BlazorBlog.Infrastructure.Persistence.ApplicationUser> UserManager { get; set; } = default!;
@@ -89,7 +85,7 @@
                 await SignInManager.SignInWithClaimsAsync(user, Input.RememberMe, additionalClaims);
 
                 Logger.LogInformation("User logged in.");
-                RedirectManager.RedirectTo(string.IsNullOrWhiteSpace(ReturnUrl) ? "/admin/dashboard" : ReturnUrl);
+                HttpContext.Response.Redirect(GetSafeRedirectUrl());
             }
             finally
             {
@@ -97,9 +93,19 @@
             }
         }
 
-        private void ToggleShowPassword()
+        private string GetSafeRedirectUrl()
         {
-            _showPassword = !_showPassword;
+            var redirectUrl = string.IsNullOrWhiteSpace(ReturnUrl) ? "/admin/dashboard" : ReturnUrl;
+
+            if (redirectUrl.StartsWith("//", StringComparison.Ordinal) ||
+                !Uri.IsWellFormedUriString(redirectUrl, UriKind.Relative))
+            {
+                return "/admin/dashboard";
+            }
+
+            return redirectUrl.StartsWith("/", StringComparison.Ordinal)
+                ? redirectUrl
+                : $"/{redirectUrl}";
         }
     }
 }
