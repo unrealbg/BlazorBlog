@@ -12,6 +12,7 @@ namespace BlazorBlog.Tests.Component
     using BlazorBlog.Application.Models;
     using FluentValidation;
     using BlazorBlog.Infrastructure.Contracts;
+    using Ganss.Xss;
 
     public class BlogPostDetailPageTests
     {
@@ -23,6 +24,7 @@ namespace BlazorBlog.Tests.Component
             blog.Setup(s => s.GetBlogPostBySlugAsync("missing", It.IsAny<CancellationToken>()))
                 .ReturnsAsync(DetailPageModel.Empty());
             ctx.Services.AddSingleton(blog.Object);
+            ctx.Services.AddSingleton<IHtmlSanitizer, HtmlSanitizer>();
 
             var nav = ctx.Services.GetRequiredService<NavigationManager>();
             var cut = ctx.Render<BlogPostDetail>(p => p.Add(x => x.BlogPostSlug, "missing"));
@@ -49,6 +51,7 @@ namespace BlazorBlog.Tests.Component
                 .ReturnsAsync(System.Array.Empty<BlogPostVm>());
 
             ctx.Services.AddSingleton(blog.Object);
+            ctx.Services.AddSingleton<IHtmlSanitizer, HtmlSanitizer>();
             // Register DI required by SubscribeBox
             ctx.Services.AddSingleton<ISubscribeService, BlazorBlog.Tests.Component.DummySubscribeService>();
             ctx.Services.AddScoped<IValidator<BlazorBlog.Domain.Entities.Subscriber>, BlazorBlog.Tests.Component.DummySubscriberValidator>();

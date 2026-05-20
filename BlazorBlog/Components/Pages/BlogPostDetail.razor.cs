@@ -1,6 +1,7 @@
 ﻿namespace BlazorBlog.Components.Pages
 {
     using BlazorBlog.Application.Utilities;
+    using BlazorBlog.Utilities;
 
     public partial class BlogPostDetail
     {
@@ -12,6 +13,7 @@
         private string _authorName = string.Empty;
         private string _publishedAt = string.Empty;
         private string _readTime = string.Empty;
+        private string _renderedContent = string.Empty;
         private int _wordCount = 0;
 
         [Inject]
@@ -19,6 +21,9 @@
 
         [Inject]
         IBlogPostService BlogPostService { get; set; } = default!;
+
+        [Inject]
+        IHtmlSanitizer HtmlSanitizer { get; set; } = default!;
 
         [Parameter]
         public string BlogPostSlug { get; set; } = string.Empty;
@@ -42,6 +47,7 @@
             _categoryName = _blogPost.CategoryName ?? string.Empty;
             _authorName = _blogPost.AuthorName ?? string.Empty;
             _publishedAt = _blogPost.PublishedAtDisplay ?? string.Empty;
+            _renderedContent = BlogContentRenderer.RenderSafeHtml(_blogPost.Content, HtmlSanitizer);
 
             if (!string.IsNullOrWhiteSpace(_blogPost.ReadingTime))
             {
