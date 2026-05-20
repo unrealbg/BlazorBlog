@@ -4,9 +4,12 @@
 
     public partial class ManageBlogPosts
     {
+        private const string PostSavedToast = "post-saved";
+
         private bool _isLoading;
         private string? _loadingText;
         private bool _showLoader;
+        private bool _statusToastShown;
 
         private BlogPost _selectedBlogPost = new();
         private bool _showConfirmationModal = false;
@@ -27,6 +30,9 @@
 
         private Dictionary<int, string> _categoryNames = new();
         private HashSet<int> _savingToggles = new();
+
+        [SupplyParameterFromQuery(Name = "toast")]
+        private string? StatusToast { get; set; }
 
         [Inject]
         private IBlogPostAdminService BlogPostService { get; set; } = default!;
@@ -69,6 +75,20 @@
 
                 return GridItemsProviderResult.From(_currentBlogPosts, pagedBlogs.TotalCount);
             };
+        }
+
+        protected override void OnAfterRender(bool firstRender)
+        {
+            if (!firstRender || _statusToastShown)
+            {
+                return;
+            }
+
+            if (StatusToast == PostSavedToast)
+            {
+                _statusToastShown = true;
+                ToastService.ShowToast(ToastLevel.Success, "Blog post saved successfully.", heading: "Success");
+            }
         }
 
         private string GetCategoryName(int categoryId)
