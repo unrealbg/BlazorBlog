@@ -31,6 +31,18 @@
             return editor && editor.__quill ? editor.__quill.getText() : "";
         },
 
+        setHtml: function (editorId, html) {
+            const editor = document.getElementById(editorId);
+            if (!editor || !editor.__quill) {
+                return;
+            }
+
+            editor.__quill.setContents([]);
+            if (html) {
+                editor.__quill.clipboard.dangerouslyPasteHTML(html);
+            }
+        },
+
         dispose: function (editorId) {
             const editor = document.getElementById(editorId);
             if (editor) {

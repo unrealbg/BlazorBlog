@@ -2,6 +2,7 @@
 {
     using Microsoft.AspNetCore.Components.Forms;
     using Microsoft.JSInterop;
+    using BlazorBlog.Utilities;
     using Category = BlazorBlog.Domain.Entities.Category;
     using BlogPost = BlazorBlog.Domain.Entities.BlogPost;
 
@@ -28,14 +29,23 @@
         private string? _errorMessage = null;
         private IBrowserFile? _fileToUpload;
         private string? _imageUrl;
+        private string _sourceContent = string.Empty;
+        private ContentEditorMode _editorMode = ContentEditorMode.Visual;
         private string PageTitle => Id is > 0 ? "Edit Blog Post" : "New Blog Post";
         private bool _isSaving;
         private readonly string _editorId = $"blog-post-editor-{Guid.NewGuid():N}";
         private readonly string _toolbarId = $"blog-post-toolbar-{Guid.NewGuid():N}";
         public bool IsSaving => _isSaving;
         public string TagsCsv { get; set; } = string.Empty;
+        private string PreviewContent => BlogContentRenderer.RenderSafeHtml(_sourceContent, HtmlSanitizer);
 
         private readonly CancellationTokenSource _cts = new();
+
+        private enum ContentEditorMode
+        {
+            Visual,
+            Source
+        }
 
         [Inject] AuthenticationStateProvider AuthenticationStateProvider { get; set; } = default!;
         [Inject] IWebHostEnvironment WebHostEnvironment { get; set; } = default!;
@@ -74,6 +84,7 @@
                 _messageStore = new ValidationMessageStore(_editContext);
                 _imageUrl = blogPost.Image;
                 _content = blogPost.Content;
+                _sourceContent = blogPost.Content;
 
                 try
                 {
@@ -84,6 +95,35 @@
             }
             _isLoading = false;
             _loadingText = null;
+        }
+
+        private async Task SetEditorModeAsync(ContentEditorMode mode)
+        {
+            if (_editorMode == mode)
+            {
+                return;
+            }
+
+            if (mode == ContentEditorMode.Source)
+            {
+                _sourceContent = await JsRuntime.InvokeAsync<string>("blazorBlogQuill.getHtml", _editorId);
+            }
+            else
+            {
+                var safeHtml = BlogContentRenderer.RenderSafeHtml(_sourceContent, HtmlSanitizer);
+                await JsRuntime.InvokeVoidAsync("blazorBlogQuill.setHtml", _editorId, safeHtml);
+            }
+
+            _editorMode = mode;
+        }
+
+        private string GetEditorModeButtonClass(ContentEditorMode mode)
+        {
+            var active = _editorMode == mode
+                ? "bg-brand-600 text-white shadow-sm"
+                : "text-slate-700 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800";
+
+            return $"rounded px-3 py-1.5 font-medium transition {active}";
         }
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -138,17 +178,34 @@
         {
             _messageStore!.Clear();
 
-            var plain = (await JsRuntime.InvokeAsync<string>("blazorBlogQuill.getText", _editorId))?.Trim();
-            if (string.IsNullOrWhiteSpace(plain))
+            if (_editorMode == ContentEditorMode.Source)
             {
-                var fi = new FieldIdentifier(_blogPostVm, nameof(_blogPostVm.Content));
-                _messageStore.Add(fi, "The content is required.");
-                _editContext.NotifyValidationStateChanged();
-                return;
+                if (string.IsNullOrWhiteSpace(_sourceContent))
+                {
+                    AddContentValidationError("The content is required.");
+                    return;
+                }
+
+                _blogPostVm.Content = BlogContentRenderer.RenderSafeHtml(_sourceContent, HtmlSanitizer);
+            }
+            else
+            {
+                var plain = (await JsRuntime.InvokeAsync<string>("blazorBlogQuill.getText", _editorId))?.Trim();
+                if (string.IsNullOrWhiteSpace(plain))
+                {
+                    AddContentValidationError("The content is required.");
+                    return;
+                }
+
+                var html = await JsRuntime.InvokeAsync<string>("blazorBlogQuill.getHtml", _editorId);
+                _blogPostVm.Content = HtmlSanitizer.Sanitize(html);
             }
 
-            var html = await JsRuntime.InvokeAsync<string>("blazorBlogQuill.getHtml", _editorId);
-            _blogPostVm.Content = HtmlSanitizer.Sanitize(html);
+            if (string.IsNullOrWhiteSpace(_blogPostVm.Content))
+            {
+                AddContentValidationError("The content is required.");
+                return;
+            }
 
             var validationResult = await Validator.ValidateAsync(_blogPostVm, _cts.Token);
             if (!validationResult.IsValid)
@@ -167,6 +224,13 @@
             _loadingText = "Saving blog post...";
             StateHasChanged();
             await SaveBlogPostAsync();
+        }
+
+        private void AddContentValidationError(string message)
+        {
+            var fi = new FieldIdentifier(_blogPostVm, nameof(_blogPostVm.Content));
+            _messageStore!.Add(fi, message);
+            _editContext.NotifyValidationStateChanged();
         }
 
         private async Task SaveBlogPostAsync()
