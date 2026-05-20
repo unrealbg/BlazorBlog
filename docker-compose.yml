@@ -32,6 +32,7 @@ services:
       - Database__ApplyMigrationsOnStartup=${APPLY_MIGRATIONS_ON_STARTUP:-true}
       - Database__SeedOnStartup=${SEED_ON_STARTUP:-true}
       - Security__UseHttpsRedirection=${USE_HTTPS_REDIRECTION:-false}
+      - DataProtection__KeysPath=/app/DataProtection-Keys
       - Email__Host=${EMAIL_HOST:-}
       - Email__Port=${EMAIL_PORT:-587}
       - Email__EnableSsl=${EMAIL_ENABLE_SSL:-true}
@@ -45,10 +46,12 @@ services:
         condition: service_healthy
     ports:
       - "8080:8080"
+    volumes:
+      - data-protection-keys:/app/DataProtection-Keys
     # Optional persistent log volume.
-    # volumes:
     #   - blazorblog-logs:/app/Logs
 
 volumes:
   postgres-data:
+  data-protection-keys:
   # blazorblog-logs:
