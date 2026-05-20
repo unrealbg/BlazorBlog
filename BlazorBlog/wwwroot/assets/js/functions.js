@@ -31,6 +31,7 @@ document.addEventListener("DOMContentLoaded", () => {
   applyStoredTheme();
 
   ensureThemeConsistency();
+  initStatusToasts();
   initPostEnhancements();
 });
 
@@ -60,6 +61,7 @@ document.addEventListener('blazor:navigation-end', applyStoredTheme);
 document.addEventListener('blazor:navigation-end', () => {
   applyStoredTheme();
   // Re-initialize page-specific enhancements after navigation
+  initStatusToasts();
   initPostEnhancements();
 });
 
@@ -118,6 +120,137 @@ function ensureThemeConsistency() {
     }
   });
   observer.observe(root, { attributes: true, attributeFilter: ['class'] });
+}
+
+function initStatusToasts() {
+  document.querySelectorAll("[data-status-toast]:not([data-toast-shown='true'])").forEach((element) => {
+    element.setAttribute("data-toast-shown", "true");
+
+    showClientToast({
+      level: element.getAttribute("data-toast-level") || "Info",
+      heading: element.getAttribute("data-toast-heading") || "",
+      message: element.getAttribute("data-toast-message") || "",
+      durationMs: Number(element.getAttribute("data-toast-duration-ms")) || undefined
+    });
+  });
+}
+
+function showClientToast({ level = "Info", heading = "", message = "", durationMs } = {}) {
+  if (!message && !heading) return;
+
+  const normalizedLevel = ["Success", "Warning", "Error", "Info"].includes(level) ? level : "Info";
+  const timeoutMs = durationMs || getClientToastDuration(normalizedLevel);
+  const container = getClientToastContainer();
+  const toast = document.createElement("div");
+
+  toast.className = "pointer-events-auto w-[360px] max-w-[92vw] rounded-md border border-slate-200/70 bg-white/95 p-0 text-slate-800 shadow-lg backdrop-blur transition dark:border-slate-800 dark:bg-slate-900/95 dark:text-slate-100";
+  toast.setAttribute("role", "status");
+  toast.style.animation = "toast-slide-in .22s ease-out";
+
+  const accentClass = getClientToastAccentClass(normalizedLevel);
+  const displayHeading = heading || normalizedLevel;
+
+  const content = document.createElement("div");
+  content.className = "flex items-start gap-3 p-3";
+
+  const icon = document.createElement("div");
+  icon.className = `mt-0.5 inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-white shadow ${accentClass}`;
+  icon.setAttribute("aria-hidden", "true");
+  icon.innerHTML = getClientToastIcon(normalizedLevel);
+
+  const text = document.createElement("div");
+  text.className = "min-w-0 flex-1";
+
+  const header = document.createElement("div");
+  header.className = "flex items-start justify-between gap-3";
+
+  const title = document.createElement("p");
+  title.className = "m-0 truncate text-sm font-semibold";
+  title.textContent = displayHeading;
+
+  const close = document.createElement("button");
+  close.type = "button";
+  close.className = "-m-1 inline-flex h-7 w-7 items-center justify-center rounded-md text-slate-400 transition hover:text-slate-600 focus:outline-none focus:ring-2 focus:ring-brand-500 dark:text-slate-400 dark:hover:text-slate-200";
+  close.title = "Dismiss";
+  close.setAttribute("aria-label", "Dismiss notification");
+  close.innerHTML = "<svg viewBox='0 0 24 24' width='16' height='16' fill='currentColor' aria-hidden='true'><path d='M18.3 5.7 12 12l6.3 6.3-1.4 1.4L10.6 13.4 4.3 19.7 2.9 18.3 9.2 12 2.9 5.7 4.3 4.3l6.3 6.3 6.3-6.3z'/></svg>";
+  close.addEventListener("click", () => removeClientToast(toast));
+
+  const body = document.createElement("div");
+  body.className = "mt-1 text-sm text-slate-600 dark:text-slate-300";
+  body.textContent = message || displayHeading;
+
+  const progressWrap = document.createElement("div");
+  progressWrap.className = "h-0.5 w-full overflow-hidden bg-slate-200 dark:bg-slate-800";
+
+  const progress = document.createElement("i");
+  progress.className = `block h-full w-full origin-left ${accentClass}`;
+  progress.style.animation = `toast-progress ${timeoutMs}ms linear forwards`;
+
+  header.append(title, close);
+  text.append(header, body);
+  content.append(icon, text);
+  progressWrap.append(progress);
+  toast.append(content, progressWrap);
+  container.prepend(toast);
+
+  window.setTimeout(() => removeClientToast(toast), timeoutMs);
+}
+
+function getClientToastContainer() {
+  let container = document.getElementById("client-toast-container");
+
+  if (!container) {
+    container = document.createElement("div");
+    container.id = "client-toast-container";
+    container.className = "pointer-events-none fixed top-4 right-4 z-[9999]";
+    container.setAttribute("aria-live", "polite");
+    container.setAttribute("aria-atomic", "true");
+
+    const stack = document.createElement("div");
+    stack.className = "flex max-w-[92vw] flex-col items-end gap-2";
+    container.append(stack);
+    document.body.append(container);
+  }
+
+  return container.firstElementChild || container;
+}
+
+function removeClientToast(toast) {
+  toast.style.opacity = "0";
+  toast.style.transform = "translate3d(16px,-8px,0)";
+  window.setTimeout(() => toast.remove(), 150);
+}
+
+function getClientToastDuration(level) {
+  switch (level) {
+    case "Success": return 5000;
+    case "Warning": return 10000;
+    case "Error": return 15000;
+    default: return 10000;
+  }
+}
+
+function getClientToastAccentClass(level) {
+  switch (level) {
+    case "Success": return "bg-emerald-600";
+    case "Warning": return "bg-amber-500";
+    case "Error": return "bg-rose-600";
+    default: return "bg-brand-600";
+  }
+}
+
+function getClientToastIcon(level) {
+  switch (level) {
+    case "Success":
+      return "<svg viewBox='0 0 24 24' width='14' height='14' fill='currentColor' aria-hidden='true'><path d='M9 16.2 4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4z'/></svg>";
+    case "Warning":
+      return "<svg viewBox='0 0 24 24' width='14' height='14' fill='currentColor' aria-hidden='true'><path d='M1 21h22L12 2 1 21zm12-3h-2v2h2v-2zm0-8h-2v6h2V10z'/></svg>";
+    case "Error":
+      return "<svg viewBox='0 0 24 24' width='14' height='14' fill='currentColor' aria-hidden='true'><path d='M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm5 13.6L15.6 17 12 13.4 8.4 17 7 15.6 10.6 12 7 8.4 8.4 7 12 10.6 15.6 7 17 8.4 13.4 12 17 15.6z'/></svg>";
+    default:
+      return "<svg viewBox='0 0 24 24' width='14' height='14' fill='currentColor' aria-hidden='true'><path d='M11 7h2v6h-2zm0 8h2v2h-2z'/><path d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z'/></svg>";
+  }
 }
 
 // --- Post page enhancements: reading progress, ToC ---
