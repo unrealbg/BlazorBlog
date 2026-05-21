@@ -23,7 +23,7 @@ Welcome to the Blazor Blog Project! This repository hosts a modern, responsive b
 - Responsive Design
 - Interactive UI with QuickGrid for admin tables
 - Identity (cookie auth) with seeded Admin user
-- Rich text editor for posts with direct Quill integration
+- Post editor with Quill visual editing plus Markdown/HTML source mode, live preview, and code blocks
 - Configurable EF Core migrations and data seeding on startup
 - Serilog logging (console + rolling files)
 - Health endpoints: GET /health and GET /ready
@@ -221,6 +221,21 @@ Content management pages require `Admin` or `Editor`:
 - `/admin/manage-blog-posts` (+ create/edit pages)
 - `/admin/manage-categories`
 
+The post editor supports two content workflows:
+
+- Visual mode for rich text editing through Quill
+- Markdown / HTML mode with a rendered preview
+
+Markdown content is sanitized before rendering. Use fenced Markdown blocks for code snippets:
+
+````markdown
+```razor
+<ProductCard
+    Title="@product.Name"
+    Price="@product.Price" />
+```
+````
+
 ## Forgot/Reset password
 
 - Pages:
@@ -268,8 +283,28 @@ On native Linux, `--add-host=host.docker.internal:host-gateway` maps `host.docke
 With Compose, create a `.env` file or export variables first:
 
 ```bash
+POSTGRES_DB=blazorblog
+POSTGRES_USER=postgres
 POSTGRES_PASSWORD=change-this-db-password
+POSTGRES_PORT=15432
+
+ADMIN_USER_NAME=Admin
+ADMIN_USER_EMAIL=admin@bblog.com
 ADMIN_USER_PASSWORD=ChangeMe-2026!
+
+APPLY_MIGRATIONS_ON_STARTUP=true
+SEED_ON_STARTUP=true
+USE_HTTPS_REDIRECTION=false
+
+# Optional SMTP settings
+# EMAIL_HOST=smtp.example.com
+# EMAIL_PORT=587
+# EMAIL_ENABLE_SSL=true
+# EMAIL_USERNAME=smtp-user
+# EMAIL_PASSWORD=smtp-password
+# EMAIL_SENDER_EMAIL=no-reply@example.com
+# EMAIL_SENDER_NAME=Blazor Blog
+# EMAIL_REQUIRE_CONFIGURED_SENDER=true
 ```
 
 Then run:
@@ -277,6 +312,22 @@ Then run:
 ```bash
 docker compose up --build
 ```
+
+Compose exposes the web app on `http://localhost:8080` and binds PostgreSQL to localhost on `POSTGRES_PORT` (`15432` by default).
+
+Compose persists two volumes:
+
+- `postgres-data` stores PostgreSQL data
+- `data-protection-keys` stores ASP.NET Core Data Protection keys so auth and antiforgery cookies survive container rebuilds and restarts
+
+Changing `POSTGRES_PASSWORD` in `.env` does not rewrite credentials inside an existing PostgreSQL volume. Update the database credentials manually, or reset local Compose data for a clean development start:
+
+```bash
+docker compose down -v
+docker compose up --build
+```
+
+The reset command deletes the Compose PostgreSQL data volume, so export any local data you need before running it.
 
 ## Contributing
 
