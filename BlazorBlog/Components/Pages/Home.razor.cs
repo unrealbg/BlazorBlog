@@ -6,6 +6,7 @@
         private BlogPostVm[] _popular = [];
         private BlogPostVm[] _recent = [];
         private TagVm[] _tags = Array.Empty<BlazorBlog.Application.Models.TagVm>();
+        private SiteSettingsVm _siteSettings = SiteSettingsVm.CreateDefault();
 
         private BlogPostVm _firstFeatured = default!;
 
@@ -13,6 +14,8 @@
         IBlogPostService BlogPostService { get; set; } = default!;
         [Inject]
         BlazorBlog.Infrastructure.Contracts.ITagService TagService { get; set; } = default!;
+        [Inject]
+        ISiteSettingsService SiteSettingsService { get; set; } = default!;
 
         private readonly CancellationTokenSource _cts = new();
 
@@ -27,6 +30,7 @@
             _featured = posts[0];
             _popular = posts[1];
             _recent = posts[2];
+            _siteSettings = await SiteSettingsService.GetSiteSettingsAsync(_cts.Token);
 
             if (_featured.Length == 0)
             {
@@ -51,5 +55,16 @@
             _cts.Cancel();
             _cts.Dispose();
         }
+
+        private string[] HomeHeroTags => _siteSettings.HomeHeroTags
+            .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+
+        private bool ShowHomeHeroSecondaryButton =>
+            !string.IsNullOrWhiteSpace(_siteSettings.HomeHeroSecondaryButtonText) &&
+            !string.IsNullOrWhiteSpace(_siteSettings.HomeHeroSecondaryButtonUrl);
+
+        private bool IsHomeHeroSecondaryGitHubLink =>
+            Uri.TryCreate(_siteSettings.HomeHeroSecondaryButtonUrl, UriKind.Absolute, out var url) &&
+            string.Equals(url.Host, "github.com", StringComparison.OrdinalIgnoreCase);
     }
 }

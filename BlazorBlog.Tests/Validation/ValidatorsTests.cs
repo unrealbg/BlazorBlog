@@ -3,6 +3,9 @@ namespace BlazorBlog.Tests.Validation
     using BlazorBlog.Application.Models;
     using BlazorBlog.Application.Validators;
     using BlazorBlog.Domain.Entities;
+    using System.Collections.Generic;
+    using System.ComponentModel.DataAnnotations;
+    using System.Linq;
     using Xunit;
 
     public class ValidatorsTests
@@ -53,6 +56,19 @@ namespace BlazorBlog.Tests.Validation
 
             var valid = new Subscriber { Email = "a@b.com", Name = "John" };
             Assert.True(v.Validate(valid).IsValid);
+        }
+
+        [Fact]
+        public void SiteSettingsVm_Rejects_Unsafe_Hero_Links()
+        {
+            var settings = SiteSettingsVm.CreateDefault();
+            settings.HomeHeroPrimaryButtonUrl = "javascript:alert(1)";
+
+            var errors = new List<ValidationResult>();
+            var valid = Validator.TryValidateObject(settings, new ValidationContext(settings), errors, validateAllProperties: true);
+
+            Assert.False(valid);
+            Assert.Contains(errors, error => error.MemberNames.Contains(nameof(SiteSettingsVm.HomeHeroPrimaryButtonUrl)));
         }
     }
 }

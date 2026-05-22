@@ -13,6 +13,7 @@ namespace BlazorBlog.Infrastructure.Persistence
         public DbSet<Subscriber> Subscribers { get; set; }
         public DbSet<Tag> Tags { get; set; }
         public DbSet<BlogPostTag> BlogPostTags { get; set; }
+        public DbSet<SiteSettings> SiteSettings { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -22,6 +23,7 @@ namespace BlazorBlog.Infrastructure.Persistence
             builder.ApplyConfiguration(new SubscriberConfiguration());
             builder.ApplyConfiguration(new TagConfiguration());
             builder.ApplyConfiguration(new BlogPostTagConfiguration());
+            builder.ApplyConfiguration(new SiteSettingsConfiguration());
         }
     }
 }

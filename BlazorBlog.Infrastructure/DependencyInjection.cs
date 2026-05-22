@@ -30,6 +30,7 @@ namespace BlazorBlog.Infrastructure
             services.AddScoped<ISubscribeService, SubscribeService>();
             services.AddScoped<ITagService, TagService>();
             services.AddScoped<ISlugService, SlugService>();
+            services.AddScoped<ISiteSettingsService, SiteSettingsService>();
             services.AddScoped<IAdminProfileService, AdminProfileService>();
             services.AddScoped<IUserManagementService, UserManagementService>();
 

@@ -19,6 +19,7 @@ namespace BlazorBlog.Tests.Component
             using var ctx = new BunitContext();
             // Minimal DI to render; the component renders before OnInitializedAsync completes
             ctx.Services.AddSingleton<BlazorBlog.Application.Contracts.IBlogPostService>(new FakeBlogPostService());
+            ctx.Services.AddSingleton<BlazorBlog.Application.Contracts.ISiteSettingsService>(new FakeSiteSettingsService());
             ctx.Services.AddSingleton<BlazorBlog.Infrastructure.Contracts.ITagService>(new FakeTagService());
             ctx.Services.AddSingleton<BlazorBlog.Infrastructure.Contracts.ISubscribeService, DummySubscribeService>();
             // Register validator used by SubscribeBox

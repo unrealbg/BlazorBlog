@@ -1,0 +1,116 @@
+@page "/admin/site-settings"
+
+@attribute [Authorize(Policy = "RequireAdminRole")]
+@rendermode InteractiveServer
+
+<PageTitle>@Utils.GetPageTitle("Site Settings")</PageTitle>
+
+<AdminHeader Title="Site Settings" />
+
+@if (_isLoading)
+{
+    <Loader LoaderText="Loading site settings..." />
+}
+else
+{
+    <EditForm Model="_settings" OnValidSubmit="SaveAsync" OnInvalidSubmit="ShowInvalidSettingsToast">
+        <DataAnnotationsValidator />
+
+        <section class="rounded-xl border border-slate-200/60 bg-white p-6 shadow-soft dark:border-slate-800 dark:bg-slate-900">
+            <div class="max-w-3xl">
+                <h3 class="text-lg font-semibold text-slate-900 dark:text-slate-100">Home Hero</h3>
+                <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">Public copy shown at the top of the home page.</p>
+
+                <div class="mt-6 space-y-5">
+                    <div>
+                        <label class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-200">
+                            Hero title <span class="text-red-600">*</span>
+                        </label>
+                        <InputText @bind-Value="_settings.HomeHeroTitle"
+                                   class="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100"
+                                   placeholder="Home page headline" />
+                        <ValidationMessage For="() => _settings.HomeHeroTitle" class="mt-1 block text-sm text-red-600" />
+                    </div>
+
+                    <div>
+                        <label class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-200">
+                            Hero description <span class="text-red-600">*</span>
+                        </label>
+                        <InputTextArea @bind-Value="_settings.HomeHeroSubtitle"
+                                       class="min-h-28 w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100"
+                                       placeholder="Short public description" />
+                        <ValidationMessage For="() => _settings.HomeHeroSubtitle" class="mt-1 block text-sm text-red-600" />
+                    </div>
+
+                    <div>
+                        <label class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-200">Hero tags</label>
+                        <InputText @bind-Value="_settings.HomeHeroTags"
+                                   class="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100"
+                                   placeholder="Blazor, .NET, Architecture" />
+                        <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">Comma-separated labels. Leave empty to hide the tags.</p>
+                        <ValidationMessage For="() => _settings.HomeHeroTags" class="mt-1 block text-sm text-red-600" />
+                    </div>
+
+                    <div class="grid gap-4 md:grid-cols-2">
+                        <div>
+                            <label class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-200">
+                                Primary button text <span class="text-red-600">*</span>
+                            </label>
+                            <InputText @bind-Value="_settings.HomeHeroPrimaryButtonText"
+                                       class="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100"
+                                       placeholder="Read Posts" />
+                            <ValidationMessage For="() => _settings.HomeHeroPrimaryButtonText" class="mt-1 block text-sm text-red-600" />
+                        </div>
+
+                        <div>
+                            <label class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-200">
+                                Primary button URL <span class="text-red-600">*</span>
+                            </label>
+                            <InputText @bind-Value="_settings.HomeHeroPrimaryButtonUrl"
+                                       class="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100"
+                                       placeholder="/posts" />
+                            <ValidationMessage For="() => _settings.HomeHeroPrimaryButtonUrl" class="mt-1 block text-sm text-red-600" />
+                        </div>
+
+                        <div>
+                            <label class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-200">Secondary button text</label>
+                            <InputText @bind-Value="_settings.HomeHeroSecondaryButtonText"
+                                       class="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100"
+                                       placeholder="Repository" />
+                            <ValidationMessage For="() => _settings.HomeHeroSecondaryButtonText" class="mt-1 block text-sm text-red-600" />
+                        </div>
+
+                        <div>
+                            <label class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-200">Secondary button URL</label>
+                            <InputText @bind-Value="_settings.HomeHeroSecondaryButtonUrl"
+                                       class="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100"
+                                       placeholder="https://example.com" />
+                            <ValidationMessage For="() => _settings.HomeHeroSecondaryButtonUrl" class="mt-1 block text-sm text-red-600" />
+                        </div>
+                    </div>
+
+                    <p class="text-xs text-slate-500 dark:text-slate-400">Button URLs may be relative paths such as <code>/posts</code> or full http/https links.</p>
+                </div>
+
+                <div class="mt-6">
+                    <button type="submit"
+                            disabled="@_isSaving"
+                            class="inline-flex items-center rounded-md bg-emerald-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-60">
+                        @if (_isSaving)
+                        {
+                            <svg class="-ml-0.5 mr-2 h-4 w-4 animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" aria-hidden="true">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+                            </svg>
+                            <span>Saving...</span>
+                        }
+                        else
+                        {
+                            <span>Save Settings</span>
+                        }
+                    </button>
+                </div>
+            </div>
+        </section>
+    </EditForm>
+}
