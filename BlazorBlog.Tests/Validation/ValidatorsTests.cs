@@ -70,5 +70,18 @@ namespace BlazorBlog.Tests.Validation
             Assert.False(valid);
             Assert.Contains(errors, error => error.MemberNames.Contains(nameof(SiteSettingsVm.HomeHeroPrimaryButtonUrl)));
         }
+
+        [Fact]
+        public void SiteSettingsVm_Rejects_Unsafe_About_Link()
+        {
+            var settings = SiteSettingsVm.CreateDefault();
+            settings.HomeAboutLinkUrl = "data:text/html,<script>alert(1)</script>";
+
+            var errors = new List<ValidationResult>();
+            var valid = Validator.TryValidateObject(settings, new ValidationContext(settings), errors, validateAllProperties: true);
+
+            Assert.False(valid);
+            Assert.Contains(errors, error => error.MemberNames.Contains(nameof(SiteSettingsVm.HomeAboutLinkUrl)));
+        }
     }
 }

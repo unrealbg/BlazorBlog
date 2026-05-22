@@ -46,6 +46,10 @@ namespace BlazorBlog.Infrastructure
             entity.HomeHeroPrimaryButtonUrl = settings.HomeHeroPrimaryButtonUrl.Trim();
             entity.HomeHeroSecondaryButtonText = settings.HomeHeroSecondaryButtonText.Trim();
             entity.HomeHeroSecondaryButtonUrl = settings.HomeHeroSecondaryButtonUrl.Trim();
+            entity.HomeAboutTitle = settings.HomeAboutTitle.Trim();
+            entity.HomeAboutDescription = settings.HomeAboutDescription.Trim();
+            entity.HomeAboutLinkText = settings.HomeAboutLinkText.Trim();
+            entity.HomeAboutLinkUrl = settings.HomeAboutLinkUrl.Trim();
 
             await context.SaveChangesAsync(cancellationToken);
             return Map(entity);
@@ -60,7 +64,11 @@ namespace BlazorBlog.Infrastructure
             HomeHeroPrimaryButtonText = settings.HomeHeroPrimaryButtonText,
             HomeHeroPrimaryButtonUrl = settings.HomeHeroPrimaryButtonUrl,
             HomeHeroSecondaryButtonText = settings.HomeHeroSecondaryButtonText,
-            HomeHeroSecondaryButtonUrl = settings.HomeHeroSecondaryButtonUrl
+            HomeHeroSecondaryButtonUrl = settings.HomeHeroSecondaryButtonUrl,
+            HomeAboutTitle = settings.HomeAboutTitle,
+            HomeAboutDescription = settings.HomeAboutDescription,
+            HomeAboutLinkText = settings.HomeAboutLinkText,
+            HomeAboutLinkUrl = settings.HomeAboutLinkUrl
         };
     }
 }
