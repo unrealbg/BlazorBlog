@@ -17,5 +17,13 @@ namespace BlazorBlog.Infrastructure.Persistence.Entities
         public string HomeHeroSecondaryButtonText { get; set; } = string.Empty;
 
         public string HomeHeroSecondaryButtonUrl { get; set; } = string.Empty;
+
+        public string HomeAboutTitle { get; set; } = string.Empty;
+
+        public string HomeAboutDescription { get; set; } = string.Empty;
+
+        public string HomeAboutLinkText { get; set; } = string.Empty;
+
+        public string HomeAboutLinkUrl { get; set; } = string.Empty;
     }
 }

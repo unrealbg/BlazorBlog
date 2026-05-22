@@ -66,5 +66,21 @@
         private bool IsHomeHeroSecondaryGitHubLink =>
             Uri.TryCreate(_siteSettings.HomeHeroSecondaryButtonUrl, UriKind.Absolute, out var url) &&
             string.Equals(url.Host, "github.com", StringComparison.OrdinalIgnoreCase);
+
+        private bool ShowHomeAboutLink =>
+            !string.IsNullOrWhiteSpace(_siteSettings.HomeAboutLinkText) &&
+            !string.IsNullOrWhiteSpace(_siteSettings.HomeAboutLinkUrl);
+
+        private bool IsHomeAboutExternalLink =>
+            Uri.TryCreate(_siteSettings.HomeAboutLinkUrl, UriKind.Absolute, out var url) &&
+            (url.Scheme == Uri.UriSchemeHttp || url.Scheme == Uri.UriSchemeHttps);
+
+        private bool IsHomeAboutGitHubLink =>
+            Uri.TryCreate(_siteSettings.HomeAboutLinkUrl, UriKind.Absolute, out var url) &&
+            string.Equals(url.Host, "github.com", StringComparison.OrdinalIgnoreCase);
+
+        private string? HomeAboutLinkTarget => IsHomeAboutExternalLink ? "_blank" : null;
+
+        private string? HomeAboutLinkRel => IsHomeAboutExternalLink ? "noopener noreferrer" : null;
     }
 }

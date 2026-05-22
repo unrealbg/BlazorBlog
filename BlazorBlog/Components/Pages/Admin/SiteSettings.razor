@@ -92,6 +92,53 @@ else
                     <p class="text-xs text-slate-500 dark:text-slate-400">Button URLs may be relative paths such as <code>/posts</code> or full http/https links.</p>
                 </div>
 
+                <div class="mt-10 border-t border-slate-200 pt-8 dark:border-slate-800">
+                    <h3 class="text-lg font-semibold text-slate-900 dark:text-slate-100">Home About Card</h3>
+                    <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">Sidebar copy shown beside the latest posts on the home page.</p>
+
+                    <div class="mt-6 space-y-5">
+                        <div>
+                            <label class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-200">
+                                About title <span class="text-red-600">*</span>
+                            </label>
+                            <InputText @bind-Value="_settings.HomeAboutTitle"
+                                       class="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100"
+                                       placeholder="About This Blog" />
+                            <ValidationMessage For="() => _settings.HomeAboutTitle" class="mt-1 block text-sm text-red-600" />
+                        </div>
+
+                        <div>
+                            <label class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-200">
+                                About description <span class="text-red-600">*</span>
+                            </label>
+                            <InputTextArea @bind-Value="_settings.HomeAboutDescription"
+                                           class="min-h-28 w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100"
+                                           placeholder="Short description for the home page sidebar" />
+                            <ValidationMessage For="() => _settings.HomeAboutDescription" class="mt-1 block text-sm text-red-600" />
+                        </div>
+
+                        <div class="grid gap-4 md:grid-cols-2">
+                            <div>
+                                <label class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-200">About link text</label>
+                                <InputText @bind-Value="_settings.HomeAboutLinkText"
+                                           class="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100"
+                                           placeholder="Learn more" />
+                                <ValidationMessage For="() => _settings.HomeAboutLinkText" class="mt-1 block text-sm text-red-600" />
+                            </div>
+
+                            <div>
+                                <label class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-200">About link URL</label>
+                                <InputText @bind-Value="_settings.HomeAboutLinkUrl"
+                                           class="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100"
+                                           placeholder="https://example.com/about" />
+                                <ValidationMessage For="() => _settings.HomeAboutLinkUrl" class="mt-1 block text-sm text-red-600" />
+                            </div>
+                        </div>
+
+                        <p class="text-xs text-slate-500 dark:text-slate-400">Leave both link fields empty to hide the About link.</p>
+                    </div>
+                </div>
+
                 <div class="mt-6">
                     <button type="submit"
                             disabled="@_isSaving"

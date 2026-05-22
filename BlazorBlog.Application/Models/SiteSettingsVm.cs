@@ -28,6 +28,19 @@ namespace BlazorBlog.Application.Models
         [MaxLength(300)]
         public string HomeHeroSecondaryButtonUrl { get; set; } = "https://github.com/unrealbg/BlazorBlog";
 
+        [Required, MaxLength(120)]
+        public string HomeAboutTitle { get; set; } = "About This Project";
+
+        [Required, MaxLength(500)]
+        public string HomeAboutDescription { get; set; } =
+            "Modern blog platform built with .NET 10 and Blazor Server. Demonstrates best practices in software development, Clean Architecture and modern technologies.";
+
+        [MaxLength(60)]
+        public string HomeAboutLinkText { get; set; } = "View on GitHub";
+
+        [MaxLength(300)]
+        public string HomeAboutLinkUrl { get; set; } = "https://github.com/unrealbg/BlazorBlog";
+
         public static SiteSettingsVm CreateDefault() => new();
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
@@ -47,6 +60,16 @@ namespace BlazorBlog.Application.Models
                 HomeHeroSecondaryButtonUrl,
                 nameof(HomeHeroSecondaryButtonText),
                 nameof(HomeHeroSecondaryButtonUrl),
+                required: false))
+            {
+                yield return result;
+            }
+
+            foreach (var result in ValidateLink(
+                HomeAboutLinkText,
+                HomeAboutLinkUrl,
+                nameof(HomeAboutLinkText),
+                nameof(HomeAboutLinkUrl),
                 required: false))
             {
                 yield return result;

@@ -15,6 +15,10 @@ namespace BlazorBlog.Infrastructure.Persistence.Configurations
             builder.Property(x => x.HomeHeroPrimaryButtonUrl).HasMaxLength(300).IsRequired();
             builder.Property(x => x.HomeHeroSecondaryButtonText).HasMaxLength(60).IsRequired();
             builder.Property(x => x.HomeHeroSecondaryButtonUrl).HasMaxLength(300).IsRequired();
+            builder.Property(x => x.HomeAboutTitle).HasMaxLength(120).IsRequired();
+            builder.Property(x => x.HomeAboutDescription).HasMaxLength(500).IsRequired();
+            builder.Property(x => x.HomeAboutLinkText).HasMaxLength(60).IsRequired();
+            builder.Property(x => x.HomeAboutLinkUrl).HasMaxLength(300).IsRequired();
         }
     }
 }
