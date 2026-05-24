@@ -3,6 +3,7 @@ namespace BlazorBlog
     using System.Net;
     using System.Text.Json;
 
+    using BlazorBlog.Feeds;
     using Components.Account;
     using BlazorBlog.Health;
     using BlazorBlog.Infrastructure;
@@ -68,6 +69,7 @@ namespace BlazorBlog
             builder.Services.AddHealthChecks()
                 .AddCheck<DatabaseHealthCheck>("database", tags: ["ready"])
                 .AddCheck<DiskSpaceHealthCheck>("disk", tags: ["ready"]);
+            builder.Services.Configure<FeedOptions>(builder.Configuration.GetSection(FeedOptions.SectionName));
 
             ValidateStartupConfiguration(builder);
 
@@ -123,6 +125,7 @@ namespace BlazorBlog
                 .AddInteractiveServerRenderMode();
 
             app.MapAdditionalIdentityEndpoints();
+            app.MapFeedEndpoint();
 
             app.MapGet("/health", (ILogger<Program> logger) =>
                 {
