@@ -21,5 +21,7 @@ namespace BlazorBlog.Application.Contracts
         Task<BlogPostVm[]> GetPopularBlogPostsByTagAsync(string tagSlug, int count, CancellationToken cancellationToken = default);
 
         Task<BlogPostVm[]> GetBlogPostsByTagAsync(string tagSlug, int pageIndex, int pageSize, CancellationToken cancellationToken = default);
+
+        Task<SitemapPostVm[]> GetSitemapPostsAsync(CancellationToken cancellationToken = default);
     }
 }

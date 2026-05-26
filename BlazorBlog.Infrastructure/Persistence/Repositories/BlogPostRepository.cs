@@ -370,6 +370,32 @@ namespace BlazorBlog.Infrastructure.Persistence.Repositories
             return posts.Select(Map).ToArray();
         }
 
+        public async Task<SitemapPostVm[]> GetSitemapPostsAsync(CancellationToken cancellationToken = default)
+        {
+            await using var context = await _contextFactory.CreateDbContextAsync(cancellationToken);
+
+            var posts = await context.BlogPosts
+                .AsNoTracking()
+                .Where(p => p.IsPublished && !p.IsDeleted && p.Slug != string.Empty)
+                .OrderByDescending(p => p.PublishedAt ?? p.CreatedAt)
+                .Select(p => new
+                {
+                    p.Slug,
+                    CategorySlug = p.Category.Slug,
+                    LastModified = p.PublishedAt ?? p.CreatedAt
+                })
+                .ToArrayAsync(cancellationToken);
+
+            return posts
+                .Select(p => new SitemapPostVm
+                {
+                    Slug = p.Slug,
+                    CategorySlug = p.CategorySlug,
+                    LastModifiedUtc = DateTime.SpecifyKind(p.LastModified, DateTimeKind.Utc).ToUniversalTime()
+                })
+                .ToArray();
+        }
+
         private static bool TryReadRowVersion(byte[]? rowVersion, out uint xmin)
         {
             xmin = default;

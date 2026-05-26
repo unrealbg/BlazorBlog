@@ -4,6 +4,7 @@ namespace BlazorBlog
     using System.Text.Json;
 
     using BlazorBlog.Feeds;
+    using BlazorBlog.Seo;
     using Components.Account;
     using BlazorBlog.Health;
     using BlazorBlog.Infrastructure;
@@ -70,6 +71,7 @@ namespace BlazorBlog
                 .AddCheck<DatabaseHealthCheck>("database", tags: ["ready"])
                 .AddCheck<DiskSpaceHealthCheck>("disk", tags: ["ready"]);
             builder.Services.Configure<FeedOptions>(builder.Configuration.GetSection(FeedOptions.SectionName));
+            builder.Services.Configure<SitemapOptions>(builder.Configuration.GetSection(SitemapOptions.SectionName));
 
             ValidateStartupConfiguration(builder);
 
@@ -126,6 +128,7 @@ namespace BlazorBlog
 
             app.MapAdditionalIdentityEndpoints();
             app.MapFeedEndpoint();
+            app.MapSeoEndpoints();
 
             app.MapGet("/health", (ILogger<Program> logger) =>
                 {

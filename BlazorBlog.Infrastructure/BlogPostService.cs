@@ -58,5 +58,8 @@
 
         public Task<BlogPostVm[]> GetBlogPostsByTagAsync(string tagSlug, int pageIndex, int pageSize, CancellationToken cancellationToken = default)
             => _blogPostRepository.GetBlogPostsByTagAsync(tagSlug, pageIndex, pageSize, cancellationToken);
+
+        public Task<SitemapPostVm[]> GetSitemapPostsAsync(CancellationToken cancellationToken = default)
+            => CacheGetOrCreateAsync($"sitemap:posts:{_signal.Version}", () => _blogPostRepository.GetSitemapPostsAsync(cancellationToken));
     }
 }
